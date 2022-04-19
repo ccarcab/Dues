@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "814549884038",
+    "project_id": "dues-66a01",
+    "storage_bucket": "dues-66a01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814549884038:android:54a53d14531802a5fa0507",
+        "android_client_info": {
+          "package_name": "es.clcarras.mydues"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "814549884038-5vo3a8pr0b4c610hd26bun8f8vo49fvn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "es.clcarras.mydues",
+            "certificate_hash": "8cb4c636cf3709538f1d761b82571f1a2d7641cf"
+          }
+        },
+        {
+          "client_id": "814549884038-inibblsehsqko6b5vmldpngjfdntcivs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAymj1QEL9bSIwYSNpBVkPyWhv4UDFacPk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "814549884038-inibblsehsqko6b5vmldpngjfdntcivs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

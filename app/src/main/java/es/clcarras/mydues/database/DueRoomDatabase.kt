@@ -8,7 +8,6 @@ import androidx.room.TypeConverters
 import es.clcarras.mydues.model.Due
 
 @Database(entities = [Due::class], version = 1, exportSchema = false)
-@TypeConverters(Converters::class)
 abstract class DueRoomDatabase : RoomDatabase() {
 
     abstract fun dueDao(): DueDao

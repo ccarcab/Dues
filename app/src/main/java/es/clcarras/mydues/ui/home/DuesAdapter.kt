@@ -1,13 +1,11 @@
 package es.clcarras.mydues.ui.home
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import es.clcarras.mydues.databinding.DueRowItemBinding
 import es.clcarras.mydues.model.Due
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DuesAdapter(private val dataSet: List<Due>):
@@ -22,13 +20,14 @@ class DuesAdapter(private val dataSet: List<Due>):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val rnd = Random()
+        val color: Int = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
         with(holder.binding) {
             with(dataSet[position]) {
                 tvName.text = name
-                tvDate.text = formatter.format(date)
-                tvPrice.text = price
+                tvPrice.text = "$price €"
             }
+            container.setCardBackgroundColor(color)
         }
     }
 

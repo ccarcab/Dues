@@ -47,11 +47,11 @@ class HomeFragment : Fragment() {
                     Log.i("Database", "Datos insertados en la base de datos")
                     insertAll(
                         arrayListOf(
-                            Due(name = "Netflix", date = Date.from(Instant.now()), price = "9€"),
-                            Due(name = "Amazon", date = Date.from(Instant.now()), price = "9€"),
-                            Due(name = "Disney", date = Date.from(Instant.now()), price = "9€"),
-                            Due(name = "O2", date = Date.from(Instant.now()), price = "9€"),
-                            Due(name = "GamePass", date = Date.from(Instant.now()), price = "9€")
+                            Due(name = "Netflix", price = "8"),
+                            Due(name = "Amazon", price = "36"),
+                            Due(name = "Disney", price = "40"),
+                            Due(name = "O2", price = "38"),
+                            Due(name = "GamePass", price = "12")
                         )
                     )
                 }
