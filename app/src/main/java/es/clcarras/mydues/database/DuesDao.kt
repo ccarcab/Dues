@@ -16,6 +16,9 @@ interface DuesDao {
     suspend fun getDueCount(): Int
 
     @Insert
+    suspend fun insert(dues: Dues)
+
+    @Insert
     suspend fun insertAll(dues: List<Dues>)
 
     @Delete

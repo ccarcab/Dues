@@ -86,8 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="number"
-                android:text="1" />
+                android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
@@ -124,9 +123,8 @@
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnColorPicker"
-            style="@android:style/Widget.Holo.Light.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"

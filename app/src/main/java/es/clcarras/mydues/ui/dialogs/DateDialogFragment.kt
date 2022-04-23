@@ -1,4 +1,4 @@
-package es.clcarras.mydues.ui.dialogs.date
+package es.clcarras.mydues.ui.dialogs
 
 import android.app.DatePickerDialog
 import android.app.Dialog
