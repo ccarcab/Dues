@@ -10,5 +10,10 @@
         android:name="es.clcarras.mydues.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/home_fragment" />
+    <fragment
+        android:id="@+id/nav_new_due"
+        android:name="es.clcarras.mydues.ui.new_due.NewDueFragment"
+        android:label="NewDueFragment"
+        tools:layout="@layout/new_due_fragment"/>
 
 </navigation>

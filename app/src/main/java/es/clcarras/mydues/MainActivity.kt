@@ -8,28 +8,30 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import es.clcarras.mydues.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         with(binding) {
             setContentView(root)
+
+            val navController = findNavController(R.id.nav_host_fragment)
 
             with(appBarMain) {
                 setSupportActionBar(bottomAppBar)
                 fab.setOnClickListener {
-
+                    navController.navigate(R.id.nav_new_due)
                 }
             }
-
-            val navController = findNavController(R.id.nav_host_fragment)
             appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
             setupActionBarWithNavController(navController, appBarConfiguration)
             navView.setupWithNavController(navController)
@@ -46,4 +48,6 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    fun getFab() : FloatingActionButton? = _binding?.appBarMain?.fab
 }

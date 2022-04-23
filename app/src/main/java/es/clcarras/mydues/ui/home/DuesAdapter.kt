@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import es.clcarras.mydues.databinding.DueRowItemBinding
-import es.clcarras.mydues.model.Due
+import es.clcarras.mydues.model.Dues
 import java.util.*
 
-class DuesAdapter(private val dataSet: List<Due>):
+class DuesAdapter(private val dataSet: List<Dues>):
     RecyclerView.Adapter<DuesAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: DueRowItemBinding) : RecyclerView.ViewHolder(binding.root)

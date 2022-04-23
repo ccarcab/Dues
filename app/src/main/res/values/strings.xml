@@ -8,10 +8,26 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
     <string name="search">Search</string>
     <string name="content_description_search">Search</string>
     <string name="more">More</string>
     <string name="content_description_more">More</string>
+    <string name="price">Price</string>
+    <string name="name">Name</string>
+    <string name="description">Description - (Optional)</string>
+    <string name="every">Every</string>
+    <string name="first_payment">First Payment</string>
+    <string name="color_picker">Choose a color</string>
+    <string name="payment_method">Payment Method - (Optional)</string>
+    <string name="save">Save</string>
+
+    <string-array name="recurrence_array">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
+        <item>Year</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

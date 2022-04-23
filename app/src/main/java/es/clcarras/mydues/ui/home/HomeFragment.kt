@@ -1,7 +1,6 @@
 package es.clcarras.mydues.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.databinding.HomeFragmentBinding
-import es.clcarras.mydues.model.Due
-import es.clcarras.mydues.database.DueRoomDatabase
+import es.clcarras.mydues.model.Dues
+import es.clcarras.mydues.database.DuesRoomDatabase
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -23,38 +21,29 @@ class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
 
-    private var dataList: List<Due> = listOf()
+    private var dataList: List<Dues> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         _binding = HomeFragmentBinding.inflate(inflater, container, false)
-
-        initDatabase()
-
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         return binding.root
     }
 
-    private fun initDatabase() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as MainActivity).getFab()?.show()
+        readDatabase()
+    }
+
+    private fun readDatabase() {
         lifecycleScope.launch {
-            val db = DueRoomDatabase.getDatabase(requireContext())
+            val db = DuesRoomDatabase.getDatabase(requireContext())
 
             with(db.dueDao()) {
-                if (getDueCount() <= 0) {
-                    Log.i("Database", "Datos insertados en la base de datos")
-                    insertAll(
-                        arrayListOf(
-                            Due(name = "Netflix", price = "8"),
-                            Due(name = "Amazon", price = "36"),
-                            Due(name = "Disney", price = "40"),
-                            Due(name = "O2", price = "38"),
-                            Due(name = "GamePass", price = "12")
-                        )
-                    )
-                }
                 dataList = getAll()
             }
 
