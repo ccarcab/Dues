@@ -43,7 +43,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             val db = DuesRoomDatabase.getDatabase(requireContext())
 
-            with(db.dueDao()) {
+            with(db.duesDao()) {
                 dataList = getAll()
             }
 

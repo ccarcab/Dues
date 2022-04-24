@@ -9,7 +9,7 @@ import es.clcarras.mydues.model.Dues
 @Database(entities = [Dues::class], version = 1, exportSchema = false)
 abstract class DuesRoomDatabase : RoomDatabase() {
 
-    abstract fun dueDao(): DuesDao
+    abstract fun duesDao(): DuesDao
 
     companion object {
         // Singleton prevents multiple instances of database opening at the

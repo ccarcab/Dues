@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import es.clcarras.mydues.Utility
 import es.clcarras.mydues.databinding.DueRowItemBinding
 import es.clcarras.mydues.model.Dues
 import java.util.*
@@ -20,14 +21,15 @@ class DuesAdapter(private val dataSet: List<Dues>):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val rnd = Random()
-        val color: Int = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
         with(holder.binding) {
             with(dataSet[position]) {
+                val textColor = Utility.contrastColor(cardColor)
                 tvName.text = name
+                tvName.setTextColor(textColor)
                 tvPrice.text = "$price €"
+                tvPrice.setTextColor(textColor)
+                container.setCardBackgroundColor(cardColor)
             }
-            container.setCardBackgroundColor(color)
         }
     }
 

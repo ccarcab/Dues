@@ -9,9 +9,9 @@ data class Dues(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val price: String,
     val name: String,
-    val description: String?,
+    val description: String? = null,
     val recurrence: String,
     val firstPayment: String,
-    val paymentMethod: String?,
-    val cardColor: String? = null
+    val paymentMethod: String? = null,
+    val cardColor: Int
 )
