@@ -2,7 +2,6 @@ package es.clcarras.mydues.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import es.clcarras.mydues.R
 
 @Entity
 data class Dues(

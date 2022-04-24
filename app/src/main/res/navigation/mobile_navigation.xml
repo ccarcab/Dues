@@ -9,11 +9,44 @@
         android:id="@+id/nav_home"
         android:name="es.clcarras.mydues.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/home_fragment" />
+        tools:layout="@layout/home_fragment" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_dues_details"
+            app:destination="@id/nav_dues_details" />
+    </fragment>
     <fragment
         android:id="@+id/nav_new_due"
         android:name="es.clcarras.mydues.ui.new_due.NewDueFragment"
         android:label="NewDueFragment"
-        tools:layout="@layout/new_due_fragment"/>
+        tools:layout="@layout/new_dues_fragment"/>
+    <dialog
+        android:id="@+id/nav_dues_details"
+        android:name="es.clcarras.mydues.ui.dialogs.DuesDetailsDialogFragment"
+        android:label="DuesDetailsDialogFragment"
+        tools:layout="@layout/dues_details_dialog_fragment">
+        <argument
+            android:name="price"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="desc"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="recurrence"
+            app:argType="string" />
+        <argument
+            android:name="firstPayment"
+            app:argType="string" />
+        <argument
+            android:name="paymentMethod"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="cardColor"
+            app:argType="integer" />
+    </dialog>
 
 </navigation>

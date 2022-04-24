@@ -13,7 +13,7 @@ import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 import es.clcarras.mydues.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
-import es.clcarras.mydues.databinding.NewDueFragmentBinding
+import es.clcarras.mydues.databinding.NewDuesFragmentBinding
 import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ import vadiole.colorpicker.ColorPickerDialog
 
 class NewDueFragment : Fragment() {
 
-    private var _binding: NewDueFragmentBinding? = null
+    private var _binding: NewDuesFragmentBinding? = null
     private val binding get() = _binding!!
 
     private var selectedColor: Int = 0
@@ -30,7 +30,7 @@ class NewDueFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = NewDueFragmentBinding.inflate(inflater, container, false)
+        _binding = NewDuesFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
