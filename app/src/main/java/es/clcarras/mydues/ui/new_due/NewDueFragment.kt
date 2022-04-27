@@ -16,8 +16,8 @@ import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
 import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
+import es.clcarras.mydues.ui.dialogs.DuesDetailsDialogFragment
 import kotlinx.coroutines.launch
-import vadiole.colorpicker.ColorPickerDialog
 
 class NewDueFragment : Fragment() {
 
@@ -55,17 +55,28 @@ class NewDueFragment : Fragment() {
 
     private fun setOnClickListeners() {
         with(binding) {
-            etPrice.setOnClickListener { it as EditText
+            etPrice.setOnClickListener {
+                it as EditText
                 it.error = null
             }
-            etName.setOnClickListener { it as EditText
+            etName.setOnClickListener {
+                it as EditText
                 etName.error = null
             }
-            etFirstPayment.setOnClickListener { it as EditText
+            etFirstPayment.setOnClickListener {
+                it as EditText
                 showDatePicker()
                 it.error = null
             }
-            btnColorPicker.setOnClickListener { showColorPicker() }
+            btnColorPicker.setOnClickListener {
+                Utility.colorPicker(selectedColor)
+                    .onColorSelected { color: Int ->
+                        selectedColor = color
+                        setColorToPicker(color)
+                    }
+                    .create()
+                    .show(childFragmentManager, Utility.TAG)
+            }
             btnSave.setOnClickListener { saveDues() }
         }
     }
@@ -76,21 +87,6 @@ class NewDueFragment : Fragment() {
             val selectedDate = "$day / ${month + 1} / $year"
             binding.etFirstPayment.setText(selectedDate)
         }.show(parentFragmentManager, DateDialogFragment.TAG)
-    }
-
-    private fun showColorPicker() {
-        ColorPickerDialog.Builder()
-            .setInitialColor(selectedColor)
-            .setColorModel(vadiole.colorpicker.ColorModel.HSV)
-            .setColorModelSwitchEnabled(true)
-            .setButtonOkText(android.R.string.ok)
-            .setButtonCancelText(android.R.string.cancel)
-            .onColorSelected { color: Int ->
-                selectedColor = color
-                setColorToPicker(color)
-            }
-            .create()
-            .show(parentFragmentManager, "color_picker")
     }
 
     private fun saveDues() {

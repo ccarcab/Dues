@@ -6,11 +6,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class Dues(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val price: String,
-    val name: String,
-    val description: String? = null,
-    val recurrence: String,
-    val firstPayment: String,
-    val paymentMethod: String? = null,
-    val cardColor: Int
+    var price: String,
+    var name: String,
+    var description: String? = null,
+    var recurrence: String,
+    var firstPayment: String,
+    var paymentMethod: String? = null,
+    var cardColor: Int
 )
