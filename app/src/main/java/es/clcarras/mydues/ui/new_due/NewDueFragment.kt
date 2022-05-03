@@ -131,7 +131,7 @@ class NewDueFragment : Fragment() {
 
             // Recurrence
             val recurrence: String =
-                if (etEvery.length() > 0) "${etEvery.text} ${spRecurrence.selectedItem}"
+                if (etEvery.text.isNotBlank()) "${etEvery.text} ${spRecurrence.selectedItem}"
                 else "1 ${spRecurrence.selectedItem}"
 
             val db = DuesRoomDatabase.getDatabase(requireContext())
