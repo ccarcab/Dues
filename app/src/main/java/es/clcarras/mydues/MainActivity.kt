@@ -13,7 +13,6 @@ import es.clcarras.mydues.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
@@ -26,15 +25,12 @@ class MainActivity : AppCompatActivity() {
 
             val navController = findNavController(R.id.nav_host_fragment)
 
-            with(appBarMain) {
+            with(binding) {
                 setSupportActionBar(bottomAppBar)
                 fab.setOnClickListener {
                     navController.navigate(R.id.nav_new_due)
                 }
             }
-            appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            navView.setupWithNavController(navController)
         }
 
     }
@@ -44,10 +40,5 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-
-    fun getFab() : FloatingActionButton? = _binding?.appBarMain?.fab
+    fun getFab() : FloatingActionButton? = _binding?.fab
 }

@@ -40,7 +40,6 @@ class NewDueFragment : Fragment() {
 
         selectedColor = ContextCompat.getColor(requireContext(), R.color.default_card_color)
         setColorToPicker(selectedColor)
-        binding.btnColorPicker
 
         setOnClickListeners()
 
@@ -123,7 +122,7 @@ class NewDueFragment : Fragment() {
 
             // Payment Method
             val paymentMethod: String =
-                if (etPaymentMethod.length() > 0) etFirstPayment.text.toString() else ""
+                if (etPaymentMethod.length() > 0) etPaymentMethod.text.toString() else ""
 
             // Description
             val description: String =

@@ -1,13 +1,19 @@
 package es.clcarras.mydues.ui.dialogs
 
 import android.app.Dialog
+import android.content.res.ColorStateList
+import android.graphics.ColorFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.children
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.textfield.TextInputLayout
 import es.clcarras.mydues.R
 import es.clcarras.mydues.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
@@ -24,13 +30,15 @@ class DuesDetailsDialogFragment(
     private val binding get() = _binding!!
 
     private var currentColor: Int = 0
+    private var contrastColor: Int = 0
+
+    private var duesChanged = false
 
     companion object {
         const val TAG = "DuesDetailsDialogFragment"
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
         _binding = DuesDetailsDialogFragmentBinding.inflate(layoutInflater)
         return AlertDialog.Builder(requireContext())
             .setView(binding.root)
@@ -50,7 +58,6 @@ class DuesDetailsDialogFragment(
                 if (description.isNullOrBlank()) tilDesc.visibility = View.GONE
                 else etDesc.setText(description)
 
-                Log.i(TAG, "$recurrence")
                 with(recurrence.split("\\s".toRegex())) {
                     etEvery.setText(this[0])
                     spRecurrence.setSelection(
@@ -58,6 +65,12 @@ class DuesDetailsDialogFragment(
                     )
                     spRecurrence.isClickable = !spRecurrence.isClickable
                     spRecurrence.isEnabled = !spRecurrence.isEnabled
+                    spRecurrence.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                        override fun onItemSelected(
+                            p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long
+                        ) { setContrast() }
+                        override fun onNothingSelected(p0: AdapterView<*>?) { }
+                    }
                 }
                 etFirstPayment.setText(firstPayment)
 
@@ -75,6 +88,7 @@ class DuesDetailsDialogFragment(
                     .onColorSelected { color: Int ->
                         currentColor = color
                         container.setBackgroundColor(color)
+                        setContrast()
                     }
                     .create()
                     .show(childFragmentManager, Utility.TAG)
@@ -90,6 +104,28 @@ class DuesDetailsDialogFragment(
         return binding.root
     }
 
+    private fun setContrast() {
+        Log.i("setContrast", "Called setContrast")
+        contrastColor = Utility.contrastColor(currentColor)
+        val colorStateList = ColorStateList.valueOf(contrastColor)
+        with(binding) {
+            container.children.forEach {
+                if (it is TextInputLayout && it.editText?.currentTextColor != contrastColor) {
+                    it.setSuffixTextColor(colorStateList)
+                    it.defaultHintTextColor = colorStateList
+                    it.boxBackgroundColor = contrastColor
+                    it.boxStrokeColor = contrastColor
+                    it.editText?.setTextColor(contrastColor)
+                    it.editText?.backgroundTintList = colorStateList
+                } else if (it is Spinner) {
+                    it.backgroundTintList = colorStateList
+                    (it.getChildAt(0) as? TextView)?.setTextColor(contrastColor)
+                }
+            }
+            scrollView.setBackgroundColor(contrastColor)
+        }
+    }
+
     private fun showDatePicker() {
         DateDialogFragment.newInstance { _, year, month, day ->
             // +1 because January is zero
@@ -99,84 +135,91 @@ class DuesDetailsDialogFragment(
     }
 
     private fun saveChanges() {
+        updateDues()
+        if (duesChanged) {
+            Log.i("saveChanges", "Cambios guardados")
+            fragment.updateDues(dues)
+            duesChanged = false
+        }
+        toggleViewEditMode()
+    }
+
+    private fun updateDues() {
         with(binding) {
-            toggleViewEditMode()
             with(dues) {
-
                 var error = false
-
                 // Price
-                if (etPrice.length() > 0) price = etPrice.text.toString()
-                else {
+                if (etPrice.length() > 0) {
+                    if (etPrice.text.toString() != price) {
+                        price = etPrice.text.toString()
+                        duesChanged = true
+                    }
+                } else {
                     etPrice.error = "Price Required"
                     error = true
                 }
-
                 // Name
-                if (etName.length() > 0) name = etName.text.toString()
-                else {
+                if (etName.length() > 0) {
+                    if (etName.text.toString() != name) {
+                        name = etName.text.toString()
+                        duesChanged = true
+                    }
+                } else {
                     etName.error = "Name Required"
                     error = true
                 }
-
                 // First Payment
-                if (etFirstPayment.length() > 0) firstPayment = etFirstPayment.text.toString()
-                else {
+                if (etFirstPayment.length() > 0) {
+                    if (etFirstPayment.text.toString() != firstPayment) {
+                        firstPayment = etFirstPayment.text.toString()
+                        duesChanged = true
+                    }
+                } else {
                     etFirstPayment.error = "First Payment Required"
                     error = true
                 }
 
                 if (error) return
-
                 // Payment Method
-                paymentMethod =
-                    if (etPaymentMethod.length() > 0) etFirstPayment.text.toString() else ""
+                paymentMethod = if (etPaymentMethod.text.toString() != paymentMethod) {
+                    duesChanged = true
+                    etPaymentMethod.text.toString()
+                } else paymentMethod
 
                 // Description
-                description =
-                    if (etDesc.length() > 0) etDesc.text.toString() else ""
+                description = if (etDesc.text.toString() != description) {
+                    duesChanged = true
+                    etDesc.text.toString()
+                } else description
 
                 // Recurrence
-                recurrence =
-                    if (etEvery.length() > 0) "${etEvery.text} ${spRecurrence.selectedItem}"
-                    else "1 ${spRecurrence.selectedItem}"
+                recurrence = if ("${etEvery.text} ${spRecurrence.selectedItem}" != recurrence) {
+                    duesChanged = true
+                    "${etEvery.text} ${spRecurrence.selectedItem}"
+                } else "1 ${spRecurrence.selectedItem}"
 
-                cardColor = currentColor
+                // Card Color
+                cardColor = if (currentColor != cardColor) {
+                    duesChanged = true
+                    currentColor
+                } else cardColor
             }
-
-            fragment.updateDues(dues)
-
         }
     }
 
     private fun toggleViewEditMode() {
         with(binding) {
-            if (btnDelete.visibility == View.GONE) btnDelete.visibility = View.VISIBLE
-            else btnDelete.visibility = View.GONE
+            container.children.forEach {
+                if (it.visibility == View.GONE)
+                    it.visibility = View.VISIBLE
+                else if (it.visibility == View.VISIBLE)
+                    if (it is Button || it is TextInputLayout && it.editText!!.text.isEmpty())
+                        it.visibility = View.GONE
 
-            if (btnEdit.visibility == View.GONE) btnEdit.visibility = View.VISIBLE
-            else btnEdit.visibility = View.GONE
-
-            if (btnSave.visibility == View.VISIBLE) btnSave.visibility = View.GONE
-            else btnSave.visibility = View.VISIBLE
-
-            if (btnColorPicker.visibility == View.VISIBLE) btnColorPicker.visibility = View.GONE
-            else btnColorPicker.visibility = View.VISIBLE
-
-            if (tilDesc.visibility == View.VISIBLE && etDesc.text.isNullOrBlank()) tilDesc.visibility = View.GONE
-            else tilDesc.visibility = View.VISIBLE
-
-            if (tilPaymentMethod.visibility == View.VISIBLE && etPaymentMethod.text.isNullOrBlank()) tilPaymentMethod.visibility = View.GONE
-            else tilPaymentMethod.visibility = View.VISIBLE
-
-            etPrice.isEnabled = !etPrice.isEnabled
-            etName.isEnabled = !etName.isEnabled
-            etDesc.isEnabled = !etDesc.isEnabled
-            etEvery.isEnabled = !etEvery.isEnabled
-            spRecurrence.isClickable = !spRecurrence.isClickable
-            spRecurrence.isEnabled = !spRecurrence.isEnabled
-            etFirstPayment.isEnabled = !etFirstPayment.isEnabled
-            etPaymentMethod.isEnabled = !etPaymentMethod.isEnabled
+                if (it is TextInputLayout) it.editText?.isEnabled = !it.editText?.isEnabled!!
+                if (it is Spinner) it.isEnabled = !it.isEnabled
+            }
+            setContrast()
         }
     }
 

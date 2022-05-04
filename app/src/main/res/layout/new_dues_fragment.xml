@@ -8,10 +8,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?actionBarSize"
-        tools:context=".ui.new_due.NewDueFragment" >
+        tools:context=".ui.new_due.NewDueFragment">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPrice"
@@ -22,13 +23,15 @@
             android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:suffixText="€">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/price" />
+                android:hint="@string/price"
+                android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -65,10 +68,10 @@
                 android:id="@+id/etDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="256dp"
                 android:ems="10"
                 android:gravity="start|top"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine"
+                android:maxHeight="256dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -162,7 +165,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:drawableEnd="@drawable/ic_baseline_save_24"
             android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
