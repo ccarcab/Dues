@@ -1,14 +1,12 @@
-package es.clcarras.mydues.ui.dialogs
+package es.clcarras.mydues.ui.dialogs.dues_details
 
 import android.app.Dialog
 import android.content.res.ColorStateList
-import android.graphics.ColorFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.children
@@ -16,9 +14,9 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputLayout
 import es.clcarras.mydues.R
 import es.clcarras.mydues.Utility
-import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
 import es.clcarras.mydues.model.Dues
+import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import es.clcarras.mydues.ui.home.HomeFragment
 
 class DuesDetailsDialogFragment(

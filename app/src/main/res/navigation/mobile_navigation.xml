@@ -17,7 +17,7 @@
         tools:layout="@layout/new_dues_fragment"/>
     <dialog
         android:id="@+id/nav_dues_details"
-        android:name="es.clcarras.mydues.ui.dialogs.DuesDetailsDialogFragment"
+        android:name="es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogFragment"
         android:label="DuesDetailsDialogFragment"
         tools:layout="@layout/dues_details_dialog_fragment"/>
 

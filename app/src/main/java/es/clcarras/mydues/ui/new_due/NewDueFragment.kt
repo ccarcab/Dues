@@ -16,7 +16,6 @@ import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
 import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
-import es.clcarras.mydues.ui.dialogs.DuesDetailsDialogFragment
 import kotlinx.coroutines.launch
 
 class NewDueFragment : Fragment() {

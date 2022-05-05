@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import es.clcarras.mydues.Utility
 import es.clcarras.mydues.databinding.DueRowItemBinding
 import es.clcarras.mydues.model.Dues
-import es.clcarras.mydues.ui.dialogs.DuesDetailsDialogFragment
+import es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogFragment
 
 class DuesAdapter(
     private val fragment: HomeFragment,
