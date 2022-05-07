@@ -2,6 +2,7 @@ package es.clcarras.mydues.ui.dialogs.dues_details
 
 import android.app.Dialog
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,11 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.children
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import es.clcarras.mydues.R
 import es.clcarras.mydues.Utility
+import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
 import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
@@ -27,10 +33,8 @@ class DuesDetailsDialogFragment(
     private var _binding: DuesDetailsDialogFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private var currentColor: Int = 0
-    private var contrastColor: Int = 0
-
-    private var duesChanged = false
+    private lateinit var viewModel: DuesDetailsDialogViewModel
+    private lateinit var viewModelFactory: DuesDetailsDialogViewModelFactory
 
     companion object {
         const val TAG = "DuesDetailsDialogFragment"
@@ -48,63 +52,112 @@ class DuesDetailsDialogFragment(
         viewGroup: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModelFactory = DuesDetailsDialogViewModelFactory(
+            DuesRoomDatabase.getDatabase(requireContext()), dues
+        )
+        viewModel =
+            ViewModelProvider(this, viewModelFactory)[DuesDetailsDialogViewModel::class.java]
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+
+        setOnTextChanged()
+        setOnClickListeners()
+        setObservers()
+        setSpinner()
+
         with(binding) {
             with(dues) {
-                etPrice.setText(price)
-                etName.setText(name)
+                if (description.isBlank()) tilDesc.visibility = View.GONE
 
-                if (description.isNullOrBlank()) tilDesc.visibility = View.GONE
-                else etDesc.setText(description)
+                if (paymentMethod.isBlank()) tilPaymentMethod.visibility = View.GONE
 
-
-                    etEvery.setText(every)
-                    spRecurrence.setSelection(
-                        resources.getStringArray(R.array.recurrence_array).indexOf(recurrence)
-                    )
-                    spRecurrence.isClickable = !spRecurrence.isClickable
-                    spRecurrence.isEnabled = !spRecurrence.isEnabled
-                    spRecurrence.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                        override fun onItemSelected(
-                            p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long
-                        ) { setContrast() }
-                        override fun onNothingSelected(p0: AdapterView<*>?) { }
-                    }
-
-                etFirstPayment.setText(firstPayment)
-
-                if (paymentMethod.isNullOrBlank()) tilPaymentMethod.visibility = View.GONE
-                else etPaymentMethod.setText(paymentMethod)
-
-                currentColor = cardColor
                 container.setBackgroundColor(cardColor)
             }
-
-            etFirstPayment.setOnClickListener { showDatePicker() }
-
-            btnColorPicker.setOnClickListener {
-                Utility.colorPicker(currentColor)
-                    .onColorSelected { color: Int ->
-                        currentColor = color
-                        container.setBackgroundColor(color)
-                        setContrast()
-                    }
-                    .create()
-                    .show(childFragmentManager, Utility.TAG)
-            }
-            btnClose.setOnClickListener { dialog?.dismiss() }
-            btnEdit.setOnClickListener { toggleViewEditMode() }
-            btnSave.setOnClickListener { saveChanges() }
-            btnDelete.setOnClickListener {
-                fragment.deleteDues(dues)
-                dialog?.dismiss()
-            }
         }
+
         return binding.root
     }
 
-    private fun setContrast() {
-        Log.i("setContrast", "Called setContrast")
-        contrastColor = Utility.contrastColor(currentColor)
+    private fun setOnTextChanged() {
+        with(binding) {
+            with(viewModel!!) {
+                etPrice.doOnTextChanged { text, _, _, _ -> setPrice(text.toString()) }
+                etName.doOnTextChanged { text, _, _, _ -> setName(text.toString()) }
+                etDesc.doOnTextChanged { text, _, _, _ -> setDesc(text.toString()) }
+                etEvery.doOnTextChanged { text, _, _, _ -> setEvery(text.toString()) }
+                etPaymentMethod.doOnTextChanged { text, _, _, _ -> setPaymentMethod(text.toString()) }
+            }
+        }
+    }
+
+    private fun setOnClickListeners() {
+        with(binding) {
+            with(viewModel!!) {
+                etFirstPayment.setOnClickListener {
+                    datePicker().show(parentFragmentManager, DateDialogFragment.TAG)
+                }
+                btnColorPicker.setOnClickListener {
+                    colorPicker().show(childFragmentManager, Utility.TAG)
+                }
+            }
+            btnClose.setOnClickListener { dialog?.dismiss() }
+            btnEdit.setOnClickListener { toggleViewEditMode() }
+        }
+
+    }
+
+    private fun setObservers() {
+        with(binding) {
+            with(viewModel!!) {
+                contrastColor.observe(viewLifecycleOwner) {
+                    setContrast(it)
+                }
+                cardColor.observe(viewLifecycleOwner) {
+                    btnColorPicker.setBackgroundColor(it)
+                    container.setBackgroundColor(it)
+                }
+                error.observe(viewLifecycleOwner) {
+                    if (it.isNotBlank()) {
+                        Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
+                        if (etPrice.text.isNullOrBlank()) etPrice.error = "Required"
+                        if (etName.text.isNullOrBlank()) etName.error = "Required"
+                        if (etFirstPayment.text.isNullOrBlank()) etFirstPayment.error = "Required"
+                    }
+                }
+                firstPayment.observe(viewLifecycleOwner) {
+                    if (it.isNotBlank()) etFirstPayment.error = null
+                }
+                update.observe(viewLifecycleOwner) {
+                    if (it) {
+                        fragment.updateDues(dues)
+                        Snackbar.make(requireView(), "Dues Updated!", Snackbar.LENGTH_LONG).show()
+                        toggleViewEditMode()
+                    }
+                }
+                delete.observe(viewLifecycleOwner) {
+                    if (it) {
+                        fragment.deleteDues(dues)
+                        dialog?.dismiss()
+                    }
+                }
+
+            }
+        }
+    }
+
+    private fun setSpinner() {
+        with(binding) {
+            with(viewModel!!) {
+                spRecurrence.onItemSelectedListener = spinnerListener
+                spRecurrence.setSelection(
+                    resources.getStringArray(R.array.recurrence_array)
+                        .indexOf(recurrence.value)
+                )
+            }
+        }
+    }
+
+    private fun setContrast(contrastColor: Int) {
         val colorStateList = ColorStateList.valueOf(contrastColor)
         with(binding) {
             container.children.forEach {
@@ -124,87 +177,6 @@ class DuesDetailsDialogFragment(
         }
     }
 
-    private fun showDatePicker() {
-        DateDialogFragment.newInstance { _, year, month, day ->
-            // +1 because January is zero
-            val selectedDate = "$day / ${month + 1} / $year"
-            binding.etFirstPayment.setText(selectedDate)
-        }.show(parentFragmentManager, DateDialogFragment.TAG)
-    }
-
-    private fun saveChanges() {
-        updateDues()
-        if (duesChanged) {
-            Log.i("saveChanges", "Cambios guardados")
-            fragment.updateDues(dues)
-            duesChanged = false
-        }
-        toggleViewEditMode()
-    }
-
-    private fun updateDues() {
-        with(binding) {
-            with(dues) {
-                var error = false
-                // Price
-                if (etPrice.length() > 0) {
-                    if (etPrice.text.toString() != price) {
-                        price = etPrice.text.toString()
-                        duesChanged = true
-                    }
-                } else {
-                    etPrice.error = "Price Required"
-                    error = true
-                }
-                // Name
-                if (etName.length() > 0) {
-                    if (etName.text.toString() != name) {
-                        name = etName.text.toString()
-                        duesChanged = true
-                    }
-                } else {
-                    etName.error = "Name Required"
-                    error = true
-                }
-                // First Payment
-                if (etFirstPayment.length() > 0) {
-                    if (etFirstPayment.text.toString() != firstPayment) {
-                        firstPayment = etFirstPayment.text.toString()
-                        duesChanged = true
-                    }
-                } else {
-                    etFirstPayment.error = "First Payment Required"
-                    error = true
-                }
-
-                if (error) return
-                // Payment Method
-                paymentMethod = if (etPaymentMethod.text.toString() != paymentMethod) {
-                    duesChanged = true
-                    etPaymentMethod.text.toString()
-                } else paymentMethod
-
-                // Description
-                description = if (etDesc.text.toString() != description) {
-                    duesChanged = true
-                    etDesc.text.toString()
-                } else description
-
-                // Recurrence
-                recurrence = if ("${etEvery.text} ${spRecurrence.selectedItem}" != recurrence) {
-                    duesChanged = true
-                    "${etEvery.text} ${spRecurrence.selectedItem}"
-                } else "1 ${spRecurrence.selectedItem}"
-
-                // Card Color
-                cardColor = if (currentColor != cardColor) {
-                    duesChanged = true
-                    currentColor
-                } else cardColor
-            }
-        }
-    }
-
     private fun toggleViewEditMode() {
         with(binding) {
             container.children.forEach {
@@ -217,8 +189,12 @@ class DuesDetailsDialogFragment(
                 if (it is TextInputLayout) it.editText?.isEnabled = !it.editText?.isEnabled!!
                 if (it is Spinner) it.isEnabled = !it.isEnabled
             }
-            setContrast()
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        dialog?.dismiss()
+        super.onConfigurationChanged(newConfig)
     }
 
 }

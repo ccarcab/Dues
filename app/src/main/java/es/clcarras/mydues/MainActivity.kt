@@ -9,6 +9,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import es.clcarras.mydues.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -18,27 +19,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         _binding = ActivityMainBinding.inflate(layoutInflater)
         with(binding) {
             setContentView(root)
-
-            val navController = findNavController(R.id.nav_host_fragment)
-
-            with(binding) {
-                setSupportActionBar(bottomAppBar)
-                fab.setOnClickListener {
-                    navController.navigate(R.id.nav_new_due)
-                }
-            }
+            setSupportActionBar(bottomAppBar)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.bottom_app_bar, menu)
         return true
     }
-
-    fun getFab() : FloatingActionButton? = _binding?.fab
 }

@@ -10,6 +10,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         tools:context=".MainActivity">
 
         <com.google.android.material.bottomappbar.BottomAppBar
@@ -21,6 +22,7 @@
             app:fabAlignmentMode="center"
             app:fabCradleMargin="10dp"
             app:fabCradleRoundedCornerRadius="10dp"
+            app:layout_anchorGravity="bottom"
             app:menu="@menu/bottom_app_bar"
             app:navigationIcon="@drawable/ic_menu_24" />
 
@@ -28,8 +30,7 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_anchor="@id/bottomAppBar"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            app:layout_anchor="@id/bottomAppBar" />
 
         <include layout="@layout/content_main" />
 

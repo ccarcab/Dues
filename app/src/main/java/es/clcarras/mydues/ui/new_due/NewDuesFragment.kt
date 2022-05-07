@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
@@ -17,28 +19,29 @@ import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 
-class NewDueFragment : Fragment() {
+class NewDuesFragment : Fragment() {
 
     private var _binding: NewDuesFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: NewDueViewModel
-    private lateinit var viewModelFactory: NewDueViewModelFactory
+    private lateinit var viewModel: NewDuesViewModel
+    private lateinit var viewModelFactory: NewDuesViewModelFactory
+
+    private lateinit var snackbar: Snackbar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = NewDuesFragmentBinding.inflate(inflater, container, false)
-        viewModelFactory = NewDueViewModelFactory(
+        viewModelFactory = NewDuesViewModelFactory(
             DuesRoomDatabase.getDatabase(requireContext()),
             getColor(requireContext(), R.color.default_card_color),
             getColor(requireContext(), R.color.black)
         )
-        viewModel = ViewModelProvider(this, viewModelFactory)[NewDueViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[NewDuesViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
-        (requireActivity() as MainActivity).getFab()?.hide()
 
         setOnTextChanged()
         setOnClickListeners()
@@ -46,6 +49,17 @@ class NewDueFragment : Fragment() {
         setSpinner()
 
         return binding.root
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        with(requireActivity().findViewById<FloatingActionButton>(R.id.fab)) {
+            setImageResource(android.R.drawable.ic_menu_save)
+            setOnClickListener { viewModel.saveDues() }
+            snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
+                anchorView = this@with
+            }
+        }
     }
 
     private fun setOnTextChanged() {
@@ -85,15 +99,18 @@ class NewDueFragment : Fragment() {
                 }
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
-                        Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
-                        etPrice.error = ""
-                        etName.error = ""
-                        etFirstPayment.error = ""
+                        snackbar.apply { setText(it) }.show()
+                        if (etPrice.text.isNullOrBlank()) etPrice.error = "Required"
+                        if (etName.text.isNullOrBlank()) etName.error = "Required"
+                        if (etFirstPayment.text.isNullOrBlank()) etFirstPayment.error = "Required"
                     }
+                }
+                firstPayment.observe(viewLifecycleOwner) {
+                    if (it.isNotBlank()) etFirstPayment.error = null
                 }
                 insert.observe(viewLifecycleOwner) {
                     if (it) {
-                        Snackbar.make(requireView(), "Dues Created!", Snackbar.LENGTH_LONG).show()
+                        snackbar.apply { setText("Dues Created!") }.show()
                         findNavController().popBackStack()
                     }
                 }

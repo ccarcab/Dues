@@ -8,10 +8,10 @@ data class Dues(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     var price: String,
     var name: String,
-    var description: String? = null,
+    var description: String = "",
     var every: String,
     var recurrence: String,
     var firstPayment: String,
-    var paymentMethod: String? = null,
+    var paymentMethod: String = "",
     var cardColor: Int
 )

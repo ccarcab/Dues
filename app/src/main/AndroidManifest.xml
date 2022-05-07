@@ -12,7 +12,8 @@
         <activity
             android:name="es.clcarras.mydues.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Dues.NoActionBar">
+            android:theme="@style/Theme.Dues.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

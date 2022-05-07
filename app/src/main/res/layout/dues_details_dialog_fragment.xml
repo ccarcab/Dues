@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogViewModel" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.dialogs.dues_details.DuesDetailsDialogFragment">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +41,8 @@
                     android:layout_height="wrap_content"
                     android:enabled="false"
                     android:hint="@string/price"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:text="@{viewModel.price}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -57,7 +61,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="@string/name" />
+                    android:hint="@string/name"
+                    android:text="@{viewModel.name}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -72,7 +77,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tilName">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,7 +85,8 @@
                     android:enabled="false"
                     android:gravity="start|top"
                     android:inputType="textMultiLine"
-                    android:maxHeight="256dp" />
+                    android:maxHeight="256dp"
+                    android:text="@{viewModel.desc}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -95,13 +101,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tilDesc">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEvery"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:enabled="false"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:text="@{viewModel.every}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Spinner
@@ -128,7 +135,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tilEvery">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etFirstPayment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -136,7 +143,8 @@
                     android:ems="10"
                     android:enabled="false"
                     android:focusable="false"
-                    android:inputType="date" />
+                    android:inputType="date"
+                    android:text="@{viewModel.firstPayment}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
@@ -168,7 +176,8 @@
                     android:id="@+id/etPaymentMethod"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="false" />
+                    android:enabled="false"
+                    android:text="@{viewModel.paymentMethod}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -202,6 +211,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
+                android:onClick="@{() -> viewModel.saveDues()}"
                 android:text="@string/save"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -217,6 +227,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
+                android:onClick="@{() -> viewModel.deleteDues()}"
                 android:text="@string/delete"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -227,5 +238,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 </layout>

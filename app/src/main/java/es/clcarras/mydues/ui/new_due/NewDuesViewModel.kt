@@ -12,7 +12,7 @@ import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 
-class NewDueViewModel(
+class NewDuesViewModel(
     private val db: DuesRoomDatabase,
     cardColor: Int,
     contrastColor: Int
@@ -27,7 +27,7 @@ class NewDueViewModel(
     private val _desc = MutableLiveData("")
     val desc: LiveData<String> get() = _desc
 
-    private val _every = MutableLiveData("")
+    private val _every = MutableLiveData("1")
     val every: LiveData<String> get() = _every
 
     private val _paymentMethod = MutableLiveData("")
@@ -54,7 +54,6 @@ class NewDueViewModel(
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             _recurrence.value = (p1 as TextView?)?.text.toString()
-            Log.i("NewDueViewModel", "New recurrence: ${_recurrence.value}")
         }
 
         override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -86,7 +85,6 @@ class NewDueViewModel(
             // +1 because January is zero
             val selectedDate = "$day / ${month + 1} / $year"
             _firstPayment.value = selectedDate
-            Log.i("NewDueViewModel", "New Date: ${_firstPayment.value}")
         }
     }
 
@@ -94,11 +92,9 @@ class NewDueViewModel(
         return Utility.colorPicker(_cardColor.value)
             .onColorSelected { color: Int ->
                 _cardColor.value = color
-                Log.i("NewDueViewModel", "New card color: ${_cardColor.value}")
                 val contrast = Utility.contrastColor(color)
                 if (contrast != _contrastColor.value) {
                     _contrastColor.value = contrast
-                    Log.i("NewDueViewModel", "New contrast color: ${_contrastColor.value}")
                 }
             }
             .create()
@@ -119,11 +115,11 @@ class NewDueViewModel(
                 Dues(
                     price = _price.value!!,
                     name = _name.value!!,
-                    description = _desc.value,
+                    description = _desc.value!!,
                     every = _every.value!!,
                     recurrence = _recurrence.value!!,
                     firstPayment = _firstPayment.value!!,
-                    paymentMethod = _paymentMethod.value,
+                    paymentMethod = _paymentMethod.value!!,
                     cardColor = _cardColor.value!!
                 )
             )
