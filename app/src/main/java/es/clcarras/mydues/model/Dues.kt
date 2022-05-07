@@ -9,6 +9,7 @@ data class Dues(
     var price: String,
     var name: String,
     var description: String? = null,
+    var every: String,
     var recurrence: String,
     var firstPayment: String,
     var paymentMethod: String? = null,

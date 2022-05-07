@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="viewModel"
+            type="es.clcarras.mydues.ui.new_due.NewDueViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/price"
-                android:inputType="number" />
+                android:inputType="number"
+                android:text="@{viewModel.price}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -49,7 +52,8 @@
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/name" />
+                android:hint="@string/name"
+                android:text="@{viewModel.name}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -64,14 +68,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilName">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
-                android:maxHeight="256dp" />
+                android:maxHeight="256dp"
+                android:text="@{viewModel.desc}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -86,12 +91,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilDesc">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEvery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="number" />
+                android:inputType="number"
+                android:text="@{viewModel.every}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
@@ -118,14 +124,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilEvery">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFirstPayment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:ems="10"
                 android:focusable="false"
-                android:inputType="date" />
+                android:inputType="date"
+                android:text="@{viewModel.firstPayment}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -155,7 +162,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPaymentMethod"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.paymentMethod}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -172,7 +180,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilPaymentMethod"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="1.0"
+            android:onClick="@{() -> viewModel.saveDues()}"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

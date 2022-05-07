@@ -56,10 +56,10 @@ class DuesDetailsDialogFragment(
                 if (description.isNullOrBlank()) tilDesc.visibility = View.GONE
                 else etDesc.setText(description)
 
-                with(recurrence.split("\\s".toRegex())) {
-                    etEvery.setText(this[0])
+
+                    etEvery.setText(every)
                     spRecurrence.setSelection(
-                        resources.getStringArray(R.array.recurrence_array).indexOf(this[1])
+                        resources.getStringArray(R.array.recurrence_array).indexOf(recurrence)
                     )
                     spRecurrence.isClickable = !spRecurrence.isClickable
                     spRecurrence.isEnabled = !spRecurrence.isEnabled
@@ -69,7 +69,7 @@ class DuesDetailsDialogFragment(
                         ) { setContrast() }
                         override fun onNothingSelected(p0: AdapterView<*>?) { }
                     }
-                }
+
                 etFirstPayment.setText(firstPayment)
 
                 if (paymentMethod.isNullOrBlank()) tilPaymentMethod.visibility = View.GONE
