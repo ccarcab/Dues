@@ -11,6 +11,9 @@ import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 class NewDuesViewModel(
     private val db: DuesRoomDatabase,
@@ -82,9 +85,7 @@ class NewDuesViewModel(
 
     fun datePicker(): DateDialogFragment {
         return DateDialogFragment.newInstance { _, year, month, day ->
-            // +1 because January is zero
-            val selectedDate = "$day / ${month + 1} / $year"
-            _firstPayment.value = selectedDate
+            _firstPayment.value = Utility.formatLocalDate(LocalDate.of(year, month + 1, day))
         }
     }
 

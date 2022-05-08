@@ -4,6 +4,9 @@ import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.FragmentManager
 import vadiole.colorpicker.ColorPickerDialog
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class Utility {
     companion object {
@@ -21,6 +24,17 @@ class Utility {
                 .setColorModelSwitchEnabled(true)
                 .setButtonOkText(android.R.string.ok)
                 .setButtonCancelText(android.R.string.cancel)
+
+        private val datePattern = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+        fun formatLocalDate(localDate: LocalDate): String =
+            localDate.format(datePattern)
+
+        private fun getLocalDateFromString(d: String): LocalDate =
+            LocalDate.parse(d, datePattern)
+
+        fun getDaysDif(fromDate: String, toDate: String): Long =
+            ChronoUnit.DAYS.between(getLocalDateFromString(fromDate), getLocalDateFromString(toDate))
 
     }
 }
