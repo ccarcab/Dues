@@ -1,5 +1,6 @@
 package es.clcarras.mydues.ui.dialogs.dues_details
 
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
@@ -11,12 +12,14 @@ import es.clcarras.mydues.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
+import es.clcarras.mydues.ui.home.HomeViewModel
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 
 class DuesDetailsDialogViewModel(
     private val db: DuesRoomDatabase,
-    private val dues: Dues
+    private val dues: Dues,
+    private val homeViewModel: HomeViewModel
 ) : ViewModel() {
 
     private val _price = MutableLiveData(dues.price)
@@ -55,6 +58,9 @@ class DuesDetailsDialogViewModel(
     private val _delete = MutableLiveData(false)
     val delete: LiveData<Boolean> get() = _delete
 
+    private val _close = MutableLiveData(false)
+    val close: LiveData<Boolean> get() = _close
+
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             val text = (p1 as TextView?)?.text.toString()
@@ -64,6 +70,10 @@ class DuesDetailsDialogViewModel(
 
         override fun onNothingSelected(p0: AdapterView<*>?) {}
 
+    }
+
+    init {
+        Log.i(DuesDetailsDialogFragment.TAG, "init")
     }
 
     fun setPrice(text: String) {
@@ -117,6 +127,8 @@ class DuesDetailsDialogViewModel(
         viewModelScope.launch {
             db.duesDao().remove(dues)
             _delete.value = true
+            homeViewModel.deleteDues()
+            close()
         }
     }
 
@@ -133,7 +145,15 @@ class DuesDetailsDialogViewModel(
         viewModelScope.launch {
             db.duesDao().update(dues)
             _update.value = true
+            homeViewModel.updateDues()
+            _update.value = false
         }
+    }
+
+    fun close() {
+        homeViewModel.detailsDialogFragment = null
+        homeViewModel.adapter?.unSelectDues()
+        _close.value = true
     }
 
 }

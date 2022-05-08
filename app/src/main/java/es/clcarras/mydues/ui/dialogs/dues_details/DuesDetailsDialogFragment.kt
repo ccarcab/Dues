@@ -1,5 +1,6 @@
 package es.clcarras.mydues.ui.dialogs.dues_details
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -9,8 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.children
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
@@ -23,12 +22,14 @@ import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
 import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
-import es.clcarras.mydues.ui.home.HomeFragment
+import es.clcarras.mydues.ui.home.HomeViewModel
 
 class DuesDetailsDialogFragment(
-    private val fragment: HomeFragment,
-    private val dues: Dues
+    private val dues: Dues?,
+    private val homeViewModel: HomeViewModel?
 ) : DialogFragment() {
+
+    constructor() : this(null, null)
 
     private var _binding: DuesDetailsDialogFragmentBinding? = null
     private val binding get() = _binding!!
@@ -41,10 +42,19 @@ class DuesDetailsDialogFragment(
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         _binding = DuesDetailsDialogFragmentBinding.inflate(layoutInflater)
-        return AlertDialog.Builder(requireContext())
+        viewModelFactory = DuesDetailsDialogViewModelFactory(
+            DuesRoomDatabase.getDatabase(requireContext()), dues, homeViewModel
+        )
+        viewModel =
+            ViewModelProvider(this, viewModelFactory)[DuesDetailsDialogViewModel::class.java]
+        val dialog = AlertDialog.Builder(requireContext())
             .setView(binding.root)
             .create()
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
+        return dialog
     }
 
     override fun onCreateView(
@@ -52,11 +62,6 @@ class DuesDetailsDialogFragment(
         viewGroup: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModelFactory = DuesDetailsDialogViewModelFactory(
-            DuesRoomDatabase.getDatabase(requireContext()), dues
-        )
-        viewModel =
-            ViewModelProvider(this, viewModelFactory)[DuesDetailsDialogViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
@@ -67,11 +72,11 @@ class DuesDetailsDialogFragment(
 
         with(binding) {
             with(dues) {
-                if (description.isBlank()) tilDesc.visibility = View.GONE
+                if (this?.description?.isBlank() == true) tilDesc.visibility = View.GONE
 
-                if (paymentMethod.isBlank()) tilPaymentMethod.visibility = View.GONE
+                if (this?.paymentMethod?.isBlank() == true) tilPaymentMethod.visibility = View.GONE
 
-                container.setBackgroundColor(cardColor)
+                container.setBackgroundColor(this?.cardColor ?: 0)
             }
         }
 
@@ -100,7 +105,10 @@ class DuesDetailsDialogFragment(
                     colorPicker().show(childFragmentManager, Utility.TAG)
                 }
             }
-            btnClose.setOnClickListener { dialog?.dismiss() }
+            btnClose.setOnClickListener {
+                viewModel!!.close()
+                dialog?.dismiss()
+            }
             btnEdit.setOnClickListener { toggleViewEditMode() }
         }
 
@@ -129,16 +137,12 @@ class DuesDetailsDialogFragment(
                 }
                 update.observe(viewLifecycleOwner) {
                     if (it) {
-                        fragment.updateDues(dues)
                         Snackbar.make(requireView(), "Dues Updated!", Snackbar.LENGTH_LONG).show()
                         toggleViewEditMode()
                     }
                 }
                 delete.observe(viewLifecycleOwner) {
-                    if (it) {
-                        fragment.deleteDues(dues)
-                        dialog?.dismiss()
-                    }
+                    if (it) dialog?.dismiss()
                 }
 
             }
@@ -153,6 +157,7 @@ class DuesDetailsDialogFragment(
                     resources.getStringArray(R.array.recurrence_array)
                         .indexOf(recurrence.value)
                 )
+                spRecurrence.isEnabled = !spRecurrence.isEnabled
             }
         }
     }
@@ -190,11 +195,6 @@ class DuesDetailsDialogFragment(
                 if (it is Spinner) it.isEnabled = !it.isEnabled
             }
         }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        dialog?.dismiss()
-        super.onConfigurationChanged(newConfig)
     }
 
 }

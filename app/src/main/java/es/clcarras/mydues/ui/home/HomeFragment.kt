@@ -5,45 +5,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 import es.clcarras.mydues.databinding.HomeFragmentBinding
-import es.clcarras.mydues.model.Dues
 import es.clcarras.mydues.database.DuesRoomDatabase
-import kotlinx.coroutines.launch
-
-// TODO: Hay que quitar la referencia del fragment cuando se crean otras vistas, si no crashea
+import es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogFragment
 
 class HomeFragment : Fragment() {
 
-    private var _binding: HomeFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: HomeFragmentBinding
+    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModelFactory: HomeViewModelFactory
 
     private lateinit var snackbar: Snackbar
-
-    private var _db: DuesRoomDatabase? = null
-    private val db get() = _db!!
-
-    private var dataList = mutableListOf<Dues>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = HomeFragmentBinding.inflate(inflater, container, false)
+        binding = HomeFragmentBinding.inflate(inflater, container, false)
+        viewModelFactory = HomeViewModelFactory(
+            DuesRoomDatabase.getDatabase(requireContext())
+        )
+        viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
+        viewModel.loadDatabase()
+        binding.lifecycleOwner = viewLifecycleOwner
+        setObservers()
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        _db = DuesRoomDatabase.getDatabase(requireContext())
-        readDatabase()
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -57,29 +50,31 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun readDatabase() {
-        lifecycleScope.launch {
-            with(db.duesDao()) { dataList = getAll() }
-            with(binding.recyclerView) {
-                layoutManager = GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
-                adapter = DuesAdapter(this@HomeFragment, dataList)
+    private fun setObservers() {
+        with(binding) {
+            with(viewModel) {
+                dataLoaded.observe(viewLifecycleOwner) {
+                    if (it) {
+                        recyclerView.layoutManager =
+                            GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
+                        recyclerView.adapter = adapter
+                        adapter?.selectedDues?.observe(viewLifecycleOwner) { dues ->
+                            if (dues != null && detailsDialogFragment == null) {
+                                detailsDialogFragment = DuesDetailsDialogFragment(dues, viewModel)
+                                detailsDialogFragment!!.show(
+                                    parentFragmentManager, DuesDetailsDialogFragment.TAG
+                                )
+                            }
+                        }
+                    }
+                }
+                deleted.observe(viewLifecycleOwner) {
+                    if (it) {
+                        snackbar.apply { setText("Dues Deleted!") }.show()
+                        viewModel.onDeleteComplete()
+                    }
+                }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    fun deleteDues(dues: Dues) {
-        val i = dataList.indexOf(dues)
-        dataList.remove(dues)
-        binding.recyclerView.adapter?.notifyItemRemoved(i)
-        snackbar.apply { setText("Dues Deleted!") }.show()
-    }
-
-    fun updateDues(dues: Dues) {
-        binding.recyclerView.adapter?.notifyItemChanged(dataList.indexOf(dues))
     }
 }
