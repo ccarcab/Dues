@@ -1,6 +1,5 @@
 package es.clcarras.mydues.ui.new_due
 
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
@@ -12,8 +11,6 @@ import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 
 class NewDuesViewModel(
     private val db: DuesRoomDatabase,
@@ -124,6 +121,7 @@ class NewDuesViewModel(
                     cardColor = _cardColor.value!!
                 )
             )
+
             _insert.value = true
         }
     }

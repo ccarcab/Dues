@@ -1,6 +1,8 @@
 package es.clcarras.mydues
 
+import android.content.Context
 import android.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.FragmentManager
 import vadiole.colorpicker.ColorPickerDialog
@@ -30,11 +32,14 @@ class Utility {
         fun formatLocalDate(localDate: LocalDate): String =
             localDate.format(datePattern)
 
-        private fun getLocalDateFromString(d: String): LocalDate =
+        fun getLocalDateFromString(d: String): LocalDate =
             LocalDate.parse(d, datePattern)
 
         fun getDaysDif(fromDate: String, toDate: String): Long =
-            ChronoUnit.DAYS.between(getLocalDateFromString(fromDate), getLocalDateFromString(toDate))
+            ChronoUnit.DAYS.between(
+                getLocalDateFromString(fromDate),
+                getLocalDateFromString(toDate)
+            )
 
     }
 }
