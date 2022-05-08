@@ -1,7 +1,8 @@
-package es.clcarras.mydues.model
+package es.clcarras.mydues.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity
 data class Dues(
@@ -13,5 +14,6 @@ data class Dues(
     var recurrence: String,
     var firstPayment: String,
     var paymentMethod: String = "",
-    var cardColor: Int
+    var cardColor: Int,
+    var notification: UUID
 )

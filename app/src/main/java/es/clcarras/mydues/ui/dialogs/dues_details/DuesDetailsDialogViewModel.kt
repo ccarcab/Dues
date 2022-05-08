@@ -8,13 +8,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import es.clcarras.mydues.Utility
+import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
-import es.clcarras.mydues.model.Dues
+import es.clcarras.mydues.database.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import es.clcarras.mydues.ui.home.HomeViewModel
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
+import java.time.LocalDate
+import java.util.*
 
 class DuesDetailsDialogViewModel(
     private val db: DuesRoomDatabase,
@@ -58,55 +60,73 @@ class DuesDetailsDialogViewModel(
     private val _delete = MutableLiveData(false)
     val delete: LiveData<Boolean> get() = _delete
 
-    private val _close = MutableLiveData(false)
-    val close: LiveData<Boolean> get() = _close
+    private val _dateChange = MutableLiveData(false)
+    val dateChange: LiveData<Boolean> get() = _dateChange
 
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             val text = (p1 as TextView?)?.text.toString()
-            _recurrence.value = text
-            dues.recurrence = text
+            if (text != dues.recurrence) {
+                _recurrence.value = text
+                dues.recurrence = text
+                _dateChange.value = true
+            }
         }
 
         override fun onNothingSelected(p0: AdapterView<*>?) {}
 
     }
 
-    init {
-        Log.i(DuesDetailsDialogFragment.TAG, "init")
-    }
-
     fun setPrice(text: String) {
-        _price.value = text
-        dues.price = text
+        if (text != dues.price) {
+            _price.value = text
+            dues.price = text
+        }
     }
 
     fun setName(text: String) {
-        _name.value = text
-        dues.name = text
+        if (text != dues.name) {
+            _name.value = text
+            dues.name = text
+        }
     }
 
     fun setDesc(text: String) {
-        _desc.value = text
-        dues.description = text
+        if (text != dues.description) {
+            _desc.value = text
+            dues.description = text
+        }
     }
 
     fun setEvery(text: String) {
-        _every.value = text
-        dues.every = text
+        if (text != dues.every) {
+            _every.value = text
+            dues.every = text
+            _dateChange.value = true
+        }
     }
 
     fun setPaymentMethod(text: String) {
-        _paymentMethod.value = text
-        dues.paymentMethod = text
+        if (text != dues.paymentMethod) {
+            _paymentMethod.value = text
+            dues.paymentMethod = text
+        }
+    }
+
+    fun setNotification(uuid: UUID) {
+        dues.notification = uuid
+        _dateChange.value = false
+        saveDues()
     }
 
     fun datePicker(): DateDialogFragment {
         return DateDialogFragment.newInstance { _, year, month, day ->
-            // +1 because January is zero
-            val selectedDate = "$day / ${month + 1} / $year"
-            _firstPayment.value = selectedDate
-            dues.firstPayment = selectedDate
+            val selectedDate = Utility.formatLocalDate(LocalDate.of(year, month + 1, day))
+            if (selectedDate != dues.firstPayment) {
+                _firstPayment.value = selectedDate
+                dues.firstPayment = selectedDate
+                _dateChange.value = true
+            }
         }
     }
 
@@ -153,7 +173,6 @@ class DuesDetailsDialogViewModel(
     fun close() {
         homeViewModel.detailsDialogFragment = null
         homeViewModel.adapter?.unSelectDues()
-        _close.value = true
     }
 
 }

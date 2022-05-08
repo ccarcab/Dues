@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.clcarras.mydues.database.DuesRoomDatabase
-import es.clcarras.mydues.model.Dues
+import es.clcarras.mydues.database.Dues
 import es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogFragment
 import kotlinx.coroutines.launch
 

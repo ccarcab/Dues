@@ -1,15 +1,13 @@
 package es.clcarras.mydues.ui.home
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
-import es.clcarras.mydues.Utility
+import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.databinding.DueRowItemBinding
-import es.clcarras.mydues.model.Dues
-import es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogFragment
+import es.clcarras.mydues.database.Dues
 
 class DuesAdapter(
     private val dataSet: List<Dues>

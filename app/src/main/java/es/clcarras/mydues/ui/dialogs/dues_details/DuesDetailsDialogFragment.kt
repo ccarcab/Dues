@@ -2,10 +2,10 @@ package es.clcarras.mydues.ui.dialogs.dues_details
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.res.ColorStateList
-import android.content.res.Configuration
+import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,13 +16,17 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
+import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.Utility
+import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
-import es.clcarras.mydues.model.Dues
+import es.clcarras.mydues.database.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import es.clcarras.mydues.ui.home.HomeViewModel
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 class DuesDetailsDialogFragment(
     private val dues: Dues?,
@@ -141,8 +145,22 @@ class DuesDetailsDialogFragment(
                         toggleViewEditMode()
                     }
                 }
+
+                dateChange.observe(viewLifecycleOwner) {
+                    if (it) {
+                        (requireActivity() as MainActivity).deleteWork(dues?.notification!!)
+                        val uuid = (requireActivity() as MainActivity).createWorkRequest(
+                            "New Notification", daysUntilNextPayment()
+                        )
+                        setNotification(uuid)
+                    }
+                }
+
                 delete.observe(viewLifecycleOwner) {
-                    if (it) dialog?.dismiss()
+                    if (it) {
+                        (requireActivity() as MainActivity).deleteWork(dues?.notification!!)
+                        dialog?.dismiss()
+                    }
                 }
 
             }
@@ -176,6 +194,8 @@ class DuesDetailsDialogFragment(
                 } else if (it is Spinner) {
                     it.backgroundTintList = colorStateList
                     (it.getChildAt(0) as? TextView)?.setTextColor(contrastColor)
+                } else if (it.id == R.id.btnColorPicker) {
+                    (it as Button).setTextColor(contrastColor)
                 }
             }
             scrollView.setBackgroundColor(contrastColor)
@@ -194,6 +214,39 @@ class DuesDetailsDialogFragment(
                 if (it is TextInputLayout) it.editText?.isEnabled = !it.editText?.isEnabled!!
                 if (it is Spinner) it.isEnabled = !it.isEnabled
             }
+        }
+    }
+
+    private fun daysUntilNextPayment(): Long {
+        val timeUnits = resources.getStringArray(R.array.recurrence_array)
+        with(viewModel) {
+            val timeUnitValue = when (recurrence.value) {
+                timeUnits[0] -> 1
+                timeUnits[1] -> 7
+                timeUnits[2] -> 30
+                timeUnits[3] -> 365
+                else -> 0
+            }
+            val totalTime = timeUnitValue * (every.value?.toInt() ?: 1)
+            val c = Calendar.getInstance()
+            // Se establece la fecha de primer pago
+            c.time = Date.from(
+                Utility.getLocalDateFromString(firstPayment.value!!)
+                    .atStartOfDay(ZoneId.systemDefault()).toInstant()
+            )
+            // Se añade el tiempo hasta el próximo pago
+            c.add(Calendar.DAY_OF_YEAR, totalTime)
+            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
+            return Utility.getDaysDif(
+                Utility.formatLocalDate(LocalDate.now()),
+                Utility.formatLocalDate(
+                    LocalDate.of(
+                        c.get(Calendar.YEAR),
+                        c.get(Calendar.MONTH) + 1,
+                        c.get(Calendar.DAY_OF_MONTH)
+                    )
+                )
+            )
         }
     }
 

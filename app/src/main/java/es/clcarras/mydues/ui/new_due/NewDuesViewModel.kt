@@ -4,13 +4,15 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.lifecycle.*
-import es.clcarras.mydues.Utility
+import es.clcarras.mydues.MainActivity
+import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
-import es.clcarras.mydues.model.Dues
+import es.clcarras.mydues.database.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
+import java.util.*
 
 class NewDuesViewModel(
     private val db: DuesRoomDatabase,
@@ -50,6 +52,9 @@ class NewDuesViewModel(
 
     private val _insert = MutableLiveData(false)
     val insert: LiveData<Boolean> get() = _insert
+
+    private val _validInput = MutableLiveData(false)
+    val validInput: LiveData<Boolean> get() = _validInput
 
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -98,7 +103,7 @@ class NewDuesViewModel(
             .create()
     }
 
-    fun saveDues() {
+    fun checkData() {
         if (
             _price.value.isNullOrBlank() ||
             _name.value.isNullOrBlank() ||
@@ -107,7 +112,10 @@ class NewDuesViewModel(
             _error.value = "Please check if you fill all the required fields."
             return
         }
+        _validInput.value = true
+    }
 
+    fun saveDues(uuid: UUID) {
         viewModelScope.launch {
             db.duesDao().insert(
                 Dues(
@@ -118,10 +126,10 @@ class NewDuesViewModel(
                     recurrence = _recurrence.value!!,
                     firstPayment = _firstPayment.value!!,
                     paymentMethod = _paymentMethod.value!!,
-                    cardColor = _cardColor.value!!
+                    cardColor = _cardColor.value!!,
+                    notification = uuid
                 )
             )
-
             _insert.value = true
         }
     }

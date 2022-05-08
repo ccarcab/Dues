@@ -1,7 +1,6 @@
 package es.clcarras.mydues.database
 
 import androidx.room.*
-import es.clcarras.mydues.model.Dues
 
 @Dao
 interface DuesDao {

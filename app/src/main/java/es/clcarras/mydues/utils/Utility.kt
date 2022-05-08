@@ -1,10 +1,7 @@
-package es.clcarras.mydues
+package es.clcarras.mydues.utils
 
-import android.content.Context
 import android.graphics.Color
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
-import androidx.fragment.app.FragmentManager
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

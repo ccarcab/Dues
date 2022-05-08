@@ -2,7 +2,6 @@ package es.clcarras.mydues.ui.new_due
 
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +10,12 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.Utility
+import es.clcarras.mydues.database.Dues
+import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
@@ -60,7 +59,7 @@ class NewDuesFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         with(requireActivity().findViewById<FloatingActionButton>(R.id.fab)) {
             setImageResource(android.R.drawable.ic_menu_save)
-            setOnClickListener { viewModel.saveDues() }
+            setOnClickListener { viewModel.checkData() }
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
                 anchorView = this@with
             }
@@ -113,10 +112,17 @@ class NewDuesFragment : Fragment() {
                 firstPayment.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) etFirstPayment.error = null
                 }
+                validInput.observe(viewLifecycleOwner) {
+                    if (it) {
+                        val uuid = (requireActivity() as MainActivity).createWorkRequest(
+                            "New Notification", daysUntilNextPayment()
+                        )
+                        saveDues(uuid)
+                    }
+                }
                 insert.observe(viewLifecycleOwner) {
                     if (it) {
                         snackbar.apply { setText("Dues Created!") }.show()
-                        calculateNextPayment()
                         findNavController().popBackStack()
                     }
                 }
@@ -136,7 +142,7 @@ class NewDuesFragment : Fragment() {
         }
     }
 
-    fun calculateNextPayment() {
+    private fun daysUntilNextPayment(): Long {
         val timeUnits = resources.getStringArray(R.array.recurrence_array)
         with(viewModel) {
             val timeUnitValue = when (recurrence.value) {
@@ -156,7 +162,7 @@ class NewDuesFragment : Fragment() {
             // Se añade el tiempo hasta el próximo pago
             c.add(Calendar.DAY_OF_YEAR, totalTime)
             // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-            val totalTimeUntil = Utility.getDaysDif(
+            return Utility.getDaysDif(
                 Utility.formatLocalDate(LocalDate.now()),
                 Utility.formatLocalDate(
                     LocalDate.of(
@@ -165,8 +171,7 @@ class NewDuesFragment : Fragment() {
                         c.get(Calendar.DAY_OF_MONTH)
                     )
                 )
-            ).toInt()
-            Log.i("NextPayment", "Days until next payment: $totalTimeUntil")
+            )
         }
     }
 
