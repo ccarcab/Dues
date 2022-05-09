@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import es.clcarras.mydues.MainActivity
@@ -28,19 +27,13 @@ class NotificationHelper(
 
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-        val icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_launcher_foreground)
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_menu_24)
-            .setLargeIcon(icon)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setStyle(
-                NotificationCompat.BigPictureStyle().bigPicture(icon).bigLargeIcon(null)
-            )
-            .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
+            setSmallIcon(R.drawable.ic_menu_24)
+            setContentTitle(title)
+            setContentText(message)
+            setContentIntent(pendingIntent)
+            priority = NotificationCompat.PRIORITY_HIGH
+        }.build()
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
 

@@ -14,14 +14,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.database.Dues
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
-import java.time.LocalDate
+import java.sql.Time
+import java.time.Instant
 import java.time.ZoneId
 import java.util.*
+import kotlin.math.abs
 
 class NewDuesFragment : Fragment() {
 
@@ -115,7 +116,9 @@ class NewDuesFragment : Fragment() {
                 validInput.observe(viewLifecycleOwner) {
                     if (it) {
                         val uuid = (requireActivity() as MainActivity).createWorkRequest(
-                            "New Notification", daysUntilNextPayment()
+                            getString(R.string.notification_msg,
+                                name, price
+                            ), hoursUntilNextPayment()
                         )
                         saveDues(uuid)
                     }
@@ -142,7 +145,7 @@ class NewDuesFragment : Fragment() {
         }
     }
 
-    private fun daysUntilNextPayment(): Long {
+    private fun hoursUntilNextPayment(): Long {
         val timeUnits = resources.getStringArray(R.array.recurrence_array)
         with(viewModel) {
             val timeUnitValue = when (recurrence.value) {
@@ -153,25 +156,17 @@ class NewDuesFragment : Fragment() {
                 else -> 0
             }
             val totalTime = timeUnitValue * (every.value?.toInt() ?: 1)
-            val c = Calendar.getInstance()
+            val nextPayment = Calendar.getInstance()
+            val currentDate = Calendar.getInstance()
             // Se establece la fecha de primer pago
-            c.time = Date.from(
+            nextPayment.time = Date.from(
                 Utility.getLocalDateFromString(firstPayment.value!!)
-                    .atStartOfDay(ZoneId.systemDefault()).toInstant()
+                    .atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
             )
             // Se añade el tiempo hasta el próximo pago
-            c.add(Calendar.DAY_OF_YEAR, totalTime)
+            nextPayment.add(Calendar.DAY_OF_YEAR, totalTime)
             // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-            return Utility.getDaysDif(
-                Utility.formatLocalDate(LocalDate.now()),
-                Utility.formatLocalDate(
-                    LocalDate.of(
-                        c.get(Calendar.YEAR),
-                        c.get(Calendar.MONTH) + 1,
-                        c.get(Calendar.DAY_OF_MONTH)
-                    )
-                )
-            )
+            return (abs(nextPayment.time.time - currentDate.time.time) / 36e5).toLong()
         }
     }
 

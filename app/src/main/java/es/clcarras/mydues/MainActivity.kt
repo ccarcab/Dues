@@ -1,24 +1,22 @@
 package es.clcarras.mydues
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ui.setupWithNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import es.clcarras.mydues.databinding.ActivityMainBinding
 import es.clcarras.mydues.service.DuesNotificationWorker
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val TIME_MARGIN = 24
+    }
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -37,16 +35,18 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    fun createWorkRequest(message: String, timeDelayInDays: Long): UUID {
+    fun createWorkRequest(message: String, delayInHours: Long): UUID {
         val myWorkRequest = OneTimeWorkRequestBuilder<DuesNotificationWorker>()
-            .setInitialDelay(timeDelayInDays, TimeUnit.DAYS)
+            .setInitialDelay(delayInHours - TIME_MARGIN, TimeUnit.HOURS)
             .setInputData(
                 workDataOf(
                     "title" to "Dues",
-                    "message" to message,
+                    "message" to message
                 )
             )
             .build()
+
+        Log.i("createWorkRequest", "Delay in hours $delayInHours")
 
         WorkManager.getInstance(this).enqueue(myWorkRequest)
         // UUID usado en caso de que se quiera eliminar la notificación

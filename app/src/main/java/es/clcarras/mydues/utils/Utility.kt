@@ -4,6 +4,7 @@ import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -31,12 +32,5 @@ class Utility {
 
         fun getLocalDateFromString(d: String): LocalDate =
             LocalDate.parse(d, datePattern)
-
-        fun getDaysDif(fromDate: String, toDate: String): Long =
-            ChronoUnit.DAYS.between(
-                getLocalDateFromString(fromDate),
-                getLocalDateFromString(toDate)
-            )
-
     }
 }

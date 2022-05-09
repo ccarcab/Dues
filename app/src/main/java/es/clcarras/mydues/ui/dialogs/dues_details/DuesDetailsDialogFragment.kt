@@ -24,9 +24,11 @@ import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
 import es.clcarras.mydues.database.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import es.clcarras.mydues.ui.home.HomeViewModel
-import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.temporal.TemporalAccessor
 import java.util.*
+import kotlin.math.abs
 
 class DuesDetailsDialogFragment(
     private val dues: Dues?,
@@ -143,7 +145,9 @@ class DuesDetailsDialogFragment(
                     if (it) {
                         (requireActivity() as MainActivity).deleteWork(dues?.notification!!)
                         val uuid = (requireActivity() as MainActivity).createWorkRequest(
-                            "New Notification", daysUntilNextPayment()
+                            getString(R.string.notification_msg,
+                                dues.name, dues.price
+                            ), hoursUntilNextPayment()
                         )
                         setNotification(uuid)
                     }
@@ -159,39 +163,6 @@ class DuesDetailsDialogFragment(
                 }
 
             }
-        }
-    }
-
-    private fun daysUntilNextPayment(): Long {
-        val timeUnits = resources.getStringArray(R.array.recurrence_array)
-        with(viewModel) {
-            val timeUnitValue = when (recurrence.value) {
-                timeUnits[0] -> 1
-                timeUnits[1] -> 7
-                timeUnits[2] -> 30
-                timeUnits[3] -> 365
-                else -> 0
-            }
-            val totalTime = timeUnitValue * (every.value?.toInt() ?: 1)
-            val c = Calendar.getInstance()
-            // Se establece la fecha de primer pago
-            c.time = Date.from(
-                Utility.getLocalDateFromString(firstPayment.value!!)
-                    .atStartOfDay(ZoneId.systemDefault()).toInstant()
-            )
-            // Se añade el tiempo hasta el próximo pago
-            c.add(Calendar.DAY_OF_YEAR, totalTime)
-            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-            return Utility.getDaysDif(
-                Utility.formatLocalDate(LocalDate.now()),
-                Utility.formatLocalDate(
-                    LocalDate.of(
-                        c.get(Calendar.YEAR),
-                        c.get(Calendar.MONTH) + 1,
-                        c.get(Calendar.DAY_OF_MONTH)
-                    )
-                )
-            )
         }
     }
 
@@ -248,6 +219,32 @@ class DuesDetailsDialogFragment(
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
         viewModel.close()
+    }
+
+    private fun hoursUntilNextPayment(): Long {
+        val timeUnits = resources.getStringArray(R.array.recurrence_array)
+        with(viewModel) {
+            val timeUnitValue = when (recurrence.value) {
+                timeUnits[0] -> 1
+                timeUnits[1] -> 7
+                timeUnits[2] -> 30
+                timeUnits[3] -> 365
+                else -> 0
+            }
+            val totalTime = timeUnitValue * (every.value?.toInt() ?: 1)
+            val nextPayment = Calendar.getInstance()
+            val currentDate = Calendar.getInstance()
+            // Se establece la fecha de primer pago
+            nextPayment.time = Date.from(
+                Utility.getLocalDateFromString(firstPayment.value!!)
+                    .atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
+            )
+            // Se añade el tiempo hasta el próximo pago
+            nextPayment.add(Calendar.DAY_OF_YEAR, totalTime)
+            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
+            return (abs(nextPayment.time.time - currentDate.time.time) / 36e5).toLong()
+
+        }
     }
 
 }

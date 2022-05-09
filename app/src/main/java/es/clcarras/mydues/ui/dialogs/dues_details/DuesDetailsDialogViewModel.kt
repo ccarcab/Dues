@@ -1,6 +1,5 @@
 package es.clcarras.mydues.ui.dialogs.dues_details
 
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
@@ -152,7 +151,7 @@ class DuesDetailsDialogViewModel(
         }
     }
 
-    fun saveDues() {
+    private fun saveDues() {
         if (
             _price.value.isNullOrBlank() ||
             _name.value.isNullOrBlank() ||
