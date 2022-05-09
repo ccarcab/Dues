@@ -139,13 +139,6 @@ class DuesDetailsDialogFragment(
                 firstPayment.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) etFirstPayment.error = null
                 }
-                update.observe(viewLifecycleOwner) {
-                    if (it) {
-                        Snackbar.make(requireView(), "Dues Updated!", Snackbar.LENGTH_LONG).show()
-                        toggleViewEditMode()
-                    }
-                }
-
                 dateChange.observe(viewLifecycleOwner) {
                     if (it) {
                         (requireActivity() as MainActivity).deleteWork(dues?.notification!!)
@@ -155,7 +148,9 @@ class DuesDetailsDialogFragment(
                         setNotification(uuid)
                     }
                 }
-
+                update.observe(viewLifecycleOwner) {
+                    if (it) toggleViewEditMode()
+                }
                 delete.observe(viewLifecycleOwner) {
                     if (it) {
                         (requireActivity() as MainActivity).deleteWork(dues?.notification!!)
@@ -164,6 +159,39 @@ class DuesDetailsDialogFragment(
                 }
 
             }
+        }
+    }
+
+    private fun daysUntilNextPayment(): Long {
+        val timeUnits = resources.getStringArray(R.array.recurrence_array)
+        with(viewModel) {
+            val timeUnitValue = when (recurrence.value) {
+                timeUnits[0] -> 1
+                timeUnits[1] -> 7
+                timeUnits[2] -> 30
+                timeUnits[3] -> 365
+                else -> 0
+            }
+            val totalTime = timeUnitValue * (every.value?.toInt() ?: 1)
+            val c = Calendar.getInstance()
+            // Se establece la fecha de primer pago
+            c.time = Date.from(
+                Utility.getLocalDateFromString(firstPayment.value!!)
+                    .atStartOfDay(ZoneId.systemDefault()).toInstant()
+            )
+            // Se añade el tiempo hasta el próximo pago
+            c.add(Calendar.DAY_OF_YEAR, totalTime)
+            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
+            return Utility.getDaysDif(
+                Utility.formatLocalDate(LocalDate.now()),
+                Utility.formatLocalDate(
+                    LocalDate.of(
+                        c.get(Calendar.YEAR),
+                        c.get(Calendar.MONTH) + 1,
+                        c.get(Calendar.DAY_OF_MONTH)
+                    )
+                )
+            )
         }
     }
 
@@ -217,37 +245,9 @@ class DuesDetailsDialogFragment(
         }
     }
 
-    private fun daysUntilNextPayment(): Long {
-        val timeUnits = resources.getStringArray(R.array.recurrence_array)
-        with(viewModel) {
-            val timeUnitValue = when (recurrence.value) {
-                timeUnits[0] -> 1
-                timeUnits[1] -> 7
-                timeUnits[2] -> 30
-                timeUnits[3] -> 365
-                else -> 0
-            }
-            val totalTime = timeUnitValue * (every.value?.toInt() ?: 1)
-            val c = Calendar.getInstance()
-            // Se establece la fecha de primer pago
-            c.time = Date.from(
-                Utility.getLocalDateFromString(firstPayment.value!!)
-                    .atStartOfDay(ZoneId.systemDefault()).toInstant()
-            )
-            // Se añade el tiempo hasta el próximo pago
-            c.add(Calendar.DAY_OF_YEAR, totalTime)
-            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-            return Utility.getDaysDif(
-                Utility.formatLocalDate(LocalDate.now()),
-                Utility.formatLocalDate(
-                    LocalDate.of(
-                        c.get(Calendar.YEAR),
-                        c.get(Calendar.MONTH) + 1,
-                        c.get(Calendar.DAY_OF_MONTH)
-                    )
-                )
-            )
-        }
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        viewModel.close()
     }
 
 }

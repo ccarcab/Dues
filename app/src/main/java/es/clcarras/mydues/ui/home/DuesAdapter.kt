@@ -32,7 +32,7 @@ class DuesAdapter(
                 tvName.text = name
                 tvName.setTextColor(textColor)
 
-                tvPrice.text = "$price €"
+                tvPrice.text = price
                 tvPrice.setTextColor(textColor)
 
                 container.setCardBackgroundColor(cardColor)

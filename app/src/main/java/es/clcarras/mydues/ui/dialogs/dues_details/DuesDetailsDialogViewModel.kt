@@ -66,7 +66,7 @@ class DuesDetailsDialogViewModel(
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             val text = (p1 as TextView?)?.text.toString()
-            if (text != dues.recurrence) {
+            if (text.isNotBlank() && text != dues.recurrence) {
                 _recurrence.value = text
                 dues.recurrence = text
                 _dateChange.value = true
@@ -99,7 +99,7 @@ class DuesDetailsDialogViewModel(
     }
 
     fun setEvery(text: String) {
-        if (text != dues.every) {
+        if (text.isNotBlank() && text != dues.every) {
             _every.value = text
             dues.every = text
             _dateChange.value = true
@@ -164,10 +164,14 @@ class DuesDetailsDialogViewModel(
 
         viewModelScope.launch {
             db.duesDao().update(dues)
-            _update.value = true
             homeViewModel.updateDues()
-            _update.value = false
         }
+    }
+
+    fun onSave() {
+        _update.value = true
+        saveDues()
+        _update.value = false
     }
 
     fun close() {
