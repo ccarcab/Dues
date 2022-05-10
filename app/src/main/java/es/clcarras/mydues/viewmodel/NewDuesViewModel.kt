@@ -1,14 +1,13 @@
-package es.clcarras.mydues.ui.new_due
+package es.clcarras.mydues.viewmodel
 
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.lifecycle.*
-import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
-import es.clcarras.mydues.database.Dues
-import es.clcarras.mydues.ui.dialogs.DateDialogFragment
+import es.clcarras.mydues.model.MyDues
+import es.clcarras.mydues.ui.DateDialogFragment
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
@@ -19,6 +18,16 @@ class NewDuesViewModel(
     cardColor: Int,
     contrastColor: Int
 ) : ViewModel() {
+
+    class Factory(
+        private val db: DuesRoomDatabase,
+        private val cardColor: Int,
+        private val contrastColor: Int
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return NewDuesViewModel(db, cardColor, contrastColor) as T
+        }
+    }
 
     private val _price = MutableLiveData("")
     val price: LiveData<String> get() = _price
@@ -118,7 +127,7 @@ class NewDuesViewModel(
     fun saveDues(uuid: UUID) {
         viewModelScope.launch {
             db.duesDao().insert(
-                Dues(
+                MyDues(
                     price = _price.value!!,
                     name = _name.value!!,
                     description = _desc.value!!,

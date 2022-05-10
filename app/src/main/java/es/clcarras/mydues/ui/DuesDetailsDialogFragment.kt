@@ -1,4 +1,4 @@
-package es.clcarras.mydues.ui.dialogs.dues_details
+package es.clcarras.mydues.ui
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.children
-import androidx.core.view.get
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,15 +21,15 @@ import es.clcarras.mydues.R
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
-import es.clcarras.mydues.database.Dues
-import es.clcarras.mydues.ui.dialogs.DateDialogFragment
-import es.clcarras.mydues.ui.home.HomeViewModel
+import es.clcarras.mydues.model.MyDues
+import es.clcarras.mydues.viewmodel.DuesDetailsDialogViewModel
+import es.clcarras.mydues.viewmodel.HomeViewModel
 import java.time.ZoneId
 import java.util.*
 import kotlin.math.abs
 
 class DuesDetailsDialogFragment(
-    private val dues: Dues?,
+    private val myDues: MyDues?,
     private val homeViewModel: HomeViewModel?
 ) : DialogFragment() {
 
@@ -40,7 +39,7 @@ class DuesDetailsDialogFragment(
     private val binding get() = _binding!!
 
     private lateinit var viewModel: DuesDetailsDialogViewModel
-    private lateinit var viewModelFactory: DuesDetailsDialogViewModelFactory
+    private lateinit var viewModelFactory: DuesDetailsDialogViewModel.Factory
 
     companion object {
         const val TAG = "DuesDetailsDialogFragment"
@@ -49,8 +48,8 @@ class DuesDetailsDialogFragment(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         _binding = DuesDetailsDialogFragmentBinding.inflate(layoutInflater)
-        viewModelFactory = DuesDetailsDialogViewModelFactory(
-            DuesRoomDatabase.getDatabase(requireContext()), dues, homeViewModel
+        viewModelFactory = DuesDetailsDialogViewModel.Factory(
+            DuesRoomDatabase.getDatabase(requireContext()), myDues, homeViewModel
         )
         viewModel =
             ViewModelProvider(this, viewModelFactory)[DuesDetailsDialogViewModel::class.java]
@@ -76,7 +75,7 @@ class DuesDetailsDialogFragment(
         setSpinner()
 
         with(binding) {
-            with(dues) {
+            with(myDues) {
                 if (this?.description?.isBlank() == true) tilDesc.visibility = View.GONE
 
                 if (this?.paymentMethod?.isBlank() == true) tilPaymentMethod.visibility = View.GONE
@@ -143,18 +142,18 @@ class DuesDetailsDialogFragment(
                 firstPayment.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
                         etFirstPayment.error = null
-                        if (it != dues?.firstPayment) {
+                        if (it != myDues?.firstPayment) {
                             updateNotification()
                         }
                     }
                 }
                 every.observe(viewLifecycleOwner) {
-                    if (it != dues?.every && it.isNotBlank()) {
+                    if (it != myDues?.every && it.isNotBlank()) {
                         updateNotification()
                     }
                 }
                 recurrence.observe(viewLifecycleOwner) {
-                    if (it != dues?.recurrence && it.isNotBlank()) {
+                    if (it != myDues?.recurrence && it.isNotBlank()) {
                         updateNotification()
                     }
                 }
@@ -163,7 +162,7 @@ class DuesDetailsDialogFragment(
                 }
                 delete.observe(viewLifecycleOwner) {
                     if (it) {
-                        (requireActivity() as MainActivity).deleteWork(dues?.notification!!)
+                        (requireActivity() as MainActivity).deleteWork(myDues?.notification!!)
                         dialog?.dismiss()
                     }
                 }
@@ -177,7 +176,7 @@ class DuesDetailsDialogFragment(
             val uuid = createWorkRequest(
                 getString(
                     R.string.notification_msg,
-                    dues?.name, dues?.price
+                    myDues?.name, myDues?.price
                 ), hoursUntilNextPayment()
             )
             deleteWork(viewModel.setNotification(uuid))

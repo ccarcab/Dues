@@ -1,4 +1,4 @@
-package es.clcarras.mydues.ui.new_due
+package es.clcarras.mydues.ui
 
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -17,9 +17,7 @@ import es.clcarras.mydues.R
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
-import es.clcarras.mydues.ui.dialogs.DateDialogFragment
-import java.sql.Time
-import java.time.Instant
+import es.clcarras.mydues.viewmodel.NewDuesViewModel
 import java.time.ZoneId
 import java.util.*
 import kotlin.math.abs
@@ -30,7 +28,7 @@ class NewDuesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: NewDuesViewModel
-    private lateinit var viewModelFactory: NewDuesViewModelFactory
+    private lateinit var viewModelFactory: NewDuesViewModel.Factory
 
     private lateinit var snackbar: Snackbar
 
@@ -39,7 +37,7 @@ class NewDuesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = NewDuesFragmentBinding.inflate(inflater, container, false)
-        viewModelFactory = NewDuesViewModelFactory(
+        viewModelFactory = NewDuesViewModel.Factory(
             DuesRoomDatabase.getDatabase(requireContext()),
             getColor(requireContext(), R.color.default_card_color),
             getColor(requireContext(), R.color.black)

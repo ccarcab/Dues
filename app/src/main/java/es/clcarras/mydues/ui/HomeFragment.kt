@@ -1,4 +1,4 @@
-package es.clcarras.mydues.ui.home
+package es.clcarras.mydues.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,13 +13,13 @@ import com.google.android.material.snackbar.Snackbar
 import es.clcarras.mydues.R
 import es.clcarras.mydues.databinding.HomeFragmentBinding
 import es.clcarras.mydues.database.DuesRoomDatabase
-import es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogFragment
+import es.clcarras.mydues.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
 
     private lateinit var binding: HomeFragmentBinding
     private lateinit var viewModel: HomeViewModel
-    private lateinit var viewModelFactory: HomeViewModelFactory
+    private lateinit var viewModelFactory: HomeViewModel.Factory
 
     private lateinit var snackbar: Snackbar
 
@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = HomeFragmentBinding.inflate(inflater, container, false)
-        viewModelFactory = HomeViewModelFactory(
+        viewModelFactory = HomeViewModel.Factory(
             DuesRoomDatabase.getDatabase(requireContext())
         )
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
@@ -43,7 +43,7 @@ class HomeFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         with(requireActivity().findViewById<FloatingActionButton>(R.id.fab)) {
             setImageResource(android.R.drawable.ic_menu_add)
-            setOnClickListener { findNavController().navigate(R.id.nav_new_due) }
+            setOnClickListener { findNavController().navigate(R.id.nav_dues_selector) }
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
                 anchorView = this@with
             }
@@ -58,7 +58,7 @@ class HomeFragment : Fragment() {
                         recyclerView.layoutManager =
                             GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
                         recyclerView.adapter = adapter
-                        adapter?.selectedDues?.observe(viewLifecycleOwner) { dues ->
+                        adapter!!.selectedMyDues.observe(viewLifecycleOwner) { dues ->
                             if (dues != null && detailsDialogFragment == null) {
                                 detailsDialogFragment = DuesDetailsDialogFragment(dues, viewModel)
                                 detailsDialogFragment!!.show(

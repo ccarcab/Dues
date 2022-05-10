@@ -1,11 +1,11 @@
-package es.clcarras.mydues.database
+package es.clcarras.mydues.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity
-data class Dues(
+data class MyDues(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     var price: String,
     var name: String,

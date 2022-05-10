@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import es.clcarras.mydues.model.MyDues
 
-@Database(entities = [Dues::class], version = 1, exportSchema = false)
+@Database(entities = [MyDues::class], version = 1, exportSchema = false)
 abstract class DuesRoomDatabase : RoomDatabase() {
 
     abstract fun duesDao(): DuesDao

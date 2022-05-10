@@ -1,4 +1,4 @@
-package es.clcarras.mydues.ui.home
+package es.clcarras.mydues.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,20 +7,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.databinding.DueRowItemBinding
-import es.clcarras.mydues.database.Dues
+import es.clcarras.mydues.model.MyDues
 
-class DuesAdapter(
-    private val dataSet: List<Dues>
-) : RecyclerView.Adapter<DuesAdapter.ViewHolder>() {
+class DuesRowAdapter(
+    private val dataSet: List<MyDues>
+) : RecyclerView.Adapter<DuesRowAdapter.ViewHolder>() {
 
-    private val _selectedDues = MutableLiveData<Dues?>(null)
-    val selectedDues: LiveData<Dues?> get() = _selectedDues
+    private val _selectedMyDues = MutableLiveData<MyDues?>(null)
+    val selectedMyDues: LiveData<MyDues?> get() = _selectedMyDues
 
     inner class ViewHolder(val binding: DueRowItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = DueRowItemBinding
-            .inflate(LayoutInflater.from(parent.context))
+        val binding = DueRowItemBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(binding)
     }
 
@@ -36,7 +35,7 @@ class DuesAdapter(
                 tvPrice.setTextColor(textColor)
 
                 container.setCardBackgroundColor(cardColor)
-                container.setOnClickListener { _selectedDues.value = this }
+                container.setOnClickListener { _selectedMyDues.value = this }
             }
         }
     }
@@ -44,8 +43,8 @@ class DuesAdapter(
     override fun getItemCount(): Int = dataSet.size
 
     fun unSelectDues() {
-        notifyItemChanged(dataSet.indexOf(_selectedDues.value))
-        _selectedDues.value = null
+        notifyItemChanged(dataSet.indexOf(_selectedMyDues.value))
+        _selectedMyDues.value = null
     }
 
 }

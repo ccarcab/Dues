@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="es.clcarras.mydues.ui.dialogs.dues_details.DuesDetailsDialogViewModel" />
+            type="es.clcarras.mydues.viewmodel.DuesDetailsDialogViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -18,7 +18,7 @@
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.dialogs.dues_details.DuesDetailsDialogFragment">
+            tools:context=".ui.DuesDetailsDialogFragment">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout

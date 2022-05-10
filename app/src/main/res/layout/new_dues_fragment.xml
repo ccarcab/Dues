@@ -7,14 +7,14 @@
 
         <variable
             name="viewModel"
-            type="es.clcarras.mydues.ui.new_due.NewDuesViewModel" />
+            type="es.clcarras.mydues.viewmodel.NewDuesViewModel" />
     </data>
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.new_due.NewDuesFragment">
+        tools:context=".ui.NewDuesFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
