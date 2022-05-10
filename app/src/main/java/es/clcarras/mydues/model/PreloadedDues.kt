@@ -1,8 +1,8 @@
 package es.clcarras.mydues.model
 
-import android.graphics.Bitmap
+import android.net.Uri
 
 data class PreloadedDues (
     val name: String,
-    val image: Bitmap
+    val image: Uri
 )

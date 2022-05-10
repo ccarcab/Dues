@@ -73,4 +73,7 @@ dependencies {
 
     // WorkManager API
     implementation "androidx.work:work-runtime-ktx:2.7.1"
+
+    // Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

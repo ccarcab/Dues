@@ -25,23 +25,22 @@ class DuesSelectorViewModel(
     init {
         firestore
             .collection("dues")
-            .document("preload_dues")
             .get()
-            .addOnSuccessListener { doc ->
+            .addOnSuccessListener { docs ->
                 val list = mutableListOf<PreloadedDues>()
-                with((doc.data as Map<*, *>)) {
-                    forEach {
-                        list.add(
-                            PreloadedDues(
-                                it.key.toString(),
-                                Uri.parse(it.value.toString())
-                            )
+                for (doc in docs) {
+                    list.add(
+                        PreloadedDues(
+                            doc["name"].toString(),
+                            Uri.parse(doc["image"].toString())
                         )
-                    }
+                    )
                 }
+
                 _adapter = DuesSelectorAdapter(list)
                 _loadComplete.value = true
             }
-    }
 
+    }
 }
+

@@ -1,8 +1,11 @@
 package es.clcarras.mydues.utils
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 import vadiole.colorpicker.ColorPickerDialog
+import java.net.URL
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter

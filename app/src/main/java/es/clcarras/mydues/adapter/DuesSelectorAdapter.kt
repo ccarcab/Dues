@@ -1,10 +1,13 @@
 package es.clcarras.mydues.adapter
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import es.clcarras.mydues.databinding.DuesSelectorItemBinding
 import es.clcarras.mydues.model.PreloadedDues
+import java.net.URL
 
 class DuesSelectorAdapter(
     private val dataList: List<PreloadedDues>
@@ -21,7 +24,10 @@ class DuesSelectorAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
             with(dataList[position]) {
-                ivDuesImage.setImageURI(url)
+                Picasso.get().load(image)
+//                    .resize(50, 50)
+                    .into(ivDuesImage)
+
                 tvDuesName.text = name
             }
         }
