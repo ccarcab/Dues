@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.children
+import androidx.core.view.get
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -25,8 +26,6 @@ import es.clcarras.mydues.database.Dues
 import es.clcarras.mydues.ui.dialogs.DateDialogFragment
 import es.clcarras.mydues.ui.home.HomeViewModel
 import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.temporal.TemporalAccessor
 import java.util.*
 import kotlin.math.abs
 
@@ -89,6 +88,11 @@ class DuesDetailsDialogFragment(
         return binding.root
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        viewModel.close()
+    }
+
     private fun setOnTextChanged() {
         with(binding) {
             with(viewModel!!) {
@@ -123,12 +127,10 @@ class DuesDetailsDialogFragment(
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
-                contrastColor.observe(viewLifecycleOwner) {
-                    setContrast(it)
-                }
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
                     container.setBackgroundColor(it)
+                    setContrast(Utility.contrastColor(it))
                 }
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
@@ -139,17 +141,21 @@ class DuesDetailsDialogFragment(
                     }
                 }
                 firstPayment.observe(viewLifecycleOwner) {
-                    if (it.isNotBlank()) etFirstPayment.error = null
+                    if (it.isNotBlank()) {
+                        etFirstPayment.error = null
+                        if (it != dues?.firstPayment) {
+                            updateNotification()
+                        }
+                    }
                 }
-                dateChange.observe(viewLifecycleOwner) {
-                    if (it) {
-                        (requireActivity() as MainActivity).deleteWork(dues?.notification!!)
-                        val uuid = (requireActivity() as MainActivity).createWorkRequest(
-                            getString(R.string.notification_msg,
-                                dues.name, dues.price
-                            ), hoursUntilNextPayment()
-                        )
-                        setNotification(uuid)
+                every.observe(viewLifecycleOwner) {
+                    if (it != dues?.every && it.isNotBlank()) {
+                        updateNotification()
+                    }
+                }
+                recurrence.observe(viewLifecycleOwner) {
+                    if (it != dues?.recurrence && it.isNotBlank()) {
+                        updateNotification()
                     }
                 }
                 update.observe(viewLifecycleOwner) {
@@ -163,6 +169,18 @@ class DuesDetailsDialogFragment(
                 }
 
             }
+        }
+    }
+
+    private fun updateNotification() {
+        with(requireActivity() as MainActivity) {
+            val uuid = createWorkRequest(
+                getString(
+                    R.string.notification_msg,
+                    dues?.name, dues?.price
+                ), hoursUntilNextPayment()
+            )
+            deleteWork(viewModel.setNotification(uuid))
         }
     }
 
@@ -184,7 +202,7 @@ class DuesDetailsDialogFragment(
         with(binding) {
             container.children.forEach {
                 if (it is TextInputLayout && it.editText?.currentTextColor != contrastColor) {
-                    it.setSuffixTextColor(colorStateList)
+                    if (it.id == R.id.tilPrice) it.setSuffixTextColor(colorStateList)
                     it.defaultHintTextColor = colorStateList
                     it.boxBackgroundColor = contrastColor
                     it.boxStrokeColor = contrastColor
@@ -192,7 +210,6 @@ class DuesDetailsDialogFragment(
                     it.editText?.backgroundTintList = colorStateList
                 } else if (it is Spinner) {
                     it.backgroundTintList = colorStateList
-                    (it.getChildAt(0) as? TextView)?.setTextColor(contrastColor)
                 } else if (it.id == R.id.btnColorPicker) {
                     (it as Button).setTextColor(contrastColor)
                 }
@@ -214,11 +231,6 @@ class DuesDetailsDialogFragment(
                 if (it is Spinner) it.isEnabled = !it.isEnabled
             }
         }
-    }
-
-    override fun onCancel(dialog: DialogInterface) {
-        super.onCancel(dialog)
-        viewModel.close()
     }
 
     private fun hoursUntilNextPayment(): Long {

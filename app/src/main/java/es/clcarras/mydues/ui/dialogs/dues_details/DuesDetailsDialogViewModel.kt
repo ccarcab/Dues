@@ -47,9 +47,6 @@ class DuesDetailsDialogViewModel(
     private val _cardColor = MutableLiveData(dues.cardColor)
     val cardColor: LiveData<Int> get() = _cardColor
 
-    private val _contrastColor = MutableLiveData(Utility.contrastColor(dues.cardColor))
-    val contrastColor: LiveData<Int> get() = _contrastColor
-
     private val _error = MutableLiveData("")
     val error: LiveData<String> get() = _error
 
@@ -59,17 +56,11 @@ class DuesDetailsDialogViewModel(
     private val _delete = MutableLiveData(false)
     val delete: LiveData<Boolean> get() = _delete
 
-    private val _dateChange = MutableLiveData(false)
-    val dateChange: LiveData<Boolean> get() = _dateChange
-
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-            val text = (p1 as TextView?)?.text.toString()
-            if (text.isNotBlank() && text != dues.recurrence) {
-                _recurrence.value = text
-                dues.recurrence = text
-                _dateChange.value = true
-            }
+            val tv = (p1 as TextView?)
+            tv?.setTextColor(Utility.contrastColor(_cardColor.value!!))
+            _recurrence.value = tv?.text.toString()
         }
 
         override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -77,54 +68,40 @@ class DuesDetailsDialogViewModel(
     }
 
     fun setPrice(text: String) {
-        if (text != dues.price) {
-            _price.value = text
-            dues.price = text
-        }
+        _price.value = text
     }
 
     fun setName(text: String) {
-        if (text != dues.name) {
-            _name.value = text
-            dues.name = text
-        }
+        _name.value = text
     }
 
     fun setDesc(text: String) {
-        if (text != dues.description) {
-            _desc.value = text
-            dues.description = text
-        }
+        _desc.value = text
     }
 
     fun setEvery(text: String) {
-        if (text.isNotBlank() && text.toInt() > 0 && text != dues.every) {
-            _every.value = text
-            dues.every = text
-            _dateChange.value = true
-        }
+        _every.value = text
     }
 
     fun setPaymentMethod(text: String) {
-        if (text != dues.paymentMethod) {
-            _paymentMethod.value = text
-            dues.paymentMethod = text
-        }
+        _paymentMethod.value = text
     }
 
-    fun setNotification(uuid: UUID) {
+    fun setNotification(uuid: UUID): UUID {
+        val currentNotification = dues.notification
         dues.notification = uuid
-        saveDues()
-        _dateChange.value = false
+        return if (!saveDues()) {
+            dues.notification = currentNotification
+            uuid
+        } else
+            currentNotification
     }
 
     fun datePicker(): DateDialogFragment {
         return DateDialogFragment.newInstance { _, year, month, day ->
             val selectedDate = Utility.formatLocalDate(LocalDate.of(year, month + 1, day))
-            if (selectedDate != dues.firstPayment) {
+            if (validInput()) {
                 _firstPayment.value = selectedDate
-                dues.firstPayment = selectedDate
-                _dateChange.value = true
             }
         }
     }
@@ -133,13 +110,7 @@ class DuesDetailsDialogViewModel(
         return Utility.colorPicker(_cardColor.value)
             .onColorSelected { color: Int ->
                 _cardColor.value = color
-                dues.cardColor = color
-                val contrast = Utility.contrastColor(color)
-                if (contrast != _contrastColor.value) {
-                    _contrastColor.value = contrast
-                }
-            }
-            .create()
+            }.create()
     }
 
     fun deleteDues() {
@@ -151,7 +122,7 @@ class DuesDetailsDialogViewModel(
         }
     }
 
-    private fun saveDues(): Boolean {
+    private fun validInput(): Boolean {
         if (
             _price.value.isNullOrBlank() ||
             _name.value.isNullOrBlank() ||
@@ -161,8 +132,21 @@ class DuesDetailsDialogViewModel(
             _error.value = "Please check if you fill all the required fields."
             return false
         }
+        return true
+    }
 
-        if (_dateChange.value == true) return false
+    private fun saveDues(): Boolean {
+
+        if (!validInput()) return false
+
+        dues.price = _price.value!!
+        dues.name = _name.value!!
+        dues.description = _desc.value!!
+        dues.every = _every.value!!
+        dues.recurrence = _recurrence.value!!
+        dues.firstPayment = _firstPayment.value!!
+        dues.paymentMethod = _paymentMethod.value!!
+        dues.cardColor = _cardColor.value!!
 
         viewModelScope.launch {
             db.duesDao().update(dues)

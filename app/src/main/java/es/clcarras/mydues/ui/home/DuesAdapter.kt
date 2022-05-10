@@ -44,6 +44,7 @@ class DuesAdapter(
     override fun getItemCount(): Int = dataSet.size
 
     fun unSelectDues() {
+        notifyItemChanged(dataSet.indexOf(_selectedDues.value))
         _selectedDues.value = null
     }
 

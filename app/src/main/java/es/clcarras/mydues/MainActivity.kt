@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             )
             .build()
 
-        Log.i("createWorkRequest", "Delay in hours $delayInHours")
+        Log.i("WorkManager", "Delay in hours: ${delayInHours - TIME_MARGIN}")
 
         WorkManager.getInstance(this).enqueue(myWorkRequest)
         // UUID usado en caso de que se quiera eliminar la notificación
@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun deleteWork(uuid: UUID) {
+        Log.i("WorkManager", "Deleted work: $uuid")
         WorkManager.getInstance(this).cancelWorkById(uuid)
     }
 }
