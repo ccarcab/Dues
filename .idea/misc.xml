@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Claudio/ad-projects/Dues/app/src/main/res/layout/due_row_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Claudio/ad-projects/Dues/app/src/main/res/layout/dues_details_dialog_fragment.xml" value="0.33" />
         <entry key="..\:/IDEs/Android/Projects/Dues/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.196" />
         <entry key="..\:/IDEs/Android/Projects/Dues/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.196" />
         <entry key="..\:/IDEs/Android/Projects/Dues/app/src/main/res/drawable/ic_launcher_background.xml" value="0.196" />

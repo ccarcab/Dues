@@ -117,7 +117,7 @@ class NewDuesFragment : Fragment() {
                     if (it) {
                         val uuid = (requireActivity() as MainActivity).createWorkRequest(
                             getString(R.string.notification_msg,
-                                name, price
+                                name.value, price.value
                             ), hoursUntilNextPayment()
                         )
                         saveDues(uuid)

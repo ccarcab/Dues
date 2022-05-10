@@ -98,7 +98,7 @@ class DuesDetailsDialogViewModel(
     }
 
     fun setEvery(text: String) {
-        if (text.isNotBlank() && text != dues.every) {
+        if (text.isNotBlank() && text.toInt() > 0 && text != dues.every) {
             _every.value = text
             dues.every = text
             _dateChange.value = true
@@ -114,8 +114,8 @@ class DuesDetailsDialogViewModel(
 
     fun setNotification(uuid: UUID) {
         dues.notification = uuid
-        _dateChange.value = false
         saveDues()
+        _dateChange.value = false
     }
 
     fun datePicker(): DateDialogFragment {
@@ -151,26 +151,28 @@ class DuesDetailsDialogViewModel(
         }
     }
 
-    private fun saveDues() {
+    private fun saveDues(): Boolean {
         if (
             _price.value.isNullOrBlank() ||
             _name.value.isNullOrBlank() ||
-            _firstPayment.value.isNullOrBlank()
+            _firstPayment.value.isNullOrBlank() ||
+            _every.value.isNullOrBlank()
         ) {
             _error.value = "Please check if you fill all the required fields."
-            return
+            return false
         }
+
+        if (_dateChange.value == true) return false
 
         viewModelScope.launch {
             db.duesDao().update(dues)
             homeViewModel.updateDues()
         }
+        return true
     }
 
     fun onSave() {
-        _update.value = true
-        saveDues()
-        _update.value = false
+        _update.value = saveDues()
     }
 
     fun close() {
