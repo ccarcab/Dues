@@ -1,7 +1,9 @@
 package es.clcarras.mydues.ui
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.icu.util.Calendar
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 import es.clcarras.mydues.utils.Utility
@@ -45,7 +48,14 @@ class NewDuesFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
-        binding.etName.isEnabled = args.name.isEmpty()
+        with(binding) {
+            etName.isEnabled = args.name.isEmpty()
+            if (args.image != "") {
+                ivPreloadDues.visibility = View.VISIBLE
+                Picasso.get().load(Uri.parse(args.image)).into(ivPreloadDues)
+                ivPreloadDues.setColorFilter(Utility.contrastColor(viewModel!!.cardColor.value!!))
+            }
+        }
 
         setOnTextChanged()
         setOnClickListeners()
@@ -101,6 +111,8 @@ class NewDuesFragment : Fragment() {
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
                     etPrice.backgroundTintList = ColorStateList.valueOf(it)
                     etPrice.setTextColor(Utility.contrastColor(it))
+                    if (ivPreloadDues.visibility == View.VISIBLE)
+                        ivPreloadDues.setColorFilter(Utility.contrastColor(it))
                 }
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
@@ -116,7 +128,8 @@ class NewDuesFragment : Fragment() {
                 validInput.observe(viewLifecycleOwner) {
                     if (it) {
                         val uuid = (requireActivity() as MainActivity).createWorkRequest(
-                            getString(R.string.notification_msg,
+                            getString(
+                                R.string.notification_msg,
                                 name.value, price.value
                             ), hoursUntilNextPayment()
                         )

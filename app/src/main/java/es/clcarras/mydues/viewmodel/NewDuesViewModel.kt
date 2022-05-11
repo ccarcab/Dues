@@ -64,17 +64,23 @@ class NewDuesViewModel(
     private val _validInput = MutableLiveData(false)
     val validInput: LiveData<Boolean> get() = _validInput
 
+    private var preloaded = false
+
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             _recurrence.value = (p1 as TextView?)?.text.toString()
         }
+
         override fun onNothingSelected(p0: AdapterView<*>?) {}
     }
 
     init {
         _cardColor.value =
             if (args.color.isEmpty()) cardColor
-            else Color.parseColor("#FF${args.color}")
+            else {
+                preloaded = true
+                Color.parseColor("#FF${args.color}")
+            }
     }
 
     fun setPrice(text: String) {
@@ -125,19 +131,19 @@ class NewDuesViewModel(
 
     fun saveDues(uuid: UUID) {
         viewModelScope.launch {
-            db.duesDao().insert(
-                MyDues(
-                    price = _price.value!!,
-                    name = _name.value!!,
-                    description = _desc.value!!,
-                    every = _every.value!!,
-                    recurrence = _recurrence.value!!,
-                    firstPayment = _firstPayment.value!!,
-                    paymentMethod = _paymentMethod.value!!,
-                    cardColor = _cardColor.value!!,
-                    notification = uuid
-                )
+            val myDues = MyDues(
+                price = _price.value!!,
+                name = _name.value!!,
+                description = _desc.value!!,
+                every = _every.value!!,
+                recurrence = _recurrence.value!!,
+                firstPayment = _firstPayment.value!!,
+                paymentMethod = _paymentMethod.value!!,
+                cardColor = _cardColor.value!!,
+                notification = uuid
             )
+            if (preloaded) myDues.image = args.image
+            db.duesDao().insert(myDues)
             _insert.value = true
         }
     }

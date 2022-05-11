@@ -15,5 +15,6 @@ data class MyDues(
     var firstPayment: String,
     var paymentMethod: String = "",
     var cardColor: Int,
+    var image: String = "",
     var notification: UUID
 )
