@@ -32,6 +32,7 @@ class DuesSelectorViewModel(
                     list.add(
                         PreloadedDues(
                             doc["name"].toString(),
+                            doc["color"].toString(),
                             Uri.parse(doc["image"].toString())
                         )
                     )

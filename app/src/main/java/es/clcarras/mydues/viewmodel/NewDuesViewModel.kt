@@ -1,5 +1,6 @@
 package es.clcarras.mydues.viewmodel
 
+import android.graphics.Color
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
@@ -8,6 +9,7 @@ import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.ui.DateDialogFragment
+import es.clcarras.mydues.ui.NewDuesFragmentArgs
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
@@ -15,24 +17,24 @@ import java.util.*
 
 class NewDuesViewModel(
     private val db: DuesRoomDatabase,
-    cardColor: Int,
-    contrastColor: Int
+    private val args: NewDuesFragmentArgs,
+    cardColor: Int
 ) : ViewModel() {
 
     class Factory(
         private val db: DuesRoomDatabase,
-        private val cardColor: Int,
-        private val contrastColor: Int
+        private val args: NewDuesFragmentArgs,
+        private val cardColor: Int
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return NewDuesViewModel(db, cardColor, contrastColor) as T
+            return NewDuesViewModel(db, args, cardColor) as T
         }
     }
 
     private val _price = MutableLiveData("")
     val price: LiveData<String> get() = _price
 
-    private val _name = MutableLiveData("")
+    private val _name = MutableLiveData(args.name)
     val name: LiveData<String> get() = _name
 
     private val _desc = MutableLiveData("")
@@ -50,11 +52,8 @@ class NewDuesViewModel(
     private val _firstPayment = MutableLiveData("")
     val firstPayment: LiveData<String> get() = _firstPayment
 
-    private val _cardColor = MutableLiveData(cardColor)
+    private val _cardColor = MutableLiveData<Int>()
     val cardColor: LiveData<Int> get() = _cardColor
-
-    private val _contrastColor = MutableLiveData(contrastColor)
-    val contrastColor: LiveData<Int> get() = _contrastColor
 
     private val _error = MutableLiveData("")
     val error: LiveData<String> get() = _error
@@ -69,9 +68,13 @@ class NewDuesViewModel(
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             _recurrence.value = (p1 as TextView?)?.text.toString()
         }
-
         override fun onNothingSelected(p0: AdapterView<*>?) {}
+    }
 
+    init {
+        _cardColor.value =
+            if (args.color.isEmpty()) cardColor
+            else Color.parseColor("#FF${args.color}")
     }
 
     fun setPrice(text: String) {
@@ -104,10 +107,6 @@ class NewDuesViewModel(
         return Utility.colorPicker(_cardColor.value)
             .onColorSelected { color: Int ->
                 _cardColor.value = color
-                val contrast = Utility.contrastColor(color)
-                if (contrast != _contrastColor.value) {
-                    _contrastColor.value = contrast
-                }
             }
             .create()
     }

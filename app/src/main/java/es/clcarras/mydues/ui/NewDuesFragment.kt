@@ -1,5 +1,6 @@
 package es.clcarras.mydues.ui
 
+import android.content.res.ColorStateList
 import android.icu.util.Calendar
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -24,9 +25,7 @@ import kotlin.math.abs
 
 class NewDuesFragment : Fragment() {
 
-    private var _binding: NewDuesFragmentBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var binding: NewDuesFragmentBinding
     private lateinit var viewModel: NewDuesViewModel
     private lateinit var viewModelFactory: NewDuesViewModel.Factory
 
@@ -36,15 +35,17 @@ class NewDuesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = NewDuesFragmentBinding.inflate(inflater, container, false)
+        binding = NewDuesFragmentBinding.inflate(inflater, container, false)
+        val args = NewDuesFragmentArgs.fromBundle(requireArguments())
         viewModelFactory = NewDuesViewModel.Factory(
-            DuesRoomDatabase.getDatabase(requireContext()),
-            getColor(requireContext(), R.color.default_card_color),
-            getColor(requireContext(), R.color.black)
+            DuesRoomDatabase.getDatabase(requireContext()), args,
+            getColor(requireContext(), R.color.default_card_color)
         )
         viewModel = ViewModelProvider(this, viewModelFactory)[NewDuesViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+
+        binding.etName.isEnabled = args.name.isEmpty()
 
         setOnTextChanged()
         setOnClickListeners()
@@ -59,6 +60,7 @@ class NewDuesFragment : Fragment() {
         with(requireActivity().findViewById<FloatingActionButton>(R.id.fab)) {
             setImageResource(android.R.drawable.ic_menu_save)
             setOnClickListener { viewModel.checkData() }
+            show()
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
                 anchorView = this@with
             }
@@ -94,11 +96,11 @@ class NewDuesFragment : Fragment() {
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
-                contrastColor.observe(viewLifecycleOwner) {
-                    btnColorPicker.setTextColor(it)
-                }
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
+                    btnColorPicker.setTextColor(Utility.contrastColor(it))
+                    etPrice.backgroundTintList = ColorStateList.valueOf(it)
+                    etPrice.setTextColor(Utility.contrastColor(it))
                 }
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {

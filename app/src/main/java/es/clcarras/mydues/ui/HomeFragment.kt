@@ -44,6 +44,7 @@ class HomeFragment : Fragment() {
         with(requireActivity().findViewById<FloatingActionButton>(R.id.fab)) {
             setImageResource(android.R.drawable.ic_menu_add)
             setOnClickListener { findNavController().navigate(R.id.nav_dues_selector) }
+            show()
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
                 anchorView = this@with
             }

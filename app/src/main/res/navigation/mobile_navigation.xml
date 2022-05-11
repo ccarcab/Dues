@@ -13,13 +13,30 @@
         <action
             android:id="@+id/action_nav_home_to_nav_dues_selector"
             app:destination="@id/nav_dues_selector"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
             app:popUpTo="@id/nav_home" />
     </fragment>
     <fragment
         android:id="@+id/nav_new_due"
         android:name="es.clcarras.mydues.ui.NewDuesFragment"
         android:label="NewDueFragment"
-        tools:layout="@layout/new_dues_fragment"/>
+        tools:layout="@layout/new_dues_fragment">
+        <argument
+            android:name="name"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="color"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="image"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
     <fragment
         android:id="@+id/nav_dues_selector"
         android:name="es.clcarras.mydues.ui.DuesSelectorFragment"
@@ -28,7 +45,18 @@
         <action
             android:id="@+id/action_nav_dues_selector_to_nav_new_due"
             app:destination="@id/nav_new_due"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
             app:popUpTo="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_dues_selector_to_nav_home"
+            app:destination="@id/nav_home"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"/>
     </fragment>
 
 </navigation>

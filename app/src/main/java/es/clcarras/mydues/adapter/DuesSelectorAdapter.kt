@@ -1,11 +1,15 @@
 package es.clcarras.mydues.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.databinding.DuesSelectorItemBinding
 import es.clcarras.mydues.model.PreloadedDues
+import es.clcarras.mydues.ui.DuesSelectorFragmentDirections
+import es.clcarras.mydues.utils.Utility
 
 class DuesSelectorAdapter(
     private val dataList: List<PreloadedDues>
@@ -26,6 +30,14 @@ class DuesSelectorAdapter(
                     .resize(250, 250)
                     .into(ivDuesImage)
                 tvDuesName.text = name
+                tvDuesName.setTextColor(Utility.contrastColor(Color.parseColor("#FF$color")))
+                container.setCardBackgroundColor(Color.parseColor("#FF$color"))
+                container.setOnClickListener {
+                    val action = DuesSelectorFragmentDirections.actionNavDuesSelectorToNavNewDue(
+                        name, color, image.toString()
+                    )
+                    it.findNavController().navigate(action)
+                }
             }
         }
     }

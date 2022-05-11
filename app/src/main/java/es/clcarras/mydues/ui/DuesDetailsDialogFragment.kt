@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -80,7 +82,6 @@ class DuesDetailsDialogFragment(
 
                 if (this?.paymentMethod?.isBlank() == true) tilPaymentMethod.visibility = View.GONE
 
-                container.setBackgroundColor(this?.cardColor ?: 0)
             }
         }
 
@@ -128,8 +129,8 @@ class DuesDetailsDialogFragment(
             with(viewModel!!) {
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
-                    container.setBackgroundColor(it)
-                    setContrast(Utility.contrastColor(it))
+                    etPrice.backgroundTintList = ColorStateList.valueOf(it)
+                    etPrice.setTextColor(Utility.contrastColor(it))
                 }
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
@@ -196,27 +197,6 @@ class DuesDetailsDialogFragment(
         }
     }
 
-    private fun setContrast(contrastColor: Int) {
-        val colorStateList = ColorStateList.valueOf(contrastColor)
-        with(binding) {
-            container.children.forEach {
-                if (it is TextInputLayout && it.editText?.currentTextColor != contrastColor) {
-                    if (it.id == R.id.tilPrice) it.setSuffixTextColor(colorStateList)
-                    it.defaultHintTextColor = colorStateList
-                    it.boxBackgroundColor = contrastColor
-                    it.boxStrokeColor = contrastColor
-                    it.editText?.setTextColor(contrastColor)
-                    it.editText?.backgroundTintList = colorStateList
-                } else if (it is Spinner) {
-                    it.backgroundTintList = colorStateList
-                } else if (it.id == R.id.btnColorPicker) {
-                    (it as Button).setTextColor(contrastColor)
-                }
-            }
-            scrollView.setBackgroundColor(contrastColor)
-        }
-    }
-
     private fun toggleViewEditMode() {
         with(binding) {
             container.children.forEach {
@@ -227,6 +207,7 @@ class DuesDetailsDialogFragment(
                         it.visibility = View.GONE
 
                 if (it is TextInputLayout) it.editText?.isEnabled = !it.editText?.isEnabled!!
+                if (it is EditText) it.isEnabled = !it.isEnabled
                 if (it is Spinner) it.isEnabled = !it.isEnabled
             }
         }
