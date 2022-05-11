@@ -1,13 +1,11 @@
 package es.clcarras.mydues.adapter
 
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.databinding.DuesSelectorItemBinding
 import es.clcarras.mydues.model.PreloadedDues
-import java.net.URL
 
 class DuesSelectorAdapter(
     private val dataList: List<PreloadedDues>
@@ -25,9 +23,8 @@ class DuesSelectorAdapter(
         with(holder.binding) {
             with(dataList[position]) {
                 Picasso.get().load(image)
-//                    .resize(50, 50)
+                    .resize(250, 250)
                     .into(ivDuesImage)
-
                 tvDuesName.text = name
             }
         }

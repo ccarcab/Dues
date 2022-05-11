@@ -20,8 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:fabAlignmentMode="center"
-            app:fabCradleMargin="10dp"
-            app:fabCradleRoundedCornerRadius="10dp"
+            app:fabCradleMargin="24dp"
+            app:fabCradleRoundedCornerRadius="24dp"
             app:layout_anchorGravity="bottom"
             app:menu="@menu/bottom_app_bar"
             app:navigationIcon="@drawable/ic_menu_24" />
