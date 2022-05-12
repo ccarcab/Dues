@@ -34,7 +34,8 @@ class HomeFragment : Fragment() {
     ): View {
         binding = HomeFragmentBinding.inflate(inflater, container, false)
         viewModelFactory = HomeViewModel.Factory(
-            DuesRoomDatabase.getDatabase(requireContext())
+            DuesRoomDatabase.getDatabase(requireContext()),
+            resources.getStringArray(R.array.recurrence_array)
         )
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         viewModel.loadDatabase()
