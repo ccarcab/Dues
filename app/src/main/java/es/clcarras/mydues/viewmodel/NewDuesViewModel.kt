@@ -76,7 +76,7 @@ class NewDuesViewModel(
 
     init {
         _cardColor.value =
-            if (args.color.isEmpty()) cardColor
+            if (args.color.isBlank()) cardColor
             else {
                 preloaded = true
                 Color.parseColor(args.color)

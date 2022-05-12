@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -29,6 +30,11 @@ class DuesSelectorFragment: Fragment() {
         binding = DuesSelectorFragmentBinding.inflate(inflater, container, false)
         viewModelFactory = DuesSelectorViewModel.Factory(FirebaseFirestore.getInstance())
         viewModel = ViewModelProvider(this, viewModelFactory)[DuesSelectorViewModel::class.java]
+
+        binding.btnNewDues.setOnClickListener {
+            val action = DuesSelectorFragmentDirections.actionNavDuesSelectorToNavNewDue()
+            findNavController().navigate(action)
+        }
 
         return binding.root
     }

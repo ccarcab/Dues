@@ -27,5 +27,6 @@
     <string name="delete">Delete</string>
 
     <string name="notification_msg">Your Dues %1$s is close to be renewed for %2$s€!</string>
+    <string name="new_dues">New Dues</string>
 
 </resources>
