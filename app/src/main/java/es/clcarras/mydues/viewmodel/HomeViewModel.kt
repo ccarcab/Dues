@@ -36,11 +36,8 @@ class HomeViewModel(
     var detailsDialogFragment: DuesDetailsDialogFragment? = null
 
     fun deleteDues() {
-        val deletedDues = adapter!!.selectedMyDues.value!!
-        _totalPrice.value = _totalPrice.value?.minus(deletedDues.price.toInt())
-
-        val i = dataList.indexOf(deletedDues)
-        dataList.remove(deletedDues)
+        val i = dataList.indexOf(adapter!!.selectedMyDues.value!!)
+        dataList.remove(adapter!!.selectedMyDues.value!!)
         _adapter?.notifyItemRemoved(i)
 
         _deleted.value = true
@@ -64,6 +61,7 @@ class HomeViewModel(
     }
 
     fun loadDatabase() {
+        _totalPrice.value = 0
         viewModelScope.launch {
             with(database.duesDao()) {
                 dataList = getAll()

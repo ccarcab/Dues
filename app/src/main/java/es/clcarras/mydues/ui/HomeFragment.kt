@@ -25,8 +25,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var snackbar: Snackbar
 
-    private var lastTotal: Int = 0
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -89,15 +87,14 @@ class HomeFragment : Fragment() {
                 }
 
                 totalPrice.observe(viewLifecycleOwner) {
-                    animateTextView(lastTotal, it, tvTotalPrice)
-                    lastTotal = it
+                    animateTextView(it, tvTotalPrice)
                 }
             }
         }
     }
 
-    private fun animateTextView(start: Int, end: Int, textview: TextView) {
-        val animator = ValueAnimator.ofInt(start, end)
+    private fun animateTextView(target: Int, textview: TextView) {
+        val animator = ValueAnimator.ofInt(0, target)
         animator.duration = 1500
         animator.addUpdateListener {
             textview.text = it.animatedValue.toString()
