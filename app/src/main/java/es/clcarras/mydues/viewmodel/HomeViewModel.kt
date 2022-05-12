@@ -1,7 +1,7 @@
 package es.clcarras.mydues.viewmodel
 
 import androidx.lifecycle.*
-import es.clcarras.mydues.adapter.DuesRowAdapter
+import es.clcarras.mydues.adapter.DuesHomeAdapter
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.ui.DuesDetailsDialogFragment
@@ -26,7 +26,7 @@ class HomeViewModel(
     val deleted: LiveData<Boolean> get() = _deleted
 
     private var dataList = mutableListOf<MyDues>()
-    private var _adapter: DuesRowAdapter? = null
+    private var _adapter: DuesHomeAdapter? = null
     val adapter get() = _adapter
 
     var detailsDialogFragment: DuesDetailsDialogFragment? = null
@@ -52,7 +52,7 @@ class HomeViewModel(
         viewModelScope.launch {
             with(database.duesDao()) {
                 dataList = getAll()
-                _adapter = DuesRowAdapter(dataList)
+                _adapter = DuesHomeAdapter(dataList)
                 _dataLoaded.value = true
             }
         }

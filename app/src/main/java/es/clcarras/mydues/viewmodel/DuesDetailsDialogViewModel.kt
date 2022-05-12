@@ -1,6 +1,5 @@
 package es.clcarras.mydues.viewmodel
 
-import android.content.res.ColorStateList
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
@@ -32,6 +31,12 @@ class DuesDetailsDialogViewModel(
 
     private val _price = MutableLiveData(myDues.price)
     val price: LiveData<String> get() = _price
+
+    private val _image = MutableLiveData(myDues.image)
+    val image: LiveData<String> get() = _image
+
+    private val _pkg = MutableLiveData(myDues.pkg)
+    val pkg: LiveData<String> get() = _pkg
 
     private val _name = MutableLiveData(myDues.name)
     val name: LiveData<String> get() = _name

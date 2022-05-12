@@ -36,6 +36,10 @@
             android:name="image"
             app:argType="string"
             android:defaultValue='""' />
+        <argument
+            android:name="pkg"
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
     <fragment
         android:id="@+id/nav_dues_selector"

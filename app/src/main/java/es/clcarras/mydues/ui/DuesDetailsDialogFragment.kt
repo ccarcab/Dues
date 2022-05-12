@@ -3,10 +3,10 @@ package es.clcarras.mydues.ui
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.icu.util.Calendar
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,17 +18,19 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
+import com.squareup.picasso.Picasso
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
 import es.clcarras.mydues.model.MyDues
+import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.DuesDetailsDialogViewModel
 import es.clcarras.mydues.viewmodel.HomeViewModel
 import java.time.ZoneId
 import java.util.*
 import kotlin.math.abs
+
 
 class DuesDetailsDialogFragment(
     private val myDues: MyDues?,
@@ -79,14 +81,36 @@ class DuesDetailsDialogFragment(
         with(binding) {
             with(myDues) {
                 if (this?.description?.isBlank() == true) tilDesc.visibility = View.GONE
-
                 if (this?.paymentMethod?.isBlank() == true) tilPaymentMethod.visibility = View.GONE
-
+                if (this?.image?.isNotBlank() == true) {
+                    btnImage.visibility = View.VISIBLE
+                    btnImage.setOnClickListener {
+                        openApp(viewModel!!.pkg.value!!)
+                    }
+                    Picasso.get().load(Uri.parse(viewModel!!.image.value!!)).into(btnImage)
+                    btnImage.setColorFilter(Utility.contrastColor(viewModel!!.cardColor.value!!))
+                }
             }
         }
 
         return binding.root
     }
+
+    private fun openApp(pkg: String) {
+
+        var intent =
+            requireContext().packageManager.getLaunchIntentForPackage(pkg)
+
+        if (intent == null)
+            intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("https://play.google.com/store/apps/details")
+                    .buildUpon()
+                    .appendQueryParameter("id", pkg).build()
+            }
+
+        requireContext().startActivity(intent)
+    }
+
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
@@ -119,7 +143,7 @@ class DuesDetailsDialogFragment(
                 viewModel!!.close()
                 dialog?.dismiss()
             }
-            btnEdit.setOnClickListener { toggleViewEditMode() }
+            btnEdit.setOnClickListener { toggleEditMode() }
         }
 
     }
@@ -129,8 +153,11 @@ class DuesDetailsDialogFragment(
             with(viewModel!!) {
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
+                    btnColorPicker.setTextColor(Utility.contrastColor(it))
                     etPrice.backgroundTintList = ColorStateList.valueOf(it)
                     etPrice.setTextColor(Utility.contrastColor(it))
+                    if (btnImage.visibility == View.VISIBLE)
+                        btnImage.setColorFilter(Utility.contrastColor(it))
                 }
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
@@ -159,7 +186,7 @@ class DuesDetailsDialogFragment(
                     }
                 }
                 update.observe(viewLifecycleOwner) {
-                    if (it) toggleViewEditMode()
+                    if (it) toggleEditMode()
                 }
                 delete.observe(viewLifecycleOwner) {
                     if (it) {
@@ -197,7 +224,7 @@ class DuesDetailsDialogFragment(
         }
     }
 
-    private fun toggleViewEditMode() {
+    private fun toggleEditMode() {
         with(binding) {
             container.children.forEach {
                 if (it.visibility == View.GONE)
@@ -206,7 +233,10 @@ class DuesDetailsDialogFragment(
                     if (it is Button || it is TextInputLayout && it.editText!!.text.isEmpty())
                         it.visibility = View.GONE
 
-                if (it is TextInputLayout) it.editText?.isEnabled = !it.editText?.isEnabled!!
+                if (it is TextInputLayout)
+                    if (it.editText?.id != R.id.etName || viewModel!!.image.value!!.isBlank())
+                        it.editText?.isEnabled = !it.editText?.isEnabled!!
+
                 if (it is EditText) it.isEnabled = !it.isEnabled
                 if (it is Spinner) it.isEnabled = !it.isEnabled
             }

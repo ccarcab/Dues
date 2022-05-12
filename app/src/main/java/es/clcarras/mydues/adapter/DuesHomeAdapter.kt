@@ -6,20 +6,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import es.clcarras.mydues.utils.Utility
-import es.clcarras.mydues.databinding.DueRowItemBinding
+import es.clcarras.mydues.databinding.DuesHomeItemBinding
 import es.clcarras.mydues.model.MyDues
 
-class DuesRowAdapter(
+class DuesHomeAdapter(
     private val dataSet: List<MyDues>
-) : RecyclerView.Adapter<DuesRowAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DuesHomeAdapter.ViewHolder>() {
 
     private val _selectedMyDues = MutableLiveData<MyDues?>(null)
     val selectedMyDues: LiveData<MyDues?> get() = _selectedMyDues
 
-    inner class ViewHolder(val binding: DueRowItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: DuesHomeItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = DueRowItemBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = DuesHomeItemBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(binding)
     }
 

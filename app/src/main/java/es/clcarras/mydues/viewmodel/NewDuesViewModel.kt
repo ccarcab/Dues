@@ -79,7 +79,7 @@ class NewDuesViewModel(
             if (args.color.isEmpty()) cardColor
             else {
                 preloaded = true
-                Color.parseColor("#FF${args.color}")
+                Color.parseColor(args.color)
             }
     }
 
@@ -142,7 +142,10 @@ class NewDuesViewModel(
                 cardColor = _cardColor.value!!,
                 notification = uuid
             )
-            if (preloaded) myDues.image = args.image
+            if (preloaded) {
+                myDues.image = args.image
+                myDues.pkg = args.pkg
+            }
             db.duesDao().insert(myDues)
             _insert.value = true
         }
