@@ -25,6 +25,9 @@ class HomeViewModel(
     private val _deleted = MutableLiveData(false)
     val deleted: LiveData<Boolean> get() = _deleted
 
+    private val _totalPrice = MutableLiveData(0)
+    val totalPrice: LiveData<Int> get() = _totalPrice
+
     private var dataList = mutableListOf<MyDues>()
     private var _adapter: DuesHomeAdapter? = null
     val adapter get() = _adapter
@@ -32,16 +35,21 @@ class HomeViewModel(
     var detailsDialogFragment: DuesDetailsDialogFragment? = null
 
     fun deleteDues() {
-        val i = dataList.indexOf(adapter?.selectedMyDues?.value)
-        dataList.remove(adapter?.selectedMyDues?.value)
+        val deletedDues = adapter!!.selectedMyDues.value!!
+        _totalPrice.value = _totalPrice.value?.minus(deletedDues.price.toInt())
+
+        val i = dataList.indexOf(deletedDues)
+        dataList.remove(deletedDues)
         _adapter?.notifyItemRemoved(i)
+
         _deleted.value = true
     }
 
     fun updateDues() {
-        _adapter?.notifyItemChanged(
-            dataList.indexOf(adapter?.selectedMyDues?.value)
-        )
+        val updatedDues = adapter!!.selectedMyDues.value!!
+        _totalPrice.value = _totalPrice.value?.minus(updatedDues.price.toInt())
+        _adapter?.notifyItemChanged(dataList.indexOf(updatedDues))
+        _totalPrice.value = _totalPrice.value?.plus(updatedDues.price.toInt())
     }
 
     fun onDeleteComplete() {
@@ -52,6 +60,9 @@ class HomeViewModel(
         viewModelScope.launch {
             with(database.duesDao()) {
                 dataList = getAll()
+                dataList.forEach {
+                    _totalPrice.value = _totalPrice.value?.plus(it.price.toInt())
+                }
                 _adapter = DuesHomeAdapter(dataList)
                 _dataLoaded.value = true
             }
