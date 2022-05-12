@@ -27,11 +27,14 @@ class DuesSelectorAdapter(
         with(holder.binding) {
             with(dataList[position]) {
                 Picasso.get().load(image)
-                    .resize(250, 250)
+//                    .resize(250, 250)
                     .into(ivDuesImage)
                 tvDuesName.text = name
-                tvDuesName.setTextColor(Utility.contrastColor(Color.parseColor("#FF$color")))
-                container.setCardBackgroundColor(Color.parseColor("#FF$color"))
+
+                val cardColor = Color.parseColor("#FF$color")
+                tvDuesName.setTextColor(Utility.contrastColor(cardColor))
+                container.setCardBackgroundColor(cardColor)
+                ivDuesImage.setColorFilter(Utility.contrastColor(cardColor))
                 container.setOnClickListener {
                     val action = DuesSelectorFragmentDirections.actionNavDuesSelectorToNavNewDue(
                         name, color, image.toString()

@@ -41,10 +41,11 @@
 
             <ImageView
                 android:id="@+id/ivPreloadDues"
-                android:layout_width="wrap_content"
-                android:layout_height="92dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/etPrice"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/etPrice"
                 tools:srcCompat="@tools:sample/avatars" />

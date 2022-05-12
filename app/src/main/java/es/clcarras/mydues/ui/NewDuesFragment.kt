@@ -111,6 +111,7 @@ class NewDuesFragment : Fragment() {
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
                     etPrice.backgroundTintList = ColorStateList.valueOf(it)
                     etPrice.setTextColor(Utility.contrastColor(it))
+                    etPrice.setHintTextColor(Utility.contrastColor(it))
                     if (ivPreloadDues.visibility == View.VISIBLE)
                         ivPreloadDues.setColorFilter(Utility.contrastColor(it))
                 }
