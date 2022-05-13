@@ -13,7 +13,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:cardCornerRadius="16dp">
+        app:cardCornerRadius="@dimen/card_view_corner_radius"
+        app:cardElevation="@dimen/card_view_elevation">
 
         <ScrollView
             android:id="@+id/scrollView"
@@ -46,8 +47,8 @@
                     android:layout_width="0dp"
                     android:layout_height="2dp"
                     android:layout_marginBottom="3dp"
-                    android:backgroundTint="@color/black"
                     android:background="?android:attr/listDivider"
+                    android:backgroundTint="@color/black"
                     app:layout_constraintBottom_toTopOf="@+id/tvCurrency"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
