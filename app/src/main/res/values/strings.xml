@@ -15,6 +15,15 @@
     <string name="payment_method">Payment Method - (Optional)</string>
     <string name="save">Save</string>
 
+    <string name="close">Close</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+
+    <string name="notification_msg">Your Dues %1$s is close to be renewed for %2$s€!</string>
+    <string name="new_dues">New Dues</string>
+
+    <string name="currency">EUR</string>
+
     <string-array name="recurrence_array">
         <item>Day</item>
         <item>Week</item>
@@ -22,11 +31,5 @@
         <item>Year</item>
     </string-array>
 
-    <string name="close">Close</string>
-    <string name="edit">Edit</string>
-    <string name="delete">Delete</string>
-
-    <string name="notification_msg">Your Dues %1$s is close to be renewed for %2$s€!</string>
-    <string name="new_dues">New Dues</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package es.clcarras.mydues.ui
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
@@ -62,6 +63,7 @@ class DuesDetailsDialogFragment(
             .create()
         dialog.setCanceledOnTouchOutside(false)
         dialog.setCancelable(false)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         return dialog
     }
 
@@ -75,20 +77,20 @@ class DuesDetailsDialogFragment(
 
         setOnTextChanged()
         setOnClickListeners()
-        setObservers()
         setSpinner()
+        setObservers()
 
         with(binding) {
             with(myDues) {
                 if (this?.description?.isBlank() == true) tilDesc.visibility = View.GONE
                 if (this?.paymentMethod?.isBlank() == true) tilPaymentMethod.visibility = View.GONE
                 if (this?.image?.isNotBlank() == true) {
-                    btnImage.visibility = View.VISIBLE
-                    btnImage.setOnClickListener {
+                    ivPreloadDues.visibility = View.VISIBLE
+                    ivPreloadDues.setOnClickListener {
                         openApp(viewModel!!.pkg.value!!)
                     }
-                    Picasso.get().load(Uri.parse(viewModel!!.image.value!!)).into(btnImage)
-                    btnImage.setColorFilter(Utility.contrastColor(viewModel!!.cardColor.value!!))
+                    Picasso.get().load(Uri.parse(viewModel!!.image.value!!)).into(ivPreloadDues)
+                    ivPreloadDues.setColorFilter(Utility.contrastColor(viewModel!!.cardColor.value!!))
                 }
             }
         }
@@ -148,16 +150,21 @@ class DuesDetailsDialogFragment(
 
     }
 
+    @SuppressLint("UseCompatTextViewDrawableApis")
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
+                    btnColorPicker.compoundDrawableTintList = ColorStateList.valueOf(Utility.contrastColor(it))
                     etPrice.backgroundTintList = ColorStateList.valueOf(it)
                     etPrice.setTextColor(Utility.contrastColor(it))
-                    if (btnImage.visibility == View.VISIBLE)
-                        btnImage.setColorFilter(Utility.contrastColor(it))
+                    etPrice.setHintTextColor(Utility.contrastColor(it))
+                    tvCurrency.backgroundTintList = ColorStateList.valueOf(it)
+                    tvCurrency.setTextColor(Utility.contrastColor(it))
+                    if (ivPreloadDues.visibility == View.VISIBLE)
+                        ivPreloadDues.setColorFilter(Utility.contrastColor(it))
                 }
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
@@ -227,7 +234,7 @@ class DuesDetailsDialogFragment(
     private fun toggleEditMode() {
         with(binding) {
             container.children.forEach {
-                if (it.visibility == View.GONE)
+                if (it.visibility == View.GONE && it.id != binding.ivPreloadDues.id)
                     it.visibility = View.VISIBLE
                 else if (it.visibility == View.VISIBLE)
                     if (it is Button || it is TextInputLayout && it.editText!!.text.isEmpty())

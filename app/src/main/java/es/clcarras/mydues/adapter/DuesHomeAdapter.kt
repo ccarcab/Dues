@@ -34,6 +34,8 @@ class DuesHomeAdapter(
                 tvPrice.text = price
                 tvPrice.setTextColor(textColor)
 
+                tvCurrency.setTextColor(textColor)
+
                 container.setCardBackgroundColor(cardColor)
                 container.setOnClickListener { _selectedMyDues.value = this }
             }

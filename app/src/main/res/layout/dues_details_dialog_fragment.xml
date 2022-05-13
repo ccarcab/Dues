@@ -12,8 +12,8 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp">
+        android:layout_height="match_parent"
+        app:cardCornerRadius="16dp">
 
         <ScrollView
             android:id="@+id/scrollView"
@@ -30,26 +30,47 @@
 
                 <EditText
                     android:id="@+id/etPrice"
+                    style="@style/text_price"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@color/black"
                     android:enabled="false"
+                    android:gravity="center"
                     android:hint="@string/price"
-                    android:includeFontPadding="true"
-                    android:inputType="number"
-                    android:padding="32dp"
                     android:text="@{viewModel.price}"
-                    android:textAlignment="center"
-                    android:textSize="60sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="3dp"
+                    android:backgroundTint="@color/black"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintBottom_toTopOf="@+id/tvCurrency"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/etPrice" />
+
+                <TextView
+                    android:id="@+id/tvCurrency"
+                    style="@style/text_currency"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/currency"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+
                 <ImageView
-                    android:id="@+id/btnImage"
+                    android:id="@+id/ivPreloadDues"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:visibility="visible"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/common_full_open_on_phone" />
@@ -59,11 +80,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/etPrice">
+                    app:layout_constraintTop_toBottomOf="@+id/tvCurrency">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etName"
@@ -149,6 +170,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
+                        android:drawableEnd="@drawable/ic_calendar_month"
                         android:ems="10"
                         android:enabled="false"
                         android:focusable="false"
@@ -163,6 +185,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
+                    android:drawableStart="@drawable/ic_palette_24"
                     android:text="@string/color_picker"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -194,7 +217,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
                     android:text="@string/close"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btnEdit"
@@ -207,6 +232,8 @@
                     android:id="@+id/btnEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:text="@string/edit"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btnSave"
@@ -219,7 +246,9 @@
                     android:id="@+id/btnSave"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
                     android:onClick="@{() -> viewModel.onSave()}"
                     android:text="@string/save"
                     android:visibility="gone"
@@ -235,7 +264,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
                     android:onClick="@{() -> viewModel.deleteDues()}"
                     android:text="@string/delete"
                     app:layout_constraintBottom_toBottomOf="parent"

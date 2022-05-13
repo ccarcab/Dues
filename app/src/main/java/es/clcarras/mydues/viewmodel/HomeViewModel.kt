@@ -41,10 +41,11 @@ class HomeViewModel(
         _adapter?.notifyItemRemoved(i)
 
         _deleted.value = true
+        reloadTotalPrice()
     }
 
     fun updateDues() {
-        val updatedDues = adapter!!.selectedMyDues.value!!
+        val updatedDues = adapter?.selectedMyDues?.value!!
         _adapter?.notifyItemChanged(dataList.indexOf(updatedDues))
         reloadTotalPrice()
     }

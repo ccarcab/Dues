@@ -15,23 +15,39 @@
         android:clipToPadding="false"
         tools:context=".ui.HomeFragment">
 
-        <FrameLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/tvTotalPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="32dp"
-                android:textSize="60sp"
-                tools:text="TotalPrice" />
-        </FrameLayout>
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            style="@style/text_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="60sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TotalPrice" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toTopOf="@+id/tvCurrency"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTotalPrice" />
+
+        <TextView
+            android:id="@+id/tvCurrency"
+            style="@style/text_currency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/currency"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -40,8 +56,9 @@
             android:clipToPadding="true"
             android:paddingBottom="?actionBarSize"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/container"
-            tools:layout_editor_absoluteX="16dp" />
+            app:layout_constraintTop_toBottomOf="@+id/tvCurrency"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="0dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

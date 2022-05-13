@@ -1,5 +1,6 @@
 package es.clcarras.mydues.ui
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.icu.util.Calendar
@@ -59,8 +60,8 @@ class NewDuesFragment : Fragment() {
 
         setOnTextChanged()
         setOnClickListeners()
-        setObservers()
         setSpinner()
+        setObservers()
 
         return binding.root
     }
@@ -103,15 +104,19 @@ class NewDuesFragment : Fragment() {
 
     }
 
+    @SuppressLint("UseCompatTextViewDrawableApis")
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
+                    btnColorPicker.compoundDrawableTintList = ColorStateList.valueOf(Utility.contrastColor(it))
                     etPrice.backgroundTintList = ColorStateList.valueOf(it)
                     etPrice.setTextColor(Utility.contrastColor(it))
                     etPrice.setHintTextColor(Utility.contrastColor(it))
+                    tvCurrency.backgroundTintList = ColorStateList.valueOf(it)
+                    tvCurrency.setTextColor(Utility.contrastColor(it))
                     if (ivPreloadDues.visibility == View.VISIBLE)
                         ivPreloadDues.setColorFilter(Utility.contrastColor(it))
                 }

@@ -70,9 +70,7 @@ class DuesDetailsDialogViewModel(
 
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-            val tv = (p1 as TextView?)
-            tv?.setTextColor(Utility.contrastColor(_cardColor.value!!))
-            _recurrence.value = tv?.text.toString()
+            _recurrence.value = (p1 as TextView?)?.text.toString()
         }
 
         override fun onNothingSelected(p0: AdapterView<*>?) { }
