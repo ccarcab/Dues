@@ -37,6 +37,7 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        viewModel.loadDatabase()
         setObservers()
         return binding.root
     }

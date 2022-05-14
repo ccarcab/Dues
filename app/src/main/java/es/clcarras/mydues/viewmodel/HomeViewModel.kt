@@ -10,7 +10,7 @@ import es.clcarras.mydues.ui.DuesDetailsDialogFragment
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    database: DuesRoomDatabase,
+    private val database: DuesRoomDatabase,
     private val recurrences: Array<String>
 ) : ViewModel() {
 
@@ -59,22 +59,6 @@ class HomeViewModel(
 
     }
 
-    init {
-        adapterDataList.clear()
-        _totalPrice.value = 0
-        viewModelScope.launch {
-            with(database.duesDao()) {
-                dataList = getAll()
-                adapterDataList.addAll(dataList)
-                adapterDataList.forEach {
-                    _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
-                }
-                _adapter = DuesHomeAdapter(adapterDataList)
-                _dataLoaded.value = true
-            }
-        }
-    }
-
     fun deleteDues() {
         val i = adapterDataList.indexOf(adapter!!.selectedMyDues.value!!)
         adapterDataList.remove(adapter!!.selectedMyDues.value!!)
@@ -99,6 +83,22 @@ class HomeViewModel(
 
     fun onDeleteComplete() {
         _deleted.value = false
+    }
+
+    fun loadDatabase() {
+        adapterDataList.clear()
+        _totalPrice.value = 0
+        viewModelScope.launch {
+            with(database.duesDao()) {
+                dataList = getAll()
+                adapterDataList.addAll(dataList)
+                adapterDataList.forEach {
+                    _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
+                }
+                _adapter = DuesHomeAdapter(adapterDataList)
+                _dataLoaded.value = true
+            }
+        }
     }
 
     private fun getPriceByRecurrence(myDues: MyDues) =
