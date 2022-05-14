@@ -2,8 +2,8 @@
     <string name="app_name">Dues</string>
 
     <string name="menu_home">Home</string>
-    <string name="search">Search</string>
-    <string name="content_description_search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="content_description_filter">Filter</string>
     <string name="more">More</string>
     <string name="content_description_more">More</string>
     <string name="price">Price</string>
@@ -23,6 +23,8 @@
     <string name="new_dues">New Dues</string>
 
     <string name="currency">EUR</string>
+
+    <string name="filter_hint">Search your dues here…</string>
 
     <string-array name="recurrence_array">
         <item>Day</item>

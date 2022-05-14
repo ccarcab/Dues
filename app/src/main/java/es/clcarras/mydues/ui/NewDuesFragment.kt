@@ -68,7 +68,12 @@ class NewDuesFragment : Fragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        with(requireActivity().findViewById<FloatingActionButton>(R.id.fab)) {
+        setFabAction()
+        (requireActivity() as MainActivity).getBottomAppBar().performHide(true)
+    }
+
+    private fun setFabAction() {
+        with((requireActivity() as MainActivity).getFab()) {
             setImageResource(android.R.drawable.ic_menu_save)
             setOnClickListener { viewModel.checkData() }
             show()

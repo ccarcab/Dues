@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="es.clcarras.mydues.viewmodel.HomeViewModel" />
@@ -53,8 +54,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:clipToPadding="true"
-            android:paddingBottom="?actionBarSize"
+            android:layout_marginBottom="?actionBarSize"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvCurrency"
             app:layout_constraintVertical_bias="0.0"

@@ -1,9 +1,8 @@
 package es.clcarras.mydues.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -11,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 import es.clcarras.mydues.databinding.DuesSelectorFragmentBinding
 import es.clcarras.mydues.viewmodel.DuesSelectorViewModel
@@ -39,6 +39,11 @@ class DuesSelectorFragment: Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -53,7 +58,17 @@ class DuesSelectorFragment: Fragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        requireActivity().findViewById<FloatingActionButton>(R.id.fab).hide()
+        (requireActivity() as MainActivity).getFab().hide()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.bottom_app_bar, menu)
+
+        menu.findItem(R.id.filter).apply {
+            val searchView = actionView as SearchView
+            searchView.queryHint = getString(R.string.filter_hint)
+            searchView.setOnQueryTextListener(viewModel.onQueryTextListener)
+        }
     }
 
 }

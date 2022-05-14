@@ -3,6 +3,7 @@ package es.clcarras.mydues
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -30,10 +31,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.bottom_app_bar, menu)
-        return true
-    }
+    fun getBottomAppBar() = binding.bottomAppBar
+    fun getFab() = binding.fab
 
     fun createWorkRequest(message: String, delayInHours: Long): UUID {
         val myWorkRequest = OneTimeWorkRequestBuilder<DuesNotificationWorker>()

@@ -1,5 +1,7 @@
 package es.clcarras.mydues.viewmodel
 
+import android.annotation.SuppressLint
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.*
 import es.clcarras.mydues.adapter.DuesHomeAdapter
 import es.clcarras.mydues.database.DuesRoomDatabase
@@ -8,7 +10,7 @@ import es.clcarras.mydues.ui.DuesDetailsDialogFragment
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val database: DuesRoomDatabase,
+    database: DuesRoomDatabase,
     private val recurrences: Array<String>
 ) : ViewModel() {
 
@@ -29,15 +31,53 @@ class HomeViewModel(
     private val _totalPrice = MutableLiveData(0)
     val totalPrice: LiveData<Int> get() = _totalPrice
 
+    private var adapterDataList = mutableListOf<MyDues>()
     private var dataList = mutableListOf<MyDues>()
+
     private var _adapter: DuesHomeAdapter? = null
     val adapter get() = _adapter
 
     var detailsDialogFragment: DuesDetailsDialogFragment? = null
 
+    val onQueryTextListener = object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?) = false
+
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onQueryTextChange(newText: String?): Boolean {
+
+            adapterDataList.clear()
+
+            dataList.forEach {
+                if (it.name.startsWith(newText!!, true))
+                    adapterDataList.add(it)
+            }
+
+            adapter!!.notifyDataSetChanged()
+
+            return false
+        }
+
+    }
+
+    init {
+        adapterDataList.clear()
+        _totalPrice.value = 0
+        viewModelScope.launch {
+            with(database.duesDao()) {
+                dataList = getAll()
+                adapterDataList.addAll(dataList)
+                adapterDataList.forEach {
+                    _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
+                }
+                _adapter = DuesHomeAdapter(adapterDataList)
+                _dataLoaded.value = true
+            }
+        }
+    }
+
     fun deleteDues() {
-        val i = dataList.indexOf(adapter!!.selectedMyDues.value!!)
-        dataList.remove(adapter!!.selectedMyDues.value!!)
+        val i = adapterDataList.indexOf(adapter!!.selectedMyDues.value!!)
+        adapterDataList.remove(adapter!!.selectedMyDues.value!!)
         _adapter?.notifyItemRemoved(i)
 
         _deleted.value = true
@@ -46,33 +86,19 @@ class HomeViewModel(
 
     fun updateDues() {
         val updatedDues = adapter?.selectedMyDues?.value!!
-        _adapter?.notifyItemChanged(dataList.indexOf(updatedDues))
+        _adapter?.notifyItemChanged(adapterDataList.indexOf(updatedDues))
         reloadTotalPrice()
     }
 
     private fun reloadTotalPrice() {
         _totalPrice.value = 0
-        dataList.forEach {
+        adapterDataList.forEach {
             _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
         }
     }
 
     fun onDeleteComplete() {
         _deleted.value = false
-    }
-
-    fun loadDatabase() {
-        _totalPrice.value = 0
-        viewModelScope.launch {
-            with(database.duesDao()) {
-                dataList = getAll()
-                dataList.forEach {
-                    _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
-                }
-                _adapter = DuesHomeAdapter(dataList)
-                _dataLoaded.value = true
-            }
-        }
     }
 
     private fun getPriceByRecurrence(myDues: MyDues) =

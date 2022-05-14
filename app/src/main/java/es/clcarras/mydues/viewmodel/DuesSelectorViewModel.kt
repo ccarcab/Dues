@@ -1,9 +1,12 @@
 package es.clcarras.mydues.viewmodel
 
+import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.*
 import com.google.firebase.firestore.FirebaseFirestore
 import es.clcarras.mydues.adapter.DuesSelectorAdapter
+import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.model.PreloadedDues
 
 class DuesSelectorViewModel(
@@ -19,17 +22,40 @@ class DuesSelectorViewModel(
     private val _loadComplete = MutableLiveData(false)
     val loadComplete: LiveData<Boolean> get() = _loadComplete
 
+    private var adapterDataList = mutableListOf<PreloadedDues>()
+    private var dataList = mutableListOf<PreloadedDues>()
+
     private var _adapter: DuesSelectorAdapter? = null
     val adapter get() = _adapter
 
+    val onQueryTextListener = object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?) = false
+
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onQueryTextChange(newText: String?): Boolean {
+
+            adapterDataList.clear()
+
+            dataList.forEach {
+                if (it.name.startsWith(newText!!, true))
+                    adapterDataList.add(it)
+            }
+
+            adapter!!.notifyDataSetChanged()
+
+            return false
+        }
+
+    }
+
     init {
+        adapterDataList.clear()
         firestore
             .collection("dues")
             .get()
             .addOnSuccessListener { docs ->
-                val list = mutableListOf<PreloadedDues>()
                 for (doc in docs) {
-                    list.add(
+                    dataList.add(
                         PreloadedDues(
                             doc["name"].toString(),
                             doc["color"].toString(),
@@ -39,7 +65,8 @@ class DuesSelectorViewModel(
                     )
                 }
 
-                _adapter = DuesSelectorAdapter(list)
+                adapterDataList.addAll(dataList)
+                _adapter = DuesSelectorAdapter(adapterDataList)
                 _loadComplete.value = true
             }
 
