@@ -25,41 +25,10 @@ class MainActivity : AppCompatActivity() {
             setContentView(root)
             setSupportActionBar(bottomAppBar)
         }
-        createWorkRequestPrueba()
     }
 
     fun getBottomAppBar() = binding.bottomAppBar
     fun getFab() = binding.fab
-
-    // TODO: Borrar la función
-    private fun createWorkRequestPrueba() {
-
-        val myWorkRequest = PeriodicWorkRequestBuilder<DuesNotificationWorker>(
-            15, TimeUnit.MINUTES,
-            5, TimeUnit.MINUTES
-        )
-            .setInitialDelay(15, TimeUnit.SECONDS)
-            .setBackoffCriteria(
-                BackoffPolicy.LINEAR,
-                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                TimeUnit.MILLISECONDS
-            )
-            .setInputData(
-                workDataOf(
-                    "title" to "Dues",
-                    "message" to "Prueba"
-                )
-            )
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "${myWorkRequest.id}",
-            ExistingPeriodicWorkPolicy.KEEP,
-            myWorkRequest
-        )
-
-        Log.i("WorkManager", "Enqueued work, uuid: ${myWorkRequest.id}")
-    }
 
     fun createWorkRequest(message: String, periodicityInHours: Long, delayInHours: Long): UUID {
 

@@ -62,7 +62,8 @@ class HomeFragment : Fragment() {
                 (requireActivity() as MainActivity).getFab().hide()
                 binding.tvTotalPrice.visibility = View.GONE
                 binding.tvCurrency.visibility = View.GONE
-                menu.findItem(R.id.launcher).isVisible = false
+                if (viewModel.launcherEnabled.value == true)
+                    menu.findItem(R.id.launcher).isVisible = false
                 return true
             }
 
@@ -70,7 +71,8 @@ class HomeFragment : Fragment() {
                 (requireActivity() as MainActivity).getFab().show()
                 binding.tvTotalPrice.visibility = View.VISIBLE
                 binding.tvCurrency.visibility = View.VISIBLE
-                menu.findItem(R.id.launcher).isVisible = true
+                if (viewModel.launcherEnabled.value == true)
+                    menu.findItem(R.id.launcher).isVisible = true
                 return true
             }
         }
