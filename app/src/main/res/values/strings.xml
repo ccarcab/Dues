@@ -25,6 +25,9 @@
     <string name="currency">EUR</string>
 
     <string name="filter_hint">Search your dues here…</string>
+    <string name="launcher">Launcher</string>
+    <string name="content_description_launcher">Launcher</string>
+    <string name="bottom_sheet_title">Click on Icon to open your APP!</string>
 
     <string-array name="recurrence_array">
         <item>Day</item>

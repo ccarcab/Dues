@@ -62,5 +62,10 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"/>
     </fragment>
+    <dialog
+        android:id="@+id/nav_preload_dues"
+        android:name="es.clcarras.mydues.ui.PreloadDuesDialogFragment"
+        android:label="PreloadDuesDialogFragment"
+        tools:layout="@layout/preload_dues_dialog_fragment"/>
 
 </navigation>

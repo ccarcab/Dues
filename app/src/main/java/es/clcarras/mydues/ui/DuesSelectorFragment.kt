@@ -69,6 +69,8 @@ class DuesSelectorFragment: Fragment() {
             searchView.queryHint = getString(R.string.filter_hint)
             searchView.setOnQueryTextListener(viewModel.onQueryTextListener)
         }
+
+        menu.findItem(R.id.launcher).isVisible = false
     }
 
 }

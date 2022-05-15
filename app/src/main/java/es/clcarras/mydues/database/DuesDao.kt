@@ -9,14 +9,11 @@ interface DuesDao {
     @Query("SELECT * FROM mydues")
     suspend fun getAll(): MutableList<MyDues>
 
-    @Query("SELECT COUNT(*) FROM mydues")
-    suspend fun getDueCount(): Int
+    @Query("SELECT * FROM mydues WHERE pkg != \"\"")
+    suspend fun getPreloadDues(): MutableList<MyDues>
 
     @Insert
     suspend fun insert(myDues: MyDues)
-
-    @Insert
-    suspend fun insertAll(dues: List<MyDues>)
 
     @Delete
     suspend fun remove(myDues: MyDues)

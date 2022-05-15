@@ -62,6 +62,7 @@ class HomeFragment : Fragment() {
                 (requireActivity() as MainActivity).getFab().hide()
                 binding.tvTotalPrice.visibility = View.GONE
                 binding.tvCurrency.visibility = View.GONE
+                menu.findItem(R.id.launcher).isVisible = false
                 return true
             }
 
@@ -69,6 +70,7 @@ class HomeFragment : Fragment() {
                 (requireActivity() as MainActivity).getFab().show()
                 binding.tvTotalPrice.visibility = View.VISIBLE
                 binding.tvCurrency.visibility = View.VISIBLE
+                menu.findItem(R.id.launcher).isVisible = true
                 return true
             }
         }
@@ -78,6 +80,12 @@ class HomeFragment : Fragment() {
             searchView.queryHint = getString(R.string.filter_hint)
             searchView.setOnQueryTextListener(viewModel.onQueryTextListener)
         }
+
+        menu.findItem(R.id.launcher).setOnMenuItemClickListener {
+            findNavController().navigate(R.id.nav_preload_dues)
+            true
+        }
+
     }
 
     private fun setFabAction() {
@@ -112,6 +120,7 @@ class HomeFragment : Fragment() {
             with(viewModel!!) {
                 recyclerView.layoutManager =
                     GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
+
                 recyclerView.adapter = adapter
                 adapter!!.selectedMyDues.observe(viewLifecycleOwner) { dues ->
                     if (dues != null && detailsDialogFragment == null) {
