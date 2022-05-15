@@ -14,8 +14,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val STANDARD_TIME_MARGIN = 24
-        const val SHORT_TIME_MARGIN = 12
+        const val GRACE_PERIOD = 24
     }
 
     private var _binding: ActivityMainBinding? = null
@@ -33,16 +32,13 @@ class MainActivity : AppCompatActivity() {
     fun getBottomAppBar() = binding.bottomAppBar
     fun getFab() = binding.fab
 
-    fun createWorkRequest(message: String, delayInHours: Long): UUID {
-        val delay =
-            if (delayInHours <= 24) delayInHours - SHORT_TIME_MARGIN
-            else delayInHours - STANDARD_TIME_MARGIN
+    fun createWorkRequest(message: String, periodicityInHours: Long, delayInHours: Long): UUID {
 
         val myWorkRequest = PeriodicWorkRequestBuilder<DuesNotificationWorker>(
-            delay, TimeUnit.HOURS,
+            periodicityInHours, TimeUnit.HOURS,
             15, TimeUnit.MINUTES
         )
-            .setInitialDelay(delay, TimeUnit.HOURS)
+            .setInitialDelay(delayInHours - GRACE_PERIOD, TimeUnit.HOURS)
             .setInputData(
                 workDataOf(
                     "title" to "Dues",
@@ -51,7 +47,8 @@ class MainActivity : AppCompatActivity() {
             )
             .build()
 
-        Log.i("WorkManager", "Delay in hours: $delay")
+        Log.i("WorkManager", "Periodicity in hours: $periodicityInHours")
+        Log.i("WorkManager", "Delay in hours from now: ${delayInHours - GRACE_PERIOD}")
 
         WorkManager.getInstance(this).enqueue(myWorkRequest)
         // UUID usado en caso de que se quiera eliminar la notificación

@@ -142,7 +142,9 @@ class NewDuesFragment : Fragment() {
                             getString(
                                 R.string.notification_msg,
                                 name.value, price.value
-                            ), hoursUntilNextPayment()
+                            ),
+                            periodicityInHours().toLong(),
+                            hoursUntilNextPayment()
                         )
                         saveDues(uuid)
                     }
@@ -170,27 +172,32 @@ class NewDuesFragment : Fragment() {
     }
 
     private fun hoursUntilNextPayment(): Long {
-        val timeUnits = resources.getStringArray(R.array.recurrence_array)
+            val nextPayment = Calendar.getInstance()
+            val currentDate = Calendar.getInstance()
+            // Se establece la fecha de primer pago
+            nextPayment.time = Date.from(
+                Utility.getLocalDateFromString(viewModel.firstPayment.value!!)
+                    .atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
+            )
+            // Se añade el tiempo hasta el próximo pago
+            nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
+            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
+            return (abs(nextPayment.time.time - currentDate.time.time) / 36e5).toLong()
+
+
+    }
+
+    private fun periodicityInHours(): Int {
         with(viewModel) {
-            val timeUnitValue = when (recurrence.value) {
+            val timeUnits = resources.getStringArray(R.array.recurrence_array)
+            val period = when (viewModel.recurrence.value) {
                 timeUnits[0] -> 1
                 timeUnits[1] -> 7
                 timeUnits[2] -> 30
                 timeUnits[3] -> 365
                 else -> 0
-            }
-            val totalTime = timeUnitValue * (every.value?.toInt() ?: 1)
-            val nextPayment = Calendar.getInstance()
-            val currentDate = Calendar.getInstance()
-            // Se establece la fecha de primer pago
-            nextPayment.time = Date.from(
-                Utility.getLocalDateFromString(firstPayment.value!!)
-                    .atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-            )
-            // Se añade el tiempo hasta el próximo pago
-            nextPayment.add(Calendar.DAY_OF_YEAR, totalTime)
-            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-            return (abs(nextPayment.time.time - currentDate.time.time) / 36e5).toLong()
+            } * (every.value?.toInt() ?: 1) * 24
+            return period
         }
     }
 
