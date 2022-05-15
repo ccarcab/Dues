@@ -86,6 +86,10 @@ class HomeFragment : Fragment() {
             true
         }
 
+        viewModel.launcherEnabled.observe(viewLifecycleOwner) {
+            menu.findItem(R.id.launcher).isVisible = it
+        }
+
     }
 
     private fun setFabAction() {

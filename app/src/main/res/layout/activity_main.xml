@@ -19,10 +19,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:background="@android:color/transparent"
             app:fabAlignmentMode="center"
             app:fabCradleMargin="24dp"
             app:fabCradleRoundedCornerRadius="24dp"
-            app:layout_anchorGravity="bottom"
+            app:layout_insetEdge="top"
             app:menu="@menu/bottom_app_bar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

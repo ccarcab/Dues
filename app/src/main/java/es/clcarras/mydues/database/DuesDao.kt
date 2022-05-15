@@ -12,6 +12,9 @@ interface DuesDao {
     @Query("SELECT * FROM mydues WHERE pkg != \"\"")
     suspend fun getPreloadDues(): MutableList<MyDues>
 
+    @Query("SELECT COUNT(*) FROM mydues WHERE pkg != \"\"")
+    suspend fun getPreloadDuesCount(): Int
+
     @Insert
     suspend fun insert(myDues: MyDues)
 

@@ -10,7 +10,8 @@ import androidx.core.app.NotificationManagerCompat
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 
-const val CHANNEL_ID = "dues_notification_channel"
+const val CHANNEL_ID = "Dues Notification Channel"
+const val CHANNEL_DESC = "Channel to alert the user the dues billing period is close."
 const val NOTIFICATION_ID = 852022
 
 class NotificationHelper(
@@ -25,7 +26,10 @@ class NotificationHelper(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(R.drawable.ic_menu_24)
@@ -33,6 +37,7 @@ class NotificationHelper(
             setContentText(message)
             setContentIntent(pendingIntent)
             priority = NotificationCompat.PRIORITY_HIGH
+            setVibrate(LongArray(0))
         }.build()
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
@@ -45,7 +50,7 @@ class NotificationHelper(
             CHANNEL_ID,
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Dues Notification Channel"
+            description = CHANNEL_DESC
         }
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

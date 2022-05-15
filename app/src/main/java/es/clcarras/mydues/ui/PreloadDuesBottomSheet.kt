@@ -10,26 +10,26 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import es.clcarras.mydues.database.DuesRoomDatabase
-import es.clcarras.mydues.databinding.PreloadDuesDialogFragmentBinding
-import es.clcarras.mydues.viewmodel.PreloadDuesDialogViewModel
+import es.clcarras.mydues.databinding.PreloadDuesBottomSheetBinding
+import es.clcarras.mydues.viewmodel.PreloadDuesBottomSheetViewModel
 
-class PreloadDuesDialogFragment : BottomSheetDialogFragment() {
+class PreloadDuesBottomSheet : BottomSheetDialogFragment() {
 
-    private lateinit var binding: PreloadDuesDialogFragmentBinding
-    private lateinit var viewModel: PreloadDuesDialogViewModel
-    private lateinit var viewModelFactory: PreloadDuesDialogViewModel.Factory
+    private lateinit var binding: PreloadDuesBottomSheetBinding
+    private lateinit var viewModel: PreloadDuesBottomSheetViewModel
+    private lateinit var viewModelFactory: PreloadDuesBottomSheetViewModel.Factory
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = PreloadDuesDialogFragmentBinding.inflate(layoutInflater)
-        viewModelFactory = PreloadDuesDialogViewModel.Factory(
+        binding = PreloadDuesBottomSheetBinding.inflate(layoutInflater)
+        viewModelFactory = PreloadDuesBottomSheetViewModel.Factory(
             DuesRoomDatabase.getDatabase(requireContext())
         )
         viewModel =
-            ViewModelProvider(this, viewModelFactory)[PreloadDuesDialogViewModel::class.java]
+            ViewModelProvider(this, viewModelFactory)[PreloadDuesBottomSheetViewModel::class.java]
         return binding.root
     }
 

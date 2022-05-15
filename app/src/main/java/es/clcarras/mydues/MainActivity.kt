@@ -3,10 +3,7 @@ package es.clcarras.mydues
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.work.*
 import es.clcarras.mydues.databinding.ActivityMainBinding
 import es.clcarras.mydues.service.DuesNotificationWorker
 import java.util.*
@@ -42,6 +39,11 @@ class MainActivity : AppCompatActivity() {
             5, TimeUnit.MINUTES
         )
             .setInitialDelay(15, TimeUnit.SECONDS)
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
             .setInputData(
                 workDataOf(
                     "title" to "Dues",
@@ -50,12 +52,11 @@ class MainActivity : AppCompatActivity() {
             )
             .build()
 
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(
-                "${myWorkRequest.id}",
-                ExistingPeriodicWorkPolicy.KEEP,
-                myWorkRequest
-            )
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "${myWorkRequest.id}",
+            ExistingPeriodicWorkPolicy.KEEP,
+            myWorkRequest
+        )
 
         Log.i("WorkManager", "Enqueued work, uuid: ${myWorkRequest.id}")
     }
@@ -66,19 +67,25 @@ class MainActivity : AppCompatActivity() {
             periodicityInHours, TimeUnit.HOURS,
             5, TimeUnit.MINUTES
         ).apply {
-            setInitialDelay(delayInHours - GRACE_PERIOD, TimeUnit.HOURS)
+            if (delayInHours - GRACE_PERIOD > 0)
+                setInitialDelay(delayInHours - GRACE_PERIOD, TimeUnit.HOURS)
+
+            setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
             setInputData(workDataOf("title" to "Dues", "message" to message))
         }.build()
 
         Log.i("WorkManager", "Periodicity in hours: $periodicityInHours")
         Log.i("WorkManager", "Delay in hours from now: ${delayInHours - GRACE_PERIOD}")
 
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(
-                "${myWorkRequest.id}",
-                ExistingPeriodicWorkPolicy.KEEP,
-                myWorkRequest
-            )
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "${myWorkRequest.id}",
+            ExistingPeriodicWorkPolicy.KEEP,
+            myWorkRequest
+        )
         // UUID usado en caso de que se quiera eliminar la notificación
         return myWorkRequest.id
     }
@@ -86,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     fun deleteWork(uuid: UUID) {
         Log.i("WorkManager", "Deleted work: $uuid")
         WorkManager.getInstance(this).apply {
-            cancelWorkById(uuid)
+            cancelUniqueWork(uuid.toString())
             pruneWork()
         }
     }

@@ -6,15 +6,15 @@ import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.model.MyDues
 import kotlinx.coroutines.launch
 
-class PreloadDuesDialogViewModel(
+class PreloadDuesBottomSheetViewModel(
     private val database: DuesRoomDatabase
-) : ViewModel() {
+): ViewModel() {
 
     class Factory(
         private val database: DuesRoomDatabase
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>) =
-            PreloadDuesDialogViewModel(database) as T
+            PreloadDuesBottomSheetViewModel(database) as T
     }
 
     private val _dataLoaded = MutableLiveData(false)
@@ -29,6 +29,7 @@ class PreloadDuesDialogViewModel(
         viewModelScope.launch {
             with(database.duesDao()) {
                 dataList = getPreloadDues()
+                dataList = dataList.toSet().toMutableList()
                 _adapter = PreloadDuesAdapter(dataList)
                 _dataLoaded.value = true
             }

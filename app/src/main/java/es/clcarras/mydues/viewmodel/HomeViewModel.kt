@@ -25,6 +25,9 @@ class HomeViewModel(
     private val _dataLoaded = MutableLiveData(false)
     val dataLoaded: LiveData<Boolean> get() = _dataLoaded
 
+    private var _launcherEnabled = MutableLiveData(false)
+    val launcherEnabled: LiveData<Boolean> get() =_launcherEnabled
+
     private val _deleted = MutableLiveData(false)
     val deleted: LiveData<Boolean> get() = _deleted
 
@@ -62,10 +65,17 @@ class HomeViewModel(
     fun deleteDues() {
         val i = adapterDataList.indexOf(adapter!!.selectedMyDues.value!!)
         adapterDataList.remove(adapter!!.selectedMyDues.value!!)
+        dataList.remove(adapter!!.selectedMyDues.value!!)
         _adapter?.notifyItemRemoved(i)
-
         _deleted.value = true
         reloadTotalPrice()
+        checkPreloadDues()
+    }
+
+    private fun checkPreloadDues() {
+        viewModelScope.launch {
+            _launcherEnabled.value = database.duesDao().getPreloadDuesCount() > 0
+        }
     }
 
     fun updateDues() {
@@ -96,6 +106,7 @@ class HomeViewModel(
                     _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
                 }
                 _adapter = DuesHomeAdapter(adapterDataList)
+                checkPreloadDues()
                 _dataLoaded.value = true
             }
         }
