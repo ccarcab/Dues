@@ -51,7 +51,7 @@ class HomeViewModel(
             adapterDataList.clear()
 
             dataList.forEach {
-                if (it.name.startsWith(newText!!, true))
+                if (it.name.contains(newText!!, true))
                     adapterDataList.add(it)
             }
 

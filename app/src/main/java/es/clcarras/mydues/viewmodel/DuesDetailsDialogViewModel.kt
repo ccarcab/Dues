@@ -4,10 +4,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.lifecycle.*
-import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.ui.DateDialogFragment
+import es.clcarras.mydues.utils.Utility
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
@@ -24,9 +24,8 @@ class DuesDetailsDialogViewModel(
         private val myDues: MyDues?,
         private val homeViewModel: HomeViewModel?
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return DuesDetailsDialogViewModel(db, myDues!!, homeViewModel!!) as T
-        }
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            DuesDetailsDialogViewModel(db, myDues!!, homeViewModel!!) as T
     }
 
     private val _price = MutableLiveData(myDues.price)
@@ -73,7 +72,7 @@ class DuesDetailsDialogViewModel(
             _recurrence.value = (p1 as TextView?)?.text.toString()
         }
 
-        override fun onNothingSelected(p0: AdapterView<*>?) { }
+        override fun onNothingSelected(p0: AdapterView<*>?) {}
 
     }
 

@@ -3,10 +3,12 @@ package es.clcarras.mydues.viewmodel
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import es.clcarras.mydues.adapter.DuesSelectorAdapter
-import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.model.PreloadedDues
 
 class DuesSelectorViewModel(
@@ -14,9 +16,8 @@ class DuesSelectorViewModel(
 ) : ViewModel() {
 
     class Factory(private val firestore: FirebaseFirestore) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return DuesSelectorViewModel(firestore) as T
-        }
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            DuesSelectorViewModel(firestore) as T
     }
 
     private val _loadComplete = MutableLiveData(false)
@@ -37,7 +38,7 @@ class DuesSelectorViewModel(
             adapterDataList.clear()
 
             dataList.forEach {
-                if (it.name.startsWith(newText!!, true))
+                if (it.name.contains(newText!!, true))
                     adapterDataList.add(it)
             }
 
