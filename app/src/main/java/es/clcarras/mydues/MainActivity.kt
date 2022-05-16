@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val GRACE_PERIOD = 24
+        // One day in millis
+        const val GRACE_PERIOD = 86400000L
     }
 
     private var _binding: ActivityMainBinding? = null
@@ -28,29 +29,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getBottomAppBar() = binding.bottomAppBar
+
     fun getFab() = binding.fab
 
-    fun createWorkRequest(message: String, periodicityInHours: Long, delayInHours: Long): UUID {
+    fun createWorkRequest(message: String, periodicityInMillis: Long, delayInMillis: Long): UUID {
 
         val myWorkRequest = PeriodicWorkRequestBuilder<DuesNotificationWorker>(
-            periodicityInHours, TimeUnit.HOURS,
-            5, TimeUnit.MINUTES
+            periodicityInMillis, TimeUnit.MILLISECONDS
         ).apply {
-            if (delayInHours - GRACE_PERIOD > 0)
-                setInitialDelay(delayInHours - GRACE_PERIOD, TimeUnit.HOURS)
+            if (delayInMillis - GRACE_PERIOD > 0)
+                setInitialDelay(delayInMillis - GRACE_PERIOD, TimeUnit.MILLISECONDS)
 
             setBackoffCriteria(
                 BackoffPolicy.LINEAR,
                 PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
-            setInputData(workDataOf("title" to "Dues", "message" to message))
+            setInputData(
+                workDataOf(
+                    "title" to "Dues",
+                    "message" to message
+                )
+            )
         }.build()
 
-        Log.i("WorkManager", "Periodicity in hours: $periodicityInHours")
-        Log.i("WorkManager", "Delay in hours from now: ${delayInHours - GRACE_PERIOD}")
+        Log.i("WorkManager", "Periodicity in millis: $periodicityInMillis")
+        Log.i("WorkManager", "Delay in millis from now: ${delayInMillis - GRACE_PERIOD}")
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
             "${myWorkRequest.id}",
             ExistingPeriodicWorkPolicy.KEEP,
             myWorkRequest
@@ -61,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     fun deleteWork(uuid: UUID) {
         Log.i("WorkManager", "Deleted work: $uuid")
-        WorkManager.getInstance(this).apply {
+        WorkManager.getInstance(applicationContext).apply {
             cancelUniqueWork(uuid.toString())
             pruneWork()
         }

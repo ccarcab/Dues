@@ -216,8 +216,8 @@ class DuesDetailsDialogFragment(
                     R.string.notification_msg,
                     myDues?.name, myDues?.price
                 ),
-                periodicityInHours().toLong(),
-                hoursUntilNextPayment()
+                (periodicityInHours() * 36e5).toLong(),
+                millisUntilNextPayment()
             )
             deleteWork(viewModel.setNotification(uuid))
         }
@@ -255,7 +255,7 @@ class DuesDetailsDialogFragment(
         }
     }
 
-    private fun hoursUntilNextPayment(): Long {
+    private fun millisUntilNextPayment(): Long {
         val nextPayment = Calendar.getInstance()
         val currentDate = Calendar.getInstance()
         // Se establece la fecha de primer pago
@@ -266,9 +266,7 @@ class DuesDetailsDialogFragment(
         // Se añade el tiempo hasta el próximo pago
         nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
         // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-        return (abs(nextPayment.time.time - currentDate.time.time) / 36e5).toLong()
-
-
+        return abs(nextPayment.time.time - currentDate.time.time)
     }
 
     private fun periodicityInHours(): Int {

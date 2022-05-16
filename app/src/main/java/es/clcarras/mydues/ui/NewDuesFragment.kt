@@ -143,8 +143,8 @@ class NewDuesFragment : Fragment() {
                                 R.string.notification_msg,
                                 name.value, price.value
                             ),
-                            periodicityInHours().toLong(),
-                            hoursUntilNextPayment()
+                            (periodicityInHours() * 36e5).toLong(),
+                            millisUntilNextPayment()
                         )
                         saveDues(uuid)
                     }
@@ -171,7 +171,7 @@ class NewDuesFragment : Fragment() {
         }
     }
 
-    private fun hoursUntilNextPayment(): Long {
+    private fun millisUntilNextPayment(): Long {
             val nextPayment = Calendar.getInstance()
             val currentDate = Calendar.getInstance()
             // Se establece la fecha de primer pago
@@ -182,7 +182,7 @@ class NewDuesFragment : Fragment() {
             // Se añade el tiempo hasta el próximo pago
             nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
             // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-            return (abs(nextPayment.time.time - currentDate.time.time) / 36e5).toLong()
+            return abs(nextPayment.time.time - currentDate.time.time)
 
 
     }
