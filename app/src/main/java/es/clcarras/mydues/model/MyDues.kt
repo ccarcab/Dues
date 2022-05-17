@@ -1,21 +1,32 @@
 package es.clcarras.mydues.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.google.firebase.Timestamp
 import java.util.*
 
-@Entity
 data class MyDues(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    var price: String,
-    var name: String,
-    var description: String = "",
-    var every: String,
-    var recurrence: String,
-    var firstPayment: String,
-    var paymentMethod: String = "",
-    var cardColor: Int,
-    var image: String = "",
-    var pkg: String = "",
-    var notification: UUID
-)
+    var id: String? = null,
+    var price: Int = 0,
+    var name: String? = null,
+    var description: String? = null,
+    var every: Int = 0,
+    var recurrence: String? = null,
+    var firstPayment: Date? = null,
+    var paymentMethod: String? = null,
+    var cardColor: Int = 0,
+    var notification: String? = null,
+    var `package`: String? = null
+) {
+    fun toMap(): Map<String, Any?> = mapOf(
+        "id" to id,
+        "price" to price,
+        "name" to name,
+        "description" to description,
+        "every" to every,
+        "recurrence" to recurrence,
+        "firstPayment" to Timestamp(firstPayment!!),
+        "paymentMethod" to paymentMethod,
+        "cardColor" to cardColor,
+        "notificationUUID" to notification,
+        "package" to `package`
+    )
+}

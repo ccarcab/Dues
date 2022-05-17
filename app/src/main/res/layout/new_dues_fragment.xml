@@ -168,8 +168,7 @@
                     android:drawableEnd="@drawable/ic_calendar_month"
                     android:ems="10"
                     android:focusable="false"
-                    android:inputType="date"
-                    android:text="@{viewModel.firstPayment}" />
+                    android:inputType="date" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton

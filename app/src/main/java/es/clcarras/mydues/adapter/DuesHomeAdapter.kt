@@ -31,7 +31,7 @@ class DuesHomeAdapter(
                 tvName.text = name
                 tvName.setTextColor(textColor)
 
-                tvPrice.text = price
+                tvPrice.text = price.toString()
                 tvPrice.setTextColor(textColor)
 
                 tvCurrency.setTextColor(textColor)

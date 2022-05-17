@@ -21,10 +21,8 @@ class LoginViewModel(
         private val googleSignInClient: GoogleSignInClient,
         private val firebaseAuth: FirebaseAuth
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return LoginViewModel(googleSignInClient, firebaseAuth) as T
-        }
-
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            LoginViewModel(googleSignInClient, firebaseAuth) as T
     }
 
     val googleSignInClient: GoogleSignInClient get() = _googleSignInClient

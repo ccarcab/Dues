@@ -1,6 +1,5 @@
 package es.clcarras.mydues.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -26,18 +25,14 @@ class DuesSelectorAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
             with(dataList[position]) {
-                Picasso.get().load(image)
-                    .into(ivDuesImage)
+                Picasso.get().load(image).into(ivDuesImage)
                 tvDuesName.text = name
-
-                val cardColor = Color.parseColor(color)
-                tvDuesName.setTextColor(Utility.contrastColor(cardColor))
-                container.setCardBackgroundColor(cardColor)
-                ivDuesImage.setColorFilter(Utility.contrastColor(cardColor))
+                tvDuesName.setTextColor(Utility.contrastColor(color))
+                container.setCardBackgroundColor(color)
+                ivDuesImage.setColorFilter(Utility.contrastColor(color))
                 container.setOnClickListener {
-                    val action = DuesSelectorFragmentDirections.actionNavDuesSelectorToNavNewDue(
-                        name, color, image.toString(), pkg
-                    )
+                    val action = DuesSelectorFragmentDirections
+                        .actionNavDuesSelectorToNavNewDue(`package`!!)
                     it.findNavController().navigate(action)
                 }
             }

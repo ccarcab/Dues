@@ -16,18 +16,6 @@
         android:label="NewDueFragment"
         tools:layout="@layout/new_dues_fragment">
         <argument
-            android:name="name"
-            app:argType="string"
-            android:defaultValue="" />
-        <argument
-            android:name="color"
-            app:argType="string"
-            android:defaultValue="" />
-        <argument
-            android:name="image"
-            app:argType="string"
-            android:defaultValue="" />
-        <argument
             android:name="pkg"
             app:argType="string"
             android:defaultValue="" />

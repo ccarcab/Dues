@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import es.clcarras.mydues.database.DuesRoomDatabase
+import es.clcarras.mydues.constants.URI_PLAY_STORE
 import es.clcarras.mydues.databinding.PreloadDuesBottomSheetBinding
 import es.clcarras.mydues.viewmodel.PreloadDuesBottomSheetViewModel
 
@@ -17,7 +17,6 @@ class PreloadDuesBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: PreloadDuesBottomSheetBinding
     private lateinit var viewModel: PreloadDuesBottomSheetViewModel
-    private lateinit var viewModelFactory: PreloadDuesBottomSheetViewModel.Factory
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,19 +24,11 @@ class PreloadDuesBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = PreloadDuesBottomSheetBinding.inflate(layoutInflater)
-        viewModelFactory = PreloadDuesBottomSheetViewModel.Factory(
-            DuesRoomDatabase.getDatabase(requireContext())
-        )
         viewModel =
-            ViewModelProvider(this, viewModelFactory)[PreloadDuesBottomSheetViewModel::class.java]
-        return binding.root
-    }
+            ViewModelProvider(this)[PreloadDuesBottomSheetViewModel::class.java]
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.dataLoaded.observe(viewLifecycleOwner) {
-            if (it) initRecyclerView()
-        }
+        initRecyclerView()
+        return binding.root
     }
 
     private fun initRecyclerView() {
@@ -62,7 +53,7 @@ class PreloadDuesBottomSheet : BottomSheetDialogFragment() {
 
         if (intent == null)
             intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("https://play.google.com/store/apps/details")
+                data = Uri.parse(URI_PLAY_STORE)
                     .buildUpon()
                     .appendQueryParameter("id", pkg).build()
             }

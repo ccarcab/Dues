@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.HomeFragmentBinding
 import es.clcarras.mydues.viewmodel.HomeViewModel
 
@@ -31,14 +30,13 @@ class HomeFragment : Fragment() {
     ): View {
         binding = HomeFragmentBinding.inflate(inflater, container, false)
         viewModelFactory = HomeViewModel.Factory(
-            DuesRoomDatabase.getDatabase(requireContext()),
             resources.getStringArray(R.array.recurrence_array)
         )
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
-        viewModel.loadDatabase()
         setObservers()
+        initRecyclerView()
         return binding.root
     }
 
@@ -60,13 +58,15 @@ class HomeFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.bottom_app_bar, menu)
 
+        viewModel.launcherEnabled.observe(viewLifecycleOwner) {
+            menu.findItem(R.id.launcher).isVisible = it
+        }
+
         val onActionListener = object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
                 (requireActivity() as MainActivity).getFab().hide()
                 binding.tvTotalPrice.visibility = View.GONE
                 binding.tvCurrency.visibility = View.GONE
-                if (viewModel.launcherEnabled.value == true)
-                    menu.findItem(R.id.launcher).isVisible = false
                 return true
             }
 
@@ -74,8 +74,6 @@ class HomeFragment : Fragment() {
                 (requireActivity() as MainActivity).getFab().show()
                 binding.tvTotalPrice.visibility = View.VISIBLE
                 binding.tvCurrency.visibility = View.VISIBLE
-                if (viewModel.launcherEnabled.value == true)
-                    menu.findItem(R.id.launcher).isVisible = true
                 return true
             }
         }
@@ -101,8 +99,8 @@ class HomeFragment : Fragment() {
         with((requireActivity() as MainActivity).getFab()) {
             setImageResource(android.R.drawable.ic_menu_add)
             setOnClickListener {
-//                findNavController().navigate(R.id.nav_dues_selector)
-                (requireActivity() as MainActivity).createWorkRequestPrueba()
+                findNavController().navigate(R.id.nav_dues_selector)
+//                (requireActivity() as MainActivity).createWorkRequestPrueba()
             }
             show()
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
@@ -114,9 +112,6 @@ class HomeFragment : Fragment() {
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
-                dataLoaded.observe(viewLifecycleOwner) {
-                    if (it) initRecyclerView()
-                }
                 deleted.observe(viewLifecycleOwner) {
                     if (it) {
                         snackbar.apply { setText("Dues Deleted!") }.show()

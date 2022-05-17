@@ -104,10 +104,10 @@ class MainActivity : AppCompatActivity() {
         return myWorkRequest.id
     }
 
-    fun deleteWork(uuid: UUID) {
+    fun deleteWork(uuid: String) {
         Log.i("WorkManager", "Deleted work: $uuid")
         WorkManager.getInstance(applicationContext).apply {
-            cancelUniqueWork(uuid.toString())
+            cancelUniqueWork(uuid)
             pruneWork()
         }
     }

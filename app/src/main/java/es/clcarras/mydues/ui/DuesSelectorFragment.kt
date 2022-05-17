@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.firebase.firestore.FirebaseFirestore
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 import es.clcarras.mydues.databinding.DuesSelectorFragmentBinding
@@ -19,7 +18,6 @@ class DuesSelectorFragment : Fragment() {
 
     private lateinit var binding: DuesSelectorFragmentBinding
     private lateinit var viewModel: DuesSelectorViewModel
-    private lateinit var viewModelFactory: DuesSelectorViewModel.Factory
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,12 +26,16 @@ class DuesSelectorFragment : Fragment() {
     ): View {
 
         binding = DuesSelectorFragmentBinding.inflate(inflater, container, false)
-        viewModelFactory = DuesSelectorViewModel.Factory(FirebaseFirestore.getInstance())
-        viewModel = ViewModelProvider(this, viewModelFactory)[DuesSelectorViewModel::class.java]
+        viewModel = ViewModelProvider(this)[DuesSelectorViewModel::class.java]
 
         binding.btnNewDues.setOnClickListener {
             val action = DuesSelectorFragmentDirections.actionNavDuesSelectorToNavNewDue()
             findNavController().navigate(action)
+        }
+
+        with(binding.rvDuesSelector) {
+            adapter = viewModel.adapter
+            layoutManager = GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
         }
 
         return binding.root
@@ -42,18 +44,6 @@ class DuesSelectorFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        viewModel.loadComplete.observe(viewLifecycleOwner) {
-            if (it)
-                with(binding.rvDuesSelector) {
-                    adapter = viewModel.adapter
-                    layoutManager = GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
-                }
-        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {

@@ -4,58 +4,54 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.lifecycle.*
-import es.clcarras.mydues.database.DuesRoomDatabase
+import es.clcarras.mydues.database.MyDuesDao
+import es.clcarras.mydues.database.PreloadDuesDao
 import es.clcarras.mydues.model.MyDues
+import es.clcarras.mydues.model.PreloadedDues
 import es.clcarras.mydues.ui.DateDialogFragment
 import es.clcarras.mydues.utils.Utility
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
-import java.time.LocalDate
 import java.util.*
 
 class DuesDetailsDialogViewModel(
-    private val db: DuesRoomDatabase,
-    private val myDues: MyDues,
+    private val _myDues: MyDues,
     private val homeViewModel: HomeViewModel
 ) : ViewModel() {
 
     class Factory(
-        private val db: DuesRoomDatabase,
         private val myDues: MyDues?,
         private val homeViewModel: HomeViewModel?
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            DuesDetailsDialogViewModel(db, myDues!!, homeViewModel!!) as T
+            DuesDetailsDialogViewModel(myDues!!, homeViewModel!!) as T
     }
 
-    private val _price = MutableLiveData(myDues.price)
+    private val _preloadDues = MutableLiveData<PreloadedDues>()
+    val preloadDues: LiveData<PreloadedDues> get() = _preloadDues
+
+    private val _price = MutableLiveData(_myDues.price.toString())
     val price: LiveData<String> get() = _price
 
-    private val _image = MutableLiveData(myDues.image)
-    val image: LiveData<String> get() = _image
-
-    private val _pkg = MutableLiveData(myDues.pkg)
-    val pkg: LiveData<String> get() = _pkg
-
-    private val _name = MutableLiveData(myDues.name)
+    private val _name = MutableLiveData(_myDues.name!!)
     val name: LiveData<String> get() = _name
 
-    private val _desc = MutableLiveData(myDues.description)
+    private val _desc = MutableLiveData(_myDues.description!!)
     val desc: LiveData<String> get() = _desc
 
-    private val _every = MutableLiveData(myDues.every)
+    private val _every = MutableLiveData(_myDues.every.toString())
     val every: LiveData<String> get() = _every
 
-    private val _paymentMethod = MutableLiveData(myDues.paymentMethod)
+    private val _paymentMethod = MutableLiveData(_myDues.paymentMethod!!)
     val paymentMethod: LiveData<String> get() = _paymentMethod
 
-    private val _recurrence = MutableLiveData(myDues.recurrence)
+    private val _recurrence = MutableLiveData(_myDues.recurrence!!)
     val recurrence: LiveData<String> get() = _recurrence
 
-    private val _firstPayment = MutableLiveData(myDues.firstPayment)
-    val firstPayment: LiveData<String> get() = _firstPayment
+    private val _firstPayment = MutableLiveData(_myDues.firstPayment!!)
+    val firstPayment: LiveData<Date> get() = _firstPayment
 
-    private val _cardColor = MutableLiveData(myDues.cardColor)
+    private val _cardColor = MutableLiveData(_myDues.cardColor)
     val cardColor: LiveData<Int> get() = _cardColor
 
     private val _error = MutableLiveData("")
@@ -66,6 +62,8 @@ class DuesDetailsDialogViewModel(
 
     private val _delete = MutableLiveData(false)
     val delete: LiveData<Boolean> get() = _delete
+
+    val `package` get() = _myDues.`package`
 
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -96,19 +94,19 @@ class DuesDetailsDialogViewModel(
         _paymentMethod.value = text
     }
 
-    fun setNotification(uuid: UUID): UUID {
-        val currentNotification = myDues.notification
-        myDues.notification = uuid
+    fun setNotification(uuid: String): String {
+        val currentNotification = _myDues.notification
+        _myDues.notification = uuid
         return if (!saveDues()) {
-            myDues.notification = currentNotification
+            _myDues.notification = currentNotification
             uuid
         } else
-            currentNotification
+            currentNotification.toString()
     }
 
     fun datePicker(): DateDialogFragment {
         return DateDialogFragment.newInstance { _, year, month, day ->
-            val selectedDate = Utility.formatLocalDate(LocalDate.of(year, month + 1, day))
+            val selectedDate = Utility.getDate(year, month + 1, day)
             if (validInput()) {
                 _firstPayment.value = selectedDate
             }
@@ -124,7 +122,7 @@ class DuesDetailsDialogViewModel(
 
     fun deleteDues() {
         viewModelScope.launch {
-            db.duesDao().remove(myDues)
+            MyDuesDao().deleteDoc(_myDues)
             _delete.value = true
             homeViewModel.deleteDues()
             close()
@@ -135,7 +133,7 @@ class DuesDetailsDialogViewModel(
         if (
             _price.value.isNullOrBlank() ||
             _name.value.isNullOrBlank() ||
-            _firstPayment.value.isNullOrBlank() ||
+            _firstPayment.value == null ||
             _every.value.isNullOrBlank()
         ) {
             _error.value = "Please check if you fill all the required fields."
@@ -148,17 +146,17 @@ class DuesDetailsDialogViewModel(
 
         if (!validInput()) return false
 
-        myDues.price = _price.value!!
-        myDues.name = _name.value!!
-        myDues.description = _desc.value!!
-        myDues.every = _every.value!!
-        myDues.recurrence = _recurrence.value!!
-        myDues.firstPayment = _firstPayment.value!!
-        myDues.paymentMethod = _paymentMethod.value!!
-        myDues.cardColor = _cardColor.value!!
+        _myDues.price = _price.value!!.toInt()
+        _myDues.name = _name.value!!
+        _myDues.description = _desc.value!!
+        _myDues.every = _every.value!!.toInt()
+        _myDues.recurrence = _recurrence.value!!
+        _myDues.firstPayment = _firstPayment.value!!
+        _myDues.paymentMethod = _paymentMethod.value!!
+        _myDues.cardColor = _cardColor.value!!
 
         viewModelScope.launch {
-            db.duesDao().update(myDues)
+            MyDuesDao().updateDoc(_myDues)
             homeViewModel.updateDues()
         }
         return true
@@ -171,6 +169,17 @@ class DuesDetailsDialogViewModel(
     fun close() {
         homeViewModel.detailsDialogFragment = null
         homeViewModel.adapter?.unSelectDues()
+    }
+
+    fun checkSelectedDues() {
+        if (!_myDues.`package`.isNullOrBlank()) {
+            viewModelScope.launch {
+                PreloadDuesDao().getPreloadDueByPackage(_myDues.`package`!!)
+                    .addOnSuccessListener { docs ->
+                        _preloadDues.value = docs.single().toObject(PreloadedDues::class.java)
+                    }
+            }
+        }
     }
 
 }

@@ -2,7 +2,6 @@ package es.clcarras.mydues.ui
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
@@ -14,13 +13,11 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 import es.clcarras.mydues.utils.Utility
-import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
 import es.clcarras.mydues.viewmodel.NewDuesViewModel
 import java.time.ZoneId
@@ -41,27 +38,19 @@ class NewDuesFragment : Fragment() {
     ): View {
         binding = NewDuesFragmentBinding.inflate(inflater, container, false)
         val args = NewDuesFragmentArgs.fromBundle(requireArguments())
-        viewModelFactory = NewDuesViewModel.Factory(
-            DuesRoomDatabase.getDatabase(requireContext()), args,
+        viewModelFactory = NewDuesViewModel.Factory( args,
             getColor(requireContext(), R.color.default_card_color)
         )
         viewModel = ViewModelProvider(this, viewModelFactory)[NewDuesViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
-        with(binding) {
-            etName.isEnabled = args.name.isEmpty()
-            if (args.image != "") {
-                ivPreloadDues.visibility = View.VISIBLE
-                Picasso.get().load(Uri.parse(args.image)).into(ivPreloadDues)
-                ivPreloadDues.setColorFilter(Utility.contrastColor(viewModel!!.cardColor.value!!))
-            }
-        }
-
         setOnTextChanged()
         setOnClickListeners()
         setSpinner()
         setObservers()
+
+        viewModel.checkSelectedDues()
 
         return binding.root
     }
@@ -113,6 +102,17 @@ class NewDuesFragment : Fragment() {
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
+                preloadDues.observe(viewLifecycleOwner) {
+                    etName.isEnabled = it == null
+                    if (it != null) {
+                        with(binding) {
+                            ivPreloadDues.visibility = View.VISIBLE
+                            Picasso.get().load(Uri.parse(it.image)).into(ivPreloadDues)
+                            ivPreloadDues.setColorFilter(Utility.contrastColor(it.color))
+                            etName.setText(it.name)
+                        }
+                    }
+                }
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
@@ -134,25 +134,28 @@ class NewDuesFragment : Fragment() {
                     }
                 }
                 firstPayment.observe(viewLifecycleOwner) {
-                    if (it.isNotBlank()) etFirstPayment.error = null
+                    if (it != null) {
+                        etFirstPayment.error = null
+                        etFirstPayment.setText("$it")
+                    }
                 }
                 validInput.observe(viewLifecycleOwner) {
                     if (it) {
                         val uuid = (requireActivity() as MainActivity).createWorkRequest(
                             getString(
                                 R.string.notification_msg,
-                                name.value, price.value
+                                name.value, price.value.toString()
                             ),
                             (periodicityInHours() * 36e5).toLong(),
                             millisUntilNextPayment()
-                        )
+                        ).toString()
                         saveDues(uuid)
                     }
                 }
                 insert.observe(viewLifecycleOwner) {
                     if (it) {
                         snackbar.apply { setText("Dues Created!") }.show()
-                        findNavController().popBackStack()
+                        findNavController().navigate(R.id.nav_home)
                     }
                 }
             }
@@ -175,10 +178,7 @@ class NewDuesFragment : Fragment() {
             val nextPayment = Calendar.getInstance()
             val currentDate = Calendar.getInstance()
             // Se establece la fecha de primer pago
-            nextPayment.time = Date.from(
-                Utility.getLocalDateFromString(viewModel.firstPayment.value!!)
-                    .atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-            )
+            nextPayment.time = viewModel.firstPayment.value!!
             // Se añade el tiempo hasta el próximo pago
             nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
             // Se calcula el tiempo que queda desde ahora hasta el próximo pago

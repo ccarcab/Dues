@@ -4,7 +4,9 @@ import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 import vadiole.colorpicker.ColorPickerDialog
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class Utility {
     companion object {
@@ -30,5 +32,9 @@ class Utility {
 
         fun getLocalDateFromString(d: String): LocalDate =
             LocalDate.parse(d, datePattern)
+
+        fun getDate(year: Int, month: Int, day: Int): Date =
+            Date.from(LocalDate.of(year, month, day).atStartOfDay(ZoneId.systemDefault()).toInstant())
+
     }
 }

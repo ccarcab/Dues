@@ -3,25 +3,14 @@ package es.clcarras.mydues.viewmodel
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.google.firebase.firestore.FirebaseFirestore
 import es.clcarras.mydues.adapter.DuesSelectorAdapter
+import es.clcarras.mydues.database.PreloadDuesDao
 import es.clcarras.mydues.model.PreloadedDues
+import kotlinx.coroutines.launch
 
-class DuesSelectorViewModel(
-    firestore: FirebaseFirestore
-) : ViewModel() {
-
-    class Factory(private val firestore: FirebaseFirestore) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            DuesSelectorViewModel(firestore) as T
-    }
-
-    private val _loadComplete = MutableLiveData(false)
-    val loadComplete: LiveData<Boolean> get() = _loadComplete
+class DuesSelectorViewModel : ViewModel() {
 
     private var adapterDataList = mutableListOf<PreloadedDues>()
     private var dataList = mutableListOf<PreloadedDues>()
@@ -38,7 +27,7 @@ class DuesSelectorViewModel(
             adapterDataList.clear()
 
             dataList.forEach {
-                if (it.name.contains(newText!!, true))
+                if (it.name!!.contains(newText!!, true))
                     adapterDataList.add(it)
             }
 
@@ -50,27 +39,17 @@ class DuesSelectorViewModel(
     }
 
     init {
-        adapterDataList.clear()
-        firestore
-            .collection("dues")
-            .get()
-            .addOnSuccessListener { docs ->
-                for (doc in docs) {
-                    dataList.add(
-                        PreloadedDues(
-                            doc["name"].toString(),
-                            doc["color"].toString(),
-                            Uri.parse(doc["image"].toString()),
-                            doc["package"].toString()
-                        )
-                    )
+        _adapter = DuesSelectorAdapter(adapterDataList)
+        viewModelScope.launch {
+            PreloadDuesDao().getAllPreloadDues().addOnSuccessListener { col ->
+                for (doc in col) {
+                    val preDues = doc.toObject(PreloadedDues::class.java)
+                    dataList.add(preDues)
+                    adapterDataList.add(preDues)
+                    _adapter!!.notifyItemInserted(adapterDataList.indexOf(preDues))
                 }
-
-                adapterDataList.addAll(dataList)
-                _adapter = DuesSelectorAdapter(adapterDataList)
-                _loadComplete.value = true
             }
-
+        }
     }
 }
 

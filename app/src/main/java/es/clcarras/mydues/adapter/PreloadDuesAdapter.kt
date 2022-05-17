@@ -7,11 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.databinding.PreloadDuesItemBinding
-import es.clcarras.mydues.model.MyDues
+import es.clcarras.mydues.model.PreloadedDues
 import es.clcarras.mydues.utils.Utility
 
 class PreloadDuesAdapter(
-    private val dataList: List<MyDues>
+    private val dataList: List<PreloadedDues>
 ) : RecyclerView.Adapter<PreloadDuesAdapter.ViewHolder>() {
 
     private val _selectedAppPackage = MutableLiveData("")
@@ -30,10 +30,10 @@ class PreloadDuesAdapter(
             with(dataList[position]) {
                 Picasso.get().load(image).into(ivLogo)
                 ivLogo.setOnClickListener {
-                    _selectedAppPackage.value = pkg
+                    _selectedAppPackage.value = `package`
                 }
-                ivLogo.setColorFilter(Utility.contrastColor(cardColor))
-                container.setCardBackgroundColor(cardColor)
+                ivLogo.setColorFilter(Utility.contrastColor(color))
+                container.setCardBackgroundColor(color)
             }
         }
     }

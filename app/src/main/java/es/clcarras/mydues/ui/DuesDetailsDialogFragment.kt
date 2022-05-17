@@ -24,7 +24,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.database.DuesRoomDatabase
 import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.utils.Utility
@@ -56,7 +55,7 @@ class DuesDetailsDialogFragment(
 
         _binding = DuesDetailsDialogFragmentBinding.inflate(layoutInflater)
         viewModelFactory = DuesDetailsDialogViewModel.Factory(
-            DuesRoomDatabase.getDatabase(requireContext()), myDues, homeViewModel
+            myDues, homeViewModel
         )
         viewModel =
             ViewModelProvider(this, viewModelFactory)[DuesDetailsDialogViewModel::class.java]
@@ -82,39 +81,17 @@ class DuesDetailsDialogFragment(
         setSpinner()
         setObservers()
 
+        viewModel.checkSelectedDues()
+
         with(binding) {
             with(myDues) {
                 if (this?.description?.isBlank() == true) tilDesc.visibility = View.GONE
                 if (this?.paymentMethod?.isBlank() == true) tilPaymentMethod.visibility = View.GONE
-                if (this?.image?.isNotBlank() == true) {
-                    ivPreloadDues.visibility = View.VISIBLE
-                    ivPreloadDues.setOnClickListener {
-                        openApp(viewModel!!.pkg.value!!)
-                    }
-                    Picasso.get().load(Uri.parse(viewModel!!.image.value!!)).into(ivPreloadDues)
-                    ivPreloadDues.setColorFilter(Utility.contrastColor(viewModel!!.cardColor.value!!))
-                }
             }
         }
 
         return binding.root
     }
-
-    private fun openApp(pkg: String) {
-
-        var intent =
-            requireContext().packageManager.getLaunchIntentForPackage(pkg)
-
-        if (intent == null)
-            intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("https://play.google.com/store/apps/details")
-                    .buildUpon()
-                    .appendQueryParameter("id", pkg).build()
-            }
-
-        requireContext().startActivity(intent)
-    }
-
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
@@ -156,6 +133,15 @@ class DuesDetailsDialogFragment(
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
+
+                preloadDues.observe(viewLifecycleOwner) {
+                    if (it != null) {
+                        ivPreloadDues.visibility = View.VISIBLE
+                        Picasso.get().load(Uri.parse(it.image)).into(ivPreloadDues)
+                        ivPreloadDues.setColorFilter(Utility.contrastColor(it.color))
+                    }
+                }
+
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
@@ -169,6 +155,7 @@ class DuesDetailsDialogFragment(
                     if (ivPreloadDues.visibility == View.VISIBLE)
                         ivPreloadDues.setColorFilter(Utility.contrastColor(it))
                 }
+
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
                         Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
@@ -177,27 +164,32 @@ class DuesDetailsDialogFragment(
                         if (etFirstPayment.text.isNullOrBlank()) etFirstPayment.error = "Required"
                     }
                 }
+
                 firstPayment.observe(viewLifecycleOwner) {
-                    if (it.isNotBlank()) {
+                    if (it != null) {
                         etFirstPayment.error = null
+                        etFirstPayment.setText("$it")
                         if (it != myDues?.firstPayment) {
                             updateNotification()
                         }
                     }
                 }
+
                 every.observe(viewLifecycleOwner) {
-                    if (it != myDues?.every && it.isNotBlank()) {
+                    if (it.toInt() != myDues?.every && it.toInt() > 0)
                         updateNotification()
-                    }
                 }
+
                 recurrence.observe(viewLifecycleOwner) {
-                    if (it != myDues?.recurrence && it.isNotBlank()) {
+                    if (it != myDues?.recurrence && it.isNotBlank())
                         updateNotification()
-                    }
+
                 }
+
                 update.observe(viewLifecycleOwner) {
                     if (it) toggleEditMode()
                 }
+
                 delete.observe(viewLifecycleOwner) {
                     if (it) {
                         (requireActivity() as MainActivity).deleteWork(myDues?.notification!!)
@@ -214,11 +206,11 @@ class DuesDetailsDialogFragment(
             val uuid = createWorkRequest(
                 getString(
                     R.string.notification_msg,
-                    myDues?.name, myDues?.price
+                    myDues?.name, myDues?.price.toString()
                 ),
                 (periodicityInHours() * 36e5).toLong(),
                 millisUntilNextPayment()
-            )
+            ).toString()
             deleteWork(viewModel.setNotification(uuid))
         }
     }
@@ -246,7 +238,7 @@ class DuesDetailsDialogFragment(
                         it.visibility = View.GONE
 
                 if (it is TextInputLayout)
-                    if (it.editText?.id != R.id.etName || viewModel!!.image.value!!.isBlank())
+                    if (it.editText?.id != R.id.etName || viewModel!!.`package` != null)
                         it.editText?.isEnabled = !it.editText?.isEnabled!!
 
                 if (it is EditText) it.isEnabled = !it.isEnabled
@@ -259,10 +251,7 @@ class DuesDetailsDialogFragment(
         val nextPayment = Calendar.getInstance()
         val currentDate = Calendar.getInstance()
         // Se establece la fecha de primer pago
-        nextPayment.time = Date.from(
-            Utility.getLocalDateFromString(viewModel.firstPayment.value!!)
-                .atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-        )
+        nextPayment.time = viewModel.firstPayment.value!!
         // Se añade el tiempo hasta el próximo pago
         nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
         // Se calcula el tiempo que queda desde ahora hasta el próximo pago

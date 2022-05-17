@@ -175,8 +175,7 @@
                         android:ems="10"
                         android:enabled="false"
                         android:focusable="false"
-                        android:inputType="date"
-                        android:text="@{viewModel.firstPayment}" />
+                        android:inputType="date" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
