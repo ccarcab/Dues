@@ -3,22 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_login">
 
     <fragment
         android:id="@+id/nav_home"
         android:name="es.clcarras.mydues.ui.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/home_fragment" >
-        <action
-            android:id="@+id/action_nav_home_to_nav_dues_selector"
-            app:destination="@id/nav_dues_selector"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            app:popUpTo="@id/nav_home" />
-    </fragment>
+        tools:layout="@layout/home_fragment" />
     <fragment
         android:id="@+id/nav_new_due"
         android:name="es.clcarras.mydues.ui.NewDuesFragment"
@@ -54,18 +45,16 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"
             app:popUpTo="@id/nav_home" />
-        <action
-            android:id="@+id/action_nav_dues_selector_to_nav_home"
-            app:destination="@id/nav_home"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"/>
     </fragment>
     <dialog
         android:id="@+id/nav_preload_dues"
         android:name="es.clcarras.mydues.ui.PreloadDuesBottomSheet"
         android:label="PreloadDuesDialogFragment"
         tools:layout="@layout/preload_dues_bottom_sheet"/>
+    <fragment
+        android:id="@+id/nav_login"
+        android:name="es.clcarras.mydues.ui.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/login_fragment"/>
 
 </navigation>

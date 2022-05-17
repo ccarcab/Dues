@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "814549884038-l8grjinps3940i4esmdshhmc05ahge1e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "es.clcarras.mydues",
+            "certificate_hash": "280e4152ccee7c59ef226de1945cdb16a4e73a31"
+          }
+        },
+        {
           "client_id": "814549884038-inibblsehsqko6b5vmldpngjfdntcivs.apps.googleusercontent.com",
           "client_type": 3
         }

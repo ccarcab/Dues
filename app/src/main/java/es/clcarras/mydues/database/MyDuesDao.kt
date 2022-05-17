@@ -4,7 +4,7 @@ import androidx.room.*
 import es.clcarras.mydues.model.MyDues
 
 @Dao
-interface DuesDao {
+interface MyDuesDao {
 
     @Query("SELECT * FROM mydues")
     suspend fun getAll(): MutableList<MyDues>

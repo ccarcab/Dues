@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Dues">
+        android:theme="@style/splash">
         <activity
             android:name="es.clcarras.mydues.MainActivity"
             android:exported="true"

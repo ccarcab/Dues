@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="es.clcarras.mydues.viewmodel.LoginViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_bg"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tilEmail"
+        app:layout_constraintTop_toTopOf="@+id/tilEmail"
+        tools:context=".ui.LoginFragment">
+
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_in_title"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+
+            <Button
+                android:id="@+id/btnGoogle"
+                style="@style/button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/google_btn"
+                android:drawableLeft="@drawable/googleg_standard_color_18"
+                android:paddingStart="80dp"
+                android:paddingEnd="100dp"
+                android:text="@string/sign_in_google"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/tvSubtitle1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvSubtitle1"
+                style="@style/text"
+                android:text="@string/sign_in_subtitle1"
+                app:layout_constraintBottom_toTopOf="@+id/tilEmail"
+                app:layout_constraintEnd_toStartOf="@+id/materialDivider2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/materialDivider1"
+                app:layout_constraintTop_toBottomOf="@+id/btnGoogle" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/materialDivider1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:dividerInsetEnd="16dp"
+                app:dividerInsetStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubtitle1"
+                app:layout_constraintEnd_toStartOf="@+id/tvSubtitle1"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvSubtitle1" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/materialDivider2"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:dividerInsetEnd="16dp"
+                app:dividerInsetStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubtitle1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tvSubtitle1"
+                app:layout_constraintTop_toTopOf="@+id/tvSubtitle1" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilEmail"
+                style="@style/textInputOuterField"
+                app:layout_constraintBottom_toTopOf="@+id/tilPass"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvSubtitle1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEmail"
+                    style="@style/textInputInnerField"
+                    android:hint="@string/type_email_hint"
+                    android:text="@{viewModel.email}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPass"
+                style="@style/textInputOuterField"
+                app:layout_constraintBottom_toTopOf="@+id/tilConfirmPass"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilEmail"
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPass"
+                    style="@style/textInputInnerField"
+                    android:hint="@string/type_password_hint"
+                    android:inputType="textPassword"
+                    android:text="@{viewModel.pass}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilConfirmPass"
+                style="@style/textInputOuterField"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/btnEnter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilPass"
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etConfirmPass"
+                    style="@style/textInputInnerField"
+                    android:hint="@string/retype_password_hint"
+                    android:inputType="textPassword"
+                    android:text="@{viewModel.confirmPass}" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnEnter"
+                style="@style/button"
+                android:text="@string/sign_in"
+                app:layout_constraintBottom_toTopOf="@+id/tvSubtitle2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilConfirmPass" />
+
+            <TextView
+                android:id="@+id/tvSubtitle2"
+                style="@style/text"
+                android:text="@string/sign_in_subtitle2"
+                app:layout_constraintBottom_toTopOf="@+id/tvToggleView"
+                app:layout_constraintEnd_toStartOf="@+id/materialDivider4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/materialDivider3"
+                app:layout_constraintTop_toBottomOf="@+id/btnEnter" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/materialDivider3"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:dividerInsetEnd="16dp"
+                app:dividerInsetStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubtitle2"
+                app:layout_constraintEnd_toStartOf="@+id/tvSubtitle2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvSubtitle2" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/materialDivider4"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:dividerInsetEnd="16dp"
+                app:dividerInsetStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubtitle2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tvSubtitle2"
+                app:layout_constraintTop_toTopOf="@+id/tvSubtitle2" />
+
+            <TextView
+                android:id="@+id/tvToggleView"
+                style="@style/text"
+                android:onClick="@{() -> viewModel.toggleSignInSignUp()}"
+                android:text="@string/sign_in_toggle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvSubtitle2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

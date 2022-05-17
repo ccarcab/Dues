@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Button Colors -->
+    <color name="textColor_Button">@color/white</color>
+    <color name="backgroundTint_Button">@color/gray</color>
+
+    <!-- Radio Button -->
+    <color name="backgroundTint_radio_button">@color/gray</color>
+
+    <!-- Text -->
+    <color name="textColor_Text">@color/white</color>
+
+    <!-- TextInputOuterField -->
+    <color name="boxStrokeColor_TextInputOuterField">@color/white</color>
+    <color name="hintTextColor_TextInputOuterField">@color/white</color>
+
+    <!-- TextInputInnerField -->
+    <color name="textColor_TextInputInnerField">@color/white</color>
+    <color name="textColorHint_TextInputInnerField">@color/gray</color>
+
+    <!-- Nav Header Main -->
+    <color name="nav_header_color">#121212</color>
+
+    <!--  Splash Screen  -->
+    <color name="splash_background">#121212</color>
+    <color name="splash_logo">#FFFFFF</color>
+
+    <!--  Gradient  -->
+    <color name="gradient_primary">#3C4A99</color>
+    <color name="gradient_secondary">#121212</color>
+
+    <!--  Google Btn  -->
+    <color name="google_btn">@color/gray</color>
+
+    <!--  Material 3 Colors  -->
+    <color name="primaryContainer">#B8CAFF</color>
+    <color name="onPrimaryContainer">#00225D</color>
+    <color name="primaryInverse">#BCF2FF</color>
+    <color name="secondaryContainer">#DCE5FF</color>
+    <color name="onSecondaryContainer">#627CC9</color>
+    <color name="tertiary">#525B7D</color>
+    <color name="onTertiary">#253149</color>
+    <color name="tertiaryContainer">#3B4663</color>
+    <color name="onTertiaryContainer">#D8E2FF</color>
+
+</resources>

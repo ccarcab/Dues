@@ -49,7 +49,10 @@ class HomeFragment : Fragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        (requireActivity() as MainActivity).getBottomAppBar().performShow()
+        with((requireActivity() as MainActivity)) {
+            supportActionBar?.show()
+            getBottomAppBar().performShow()
+        }
         setFabAction()
 
     }

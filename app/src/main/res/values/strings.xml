@@ -36,5 +36,24 @@
         <item>Year</item>
     </string-array>
 
+    <!-- defaultWebId from project > src > google-services.json > client > services > client_id -->
+    <string name="defaultWebId">814549884038-inibblsehsqko6b5vmldpngjfdntcivs.apps.googleusercontent.com</string>
+
+    <!--  Login Fragment  -->
+    <string name="sign_in_google">Login with Google</string>
+    <string name="sign_in_title">¡Welcome!\n\nLogin to continue</string>
+    <string name="sign_in_subtitle1">Login with account</string>
+    <string name="sign_in_subtitle2">New here?</string>
+    <string name="sign_in_toggle">New account</string>
+    <string name="sign_in">Login</string>
+    <string name="sign_up_title">Not registered?\n\nSignup to continue</string>
+    <string name="sign_up_subtitle1">Signup account</string>
+    <string name="sign_up_subtitle2">Got an account?</string>
+    <string name="sign_up_toggle">Signin with my account</string>
+    <string name="sign_up">Signup</string>
+    <string name="type_email_hint">Type your email...</string>
+    <string name="type_password_hint">Type your password...</string>
+    <string name="retype_password_hint">Retype your password...</string>
+
 
 </resources>
