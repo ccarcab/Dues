@@ -32,6 +32,41 @@ class MainActivity : AppCompatActivity() {
 
     fun getFab() = binding.fab
 
+    fun createWorkRequestPrueba() {
+
+        val workName = "createWorkRequestPrueba.Test"
+
+        WorkManager.getInstance(applicationContext).cancelUniqueWork(workName)
+
+        val minutes = 30L
+        val periodicityInMillis = minutes * 60000
+
+        val myWorkRequest = PeriodicWorkRequestBuilder<DuesNotificationWorker>(
+            periodicityInMillis, TimeUnit.MILLISECONDS
+        ).apply {
+
+            setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
+            setInputData(
+                workDataOf(
+                    "title" to "Dues",
+                    "message" to "Testing Worker in $minutes minutes!"
+                )
+            )
+        }.build()
+
+        Log.i("WorkManager", "Periodicity in millis: $periodicityInMillis")
+
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            workName,
+            ExistingPeriodicWorkPolicy.KEEP,
+            myWorkRequest
+        )
+    }
+
     fun createWorkRequest(message: String, periodicityInMillis: Long, delayInMillis: Long): UUID {
 
         val myWorkRequest = PeriodicWorkRequestBuilder<DuesNotificationWorker>(

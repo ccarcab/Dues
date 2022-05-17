@@ -28,8 +28,13 @@ class PreloadDuesBottomSheetViewModel(
     init {
         viewModelScope.launch {
             with(database.duesDao()) {
-                dataList = getPreloadDues()
-                dataList = dataList.toSet().toMutableList()
+                val appsAdded = mutableListOf<String>()
+                getPreloadDues().forEach { myDues ->
+                    if (!appsAdded.contains(myDues.pkg)) {
+                        appsAdded.add(myDues.pkg)
+                        dataList.add(myDues)
+                    }
+                }
                 _adapter = PreloadDuesAdapter(dataList)
                 _dataLoaded.value = true
             }

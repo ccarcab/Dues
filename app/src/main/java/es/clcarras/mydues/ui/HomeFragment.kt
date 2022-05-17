@@ -97,7 +97,10 @@ class HomeFragment : Fragment() {
     private fun setFabAction() {
         with((requireActivity() as MainActivity).getFab()) {
             setImageResource(android.R.drawable.ic_menu_add)
-            setOnClickListener { findNavController().navigate(R.id.nav_dues_selector) }
+            setOnClickListener {
+//                findNavController().navigate(R.id.nav_dues_selector)
+                (requireActivity() as MainActivity).createWorkRequestPrueba()
+            }
             show()
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
                 anchorView = this@with
