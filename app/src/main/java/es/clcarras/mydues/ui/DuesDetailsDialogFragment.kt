@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.icu.util.Calendar
 import android.net.Uri
@@ -29,8 +28,6 @@ import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.DuesDetailsDialogViewModel
 import es.clcarras.mydues.viewmodel.HomeViewModel
-import java.time.ZoneId
-import java.util.*
 import kotlin.math.abs
 
 
@@ -250,11 +247,8 @@ class DuesDetailsDialogFragment(
     private fun millisUntilNextPayment(): Long {
         val nextPayment = Calendar.getInstance()
         val currentDate = Calendar.getInstance()
-        // Se establece la fecha de primer pago
         nextPayment.time = viewModel.firstPayment.value!!
-        // Se añade el tiempo hasta el próximo pago
         nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
-        // Se calcula el tiempo que queda desde ahora hasta el próximo pago
         return abs(nextPayment.time.time - currentDate.time.time)
     }
 
