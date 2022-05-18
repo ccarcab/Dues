@@ -64,6 +64,7 @@ class DuesDetailsDialogViewModel(
     val delete: LiveData<Boolean> get() = _delete
 
     val `package` get() = _myDues.`package`
+    val notificationUUID get() = _myDues.notificationUUID!!
 
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -95,10 +96,10 @@ class DuesDetailsDialogViewModel(
     }
 
     fun setNotification(uuid: String): String {
-        val currentNotification = _myDues.notification
-        _myDues.notification = uuid
+        val currentNotification = _myDues.notificationUUID
+        _myDues.notificationUUID = uuid
         return if (!saveDues()) {
-            _myDues.notification = currentNotification
+            _myDues.notificationUUID = currentNotification
             uuid
         } else
             currentNotification.toString()
@@ -122,8 +123,8 @@ class DuesDetailsDialogViewModel(
 
     fun deleteDues() {
         viewModelScope.launch {
-            MyDuesDao().deleteDoc(_myDues)
             _delete.value = true
+            MyDuesDao().deleteDoc(_myDues)
             homeViewModel.deleteDues()
             close()
         }

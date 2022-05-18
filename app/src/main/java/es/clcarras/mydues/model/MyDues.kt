@@ -13,7 +13,7 @@ data class MyDues(
     var firstPayment: Date? = null,
     var paymentMethod: String? = null,
     var cardColor: Int = 0,
-    var notification: String? = null,
+    var notificationUUID: String? = null,
     var `package`: String? = null
 ) {
     fun toMap(): Map<String, Any?> = mapOf(
@@ -26,7 +26,7 @@ data class MyDues(
         "firstPayment" to Timestamp(firstPayment!!),
         "paymentMethod" to paymentMethod,
         "cardColor" to cardColor,
-        "notificationUUID" to notification,
+        "notificationUUID" to notificationUUID,
         "package" to `package`
     )
 }

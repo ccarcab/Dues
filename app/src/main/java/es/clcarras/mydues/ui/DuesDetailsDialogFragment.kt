@@ -192,7 +192,7 @@ class DuesDetailsDialogFragment(
 
                 delete.observe(viewLifecycleOwner) {
                     if (it) {
-                        (requireActivity() as MainActivity).deleteWork(myDues?.notification!!)
+                        (requireActivity() as MainActivity).deleteWork(notificationUUID)
                         dialog?.dismiss()
                     }
                 }

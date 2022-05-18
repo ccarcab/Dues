@@ -130,7 +130,7 @@ class NewDuesViewModel(
                 firstPayment = _firstPayment.value,
                 paymentMethod = _paymentMethod.value,
                 cardColor = _cardColor.value!!,
-                notification = uuid,
+                notificationUUID = uuid,
                 `package` = _preloadDues.value?.`package`
             )
 
