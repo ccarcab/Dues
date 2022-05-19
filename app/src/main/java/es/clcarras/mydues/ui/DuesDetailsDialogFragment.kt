@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.res.ColorStateList
-import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,7 +27,6 @@ import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.DuesDetailsDialogViewModel
 import es.clcarras.mydues.viewmodel.HomeViewModel
-import kotlin.math.abs
 
 
 class DuesDetailsDialogFragment(
@@ -52,7 +50,8 @@ class DuesDetailsDialogFragment(
 
         _binding = DuesDetailsDialogFragmentBinding.inflate(layoutInflater)
         viewModelFactory = DuesDetailsDialogViewModel.Factory(
-            myDues, homeViewModel
+            myDues, homeViewModel,
+            resources.getStringArray(R.array.recurrence_array)
         )
         viewModel =
             ViewModelProvider(this, viewModelFactory)[DuesDetailsDialogViewModel::class.java]
@@ -165,7 +164,7 @@ class DuesDetailsDialogFragment(
                 firstPayment.observe(viewLifecycleOwner) {
                     if (it != null) {
                         etFirstPayment.error = null
-                        etFirstPayment.setText("$it")
+                        etFirstPayment.setText(Utility.formatDate(it))
                         if (it != myDues?.firstPayment) {
                             updateNotification()
                         }
@@ -173,14 +172,13 @@ class DuesDetailsDialogFragment(
                 }
 
                 every.observe(viewLifecycleOwner) {
-                    if (it.toInt() != myDues?.every && it.toInt() > 0)
+                    if (!it.isNullOrBlank() && it.toInt() != myDues?.every && it.toInt() > 0)
                         updateNotification()
                 }
 
                 recurrence.observe(viewLifecycleOwner) {
                     if (it != myDues?.recurrence && it.isNotBlank())
                         updateNotification()
-
                 }
 
                 update.observe(viewLifecycleOwner) {
@@ -200,15 +198,19 @@ class DuesDetailsDialogFragment(
 
     private fun updateNotification() {
         with(requireActivity() as MainActivity) {
-            val uuid = createWorkRequest(
-                getString(
+            with(viewModel) {
+                val periodTime = (periodicityInHours() * 36e5).toLong()
+                val msg = getString(
                     R.string.notification_msg,
-                    myDues?.name, myDues?.price.toString()
-                ),
-                (periodicityInHours() * 36e5).toLong(),
-                millisUntilNextPayment()
-            ).toString()
-            deleteWork(viewModel.setNotification(uuid))
+                    name.value, price.value.toString()
+                )
+                val uuid = (requireActivity() as MainActivity).createWorkRequest(
+                    msg,
+                    periodTime,
+                    millisUntilNextPayment()
+                ).toString()
+                deleteWork(setNotification(uuid, msg))
+            }
         }
     }
 
@@ -241,28 +243,6 @@ class DuesDetailsDialogFragment(
                 if (it is EditText) it.isEnabled = !it.isEnabled
                 if (it is Spinner) it.isEnabled = !it.isEnabled
             }
-        }
-    }
-
-    private fun millisUntilNextPayment(): Long {
-        val nextPayment = Calendar.getInstance()
-        val currentDate = Calendar.getInstance()
-        nextPayment.time = viewModel.firstPayment.value!!
-        nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
-        return abs(nextPayment.time.time - currentDate.time.time)
-    }
-
-    private fun periodicityInHours(): Int {
-        with(viewModel) {
-            val timeUnits = resources.getStringArray(R.array.recurrence_array)
-            val period = when (viewModel.recurrence.value) {
-                timeUnits[0] -> 1
-                timeUnits[1] -> 7
-                timeUnits[2] -> 30
-                timeUnits[3] -> 365
-                else -> 0
-            } * (every.value?.toInt() ?: 1) * 24
-            return period
         }
     }
 

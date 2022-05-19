@@ -3,8 +3,7 @@ package es.clcarras.mydues.utils
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 import vadiole.colorpicker.ColorPickerDialog
-import java.time.LocalDate
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -27,14 +26,23 @@ class Utility {
 
         private val datePattern = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-        fun formatLocalDate(localDate: LocalDate): String =
+        private fun formatLocalDate(localDate: LocalDate): String =
             localDate.format(datePattern)
 
-        fun getLocalDateFromString(d: String): LocalDate =
-            LocalDate.parse(d, datePattern)
+        private fun getLocalFromDate(dateToConvert: Date): LocalDate =
+            Instant.ofEpochMilli(dateToConvert.time)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+
+        fun formatDate(date: Date): String = formatLocalDate(getLocalFromDate(date))
 
         fun getDate(year: Int, month: Int, day: Int): Date =
-            Date.from(LocalDate.of(year, month, day).atStartOfDay(ZoneId.systemDefault()).toInstant())
+            Date.from(
+                LocalDate
+                    .of(year, month, day)
+                    .atTime(12, 0)
+                    .toInstant(ZoneId.systemDefault().rules.getOffset(LocalDateTime.now()))
+            )
 
     }
 }

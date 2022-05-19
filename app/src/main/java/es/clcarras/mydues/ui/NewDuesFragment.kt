@@ -2,27 +2,23 @@ package es.clcarras.mydues.ui
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.databinding.NewDuesFragmentBinding
+import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.NewDuesViewModel
-import java.time.ZoneId
-import java.util.*
-import kotlin.math.abs
 
 class NewDuesFragment : Fragment() {
 
@@ -38,8 +34,10 @@ class NewDuesFragment : Fragment() {
     ): View {
         binding = NewDuesFragmentBinding.inflate(inflater, container, false)
         val args = NewDuesFragmentArgs.fromBundle(requireArguments())
-        viewModelFactory = NewDuesViewModel.Factory( args,
-            getColor(requireContext(), R.color.default_card_color)
+        viewModelFactory = NewDuesViewModel.Factory(
+            args,
+            getColor(requireContext(), R.color.default_card_color),
+            resources.getStringArray(R.array.recurrence_array)
         )
         viewModel = ViewModelProvider(this, viewModelFactory)[NewDuesViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
@@ -116,7 +114,8 @@ class NewDuesFragment : Fragment() {
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
-                    btnColorPicker.compoundDrawableTintList = ColorStateList.valueOf(Utility.contrastColor(it))
+                    btnColorPicker.compoundDrawableTintList =
+                        ColorStateList.valueOf(Utility.contrastColor(it))
                     etPrice.backgroundTintList = ColorStateList.valueOf(it)
                     etPrice.setTextColor(Utility.contrastColor(it))
                     etPrice.setHintTextColor(Utility.contrastColor(it))
@@ -136,20 +135,22 @@ class NewDuesFragment : Fragment() {
                 firstPayment.observe(viewLifecycleOwner) {
                     if (it != null) {
                         etFirstPayment.error = null
-                        etFirstPayment.setText("$it")
+                        etFirstPayment.setText(Utility.formatDate(it))
                     }
                 }
                 validInput.observe(viewLifecycleOwner) {
                     if (it) {
+                        val periodTime = (periodicityInHours() * 36e5).toLong()
+                        val msg = getString(
+                            R.string.notification_msg,
+                            name.value, price.value.toString()
+                        )
                         val uuid = (requireActivity() as MainActivity).createWorkRequest(
-                            getString(
-                                R.string.notification_msg,
-                                name.value, price.value.toString()
-                            ),
-                            (periodicityInHours() * 36e5).toLong(),
+                            msg,
+                            periodTime,
                             millisUntilNextPayment()
                         ).toString()
-                        saveDues(uuid)
+                        saveDues(uuid, msg)
                     }
                 }
                 insert.observe(viewLifecycleOwner) {
@@ -174,31 +175,5 @@ class NewDuesFragment : Fragment() {
         }
     }
 
-    private fun millisUntilNextPayment(): Long {
-            val nextPayment = Calendar.getInstance()
-            val currentDate = Calendar.getInstance()
-            // Se establece la fecha de primer pago
-            nextPayment.time = viewModel.firstPayment.value!!
-            // Se añade el tiempo hasta el próximo pago
-            nextPayment.add(Calendar.HOUR_OF_DAY, periodicityInHours())
-            // Se calcula el tiempo que queda desde ahora hasta el próximo pago
-            return abs(nextPayment.time.time - currentDate.time.time)
-
-
-    }
-
-    private fun periodicityInHours(): Int {
-        with(viewModel) {
-            val timeUnits = resources.getStringArray(R.array.recurrence_array)
-            val period = when (viewModel.recurrence.value) {
-                timeUnits[0] -> 1
-                timeUnits[1] -> 7
-                timeUnits[2] -> 30
-                timeUnits[3] -> 365
-                else -> 0
-            } * (every.value?.toInt() ?: 1) * 24
-            return period
-        }
-    }
 
 }

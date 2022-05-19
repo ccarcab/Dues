@@ -19,7 +19,7 @@ class PreloadDuesBottomSheetViewModel : ViewModel() {
         _adapter = PreloadDuesAdapter(dataList)
         viewModelScope.launch {
             val appsAdded = mutableListOf<String>()
-            MyDuesDao().getAllDocs().addOnSuccessListener { col ->
+            MyDuesDao().getMyDues().addOnSuccessListener { col ->
                 for (doc in col) {
                     val dues = doc.toObject(MyDues::class.java)
                     if (!dues.`package`.isNullOrBlank() && !appsAdded.contains(dues.`package`)) {

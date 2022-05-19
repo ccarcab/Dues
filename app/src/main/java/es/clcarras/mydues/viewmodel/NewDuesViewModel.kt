@@ -1,31 +1,37 @@
 package es.clcarras.mydues.viewmodel
 
+import android.icu.util.Calendar
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.lifecycle.*
 import es.clcarras.mydues.database.MyDuesDao
 import es.clcarras.mydues.database.PreloadDuesDao
+import es.clcarras.mydues.database.WorkerDao
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.model.PreloadedDues
+import es.clcarras.mydues.model.Worker
 import es.clcarras.mydues.ui.DateDialogFragment
 import es.clcarras.mydues.ui.NewDuesFragmentArgs
 import es.clcarras.mydues.utils.Utility
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 import java.util.*
+import kotlin.math.abs
 
 class NewDuesViewModel(
     private val args: NewDuesFragmentArgs,
-    cardColor: Int
+    cardColor: Int,
+    private val timeUnits: Array<String>
 ) : ViewModel() {
 
     class Factory(
         private val args: NewDuesFragmentArgs,
-        private val cardColor: Int
+        private val cardColor: Int,
+        private val timeUnits: Array<String>
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            NewDuesViewModel(args, cardColor) as T
+            NewDuesViewModel(args, cardColor, timeUnits) as T
     }
 
     private val _preloadDues = MutableLiveData<PreloadedDues>()
@@ -63,6 +69,8 @@ class NewDuesViewModel(
 
     private val _validInput = MutableLiveData(false)
     val validInput: LiveData<Boolean> get() = _validInput
+
+    private var nextPayment: Calendar? = null
 
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -118,7 +126,7 @@ class NewDuesViewModel(
         _validInput.value = true
     }
 
-    fun saveDues(uuid: String) {
+    fun saveDues(uuid: String, msg: String) {
         viewModelScope.launch {
 
             val myDues = MyDues(
@@ -134,14 +142,43 @@ class NewDuesViewModel(
                 `package` = _preloadDues.value?.`package`
             )
 
-            MyDuesDao().createDoc(myDues).addOnSuccessListener {
-                myDues.id = it.id
-                MyDuesDao().updateDoc(myDues).addOnSuccessListener {
+            MyDuesDao().newDues(myDues).addOnSuccessListener { duesDoc ->
+                myDues.id = duesDoc.id
+                MyDuesDao().updateDues(myDues).addOnSuccessListener {
                     _insert.value = true
+                }
+                val worker = Worker(
+                    uuid = uuid,
+                    targetDate = nextPayment!!.time,
+                    periodicity = periodicityInHours(),
+                    message = msg
+                )
+                WorkerDao().newWorker(worker).addOnSuccessListener { workDoc ->
+                    worker.id = workDoc.id
+                    WorkerDao().updateWorker(worker)
                 }
             }
         }
     }
+
+    fun millisUntilNextPayment(): Long {
+        nextPayment = Calendar.getInstance()
+        // Se establece la fecha de primer pago
+        nextPayment!!.time = firstPayment.value!!
+        // Se añade el tiempo hasta el próximo pago
+        nextPayment!!.add(Calendar.HOUR_OF_DAY, periodicityInHours())
+        // Se calcula el tiempo que queda desde ahora hasta el próximo pago
+        return abs(nextPayment!!.time.time - System.currentTimeMillis())
+    }
+
+    fun periodicityInHours() = when (recurrence.value) {
+        timeUnits[0] -> 1
+        timeUnits[1] -> 7
+        timeUnits[2] -> 30
+        timeUnits[3] -> 365
+        else -> 0
+    } * (every.value?.toInt() ?: 1) * 24
+
 
     fun checkSelectedDues() {
         if (args.pkg.isNotBlank()) {

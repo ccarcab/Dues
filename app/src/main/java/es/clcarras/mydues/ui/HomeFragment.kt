@@ -10,10 +10,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.ktx.toObject
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
+import es.clcarras.mydues.constants.GRACE_PERIOD
+import es.clcarras.mydues.database.WorkerDao
 import es.clcarras.mydues.databinding.HomeFragmentBinding
+import es.clcarras.mydues.model.Worker
 import es.clcarras.mydues.viewmodel.HomeViewModel
+import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -51,6 +57,7 @@ class HomeFragment : Fragment() {
             supportActionBar?.show()
             getBottomAppBar().performShow()
         }
+        checkUserWorkers()
         setFabAction()
 
     }
@@ -100,7 +107,6 @@ class HomeFragment : Fragment() {
             setImageResource(android.R.drawable.ic_menu_add)
             setOnClickListener {
                 findNavController().navigate(R.id.nav_dues_selector)
-//                (requireActivity() as MainActivity).createWorkRequestPrueba()
             }
             show()
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
@@ -152,5 +158,32 @@ class HomeFragment : Fragment() {
             textview.text = it.animatedValue.toString()
         }
         animator.start()
+    }
+
+    private fun checkUserWorkers() {
+        WorkerDao().getMyWorkers().addOnSuccessListener { col ->
+            for (doc in col) {
+                val worker = doc.toObject(Worker::class.java)
+                val periodicityInMillis = (worker.periodicity * 36e5).toLong()
+                val delayInMillis = worker.targetDate!!.time - System.currentTimeMillis() - GRACE_PERIOD
+                if (delayInMillis <= 0) {
+                    worker.targetDate!!.time += periodicityInMillis
+                    WorkerDao().updateWorker(worker).addOnSuccessListener {
+                        (requireActivity() as MainActivity).createWorkRequest(
+                            worker.message!!,
+                            periodicityInMillis,
+                            delayInMillis,
+                            worker.uuid
+                        )
+                    }
+                } else
+                (requireActivity() as MainActivity).createWorkRequest(
+                    worker.message!!,
+                    periodicityInMillis,
+                    delayInMillis,
+                    worker.uuid
+                )
+            }
+        }
     }
 }

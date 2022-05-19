@@ -1,30 +1,37 @@
 package es.clcarras.mydues.viewmodel
 
+import android.icu.util.Calendar
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.lifecycle.*
+import com.google.firebase.firestore.ktx.toObject
 import es.clcarras.mydues.database.MyDuesDao
 import es.clcarras.mydues.database.PreloadDuesDao
+import es.clcarras.mydues.database.WorkerDao
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.model.PreloadedDues
+import es.clcarras.mydues.model.Worker
 import es.clcarras.mydues.ui.DateDialogFragment
 import es.clcarras.mydues.utils.Utility
 import kotlinx.coroutines.launch
 import vadiole.colorpicker.ColorPickerDialog
 import java.util.*
+import kotlin.math.abs
 
 class DuesDetailsDialogViewModel(
     private val _myDues: MyDues,
-    private val homeViewModel: HomeViewModel
+    private val homeViewModel: HomeViewModel,
+    private val timeUnits: Array<String>
 ) : ViewModel() {
 
     class Factory(
         private val myDues: MyDues?,
-        private val homeViewModel: HomeViewModel?
+        private val homeViewModel: HomeViewModel?,
+        private val timeUnits: Array<String>
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            DuesDetailsDialogViewModel(myDues!!, homeViewModel!!) as T
+            DuesDetailsDialogViewModel(myDues!!, homeViewModel!!, timeUnits) as T
     }
 
     private val _preloadDues = MutableLiveData<PreloadedDues>()
@@ -66,6 +73,8 @@ class DuesDetailsDialogViewModel(
     val `package` get() = _myDues.`package`
     val notificationUUID get() = _myDues.notificationUUID!!
 
+    private var nextPayment: Calendar? = null
+
     val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             _recurrence.value = (p1 as TextView?)?.text.toString()
@@ -95,14 +104,25 @@ class DuesDetailsDialogViewModel(
         _paymentMethod.value = text
     }
 
-    fun setNotification(uuid: String): String {
+    fun setNotification(uuid: String, msg: String): String {
         val currentNotification = _myDues.notificationUUID
         _myDues.notificationUUID = uuid
         return if (!saveDues()) {
             _myDues.notificationUUID = currentNotification
             uuid
-        } else
+        } else {
+            val worker = Worker(
+                uuid = uuid,
+                targetDate = nextPayment!!.time,
+                periodicity = periodicityInHours(),
+                message = msg
+            )
+            WorkerDao().newWorker(worker).addOnSuccessListener { workDoc ->
+                worker.id = workDoc.id
+                WorkerDao().updateWorker(worker)
+            }
             currentNotification.toString()
+        }
     }
 
     fun datePicker(): DateDialogFragment {
@@ -124,7 +144,8 @@ class DuesDetailsDialogViewModel(
     fun deleteDues() {
         viewModelScope.launch {
             _delete.value = true
-            MyDuesDao().deleteDoc(_myDues)
+            MyDuesDao().deleteDues(_myDues)
+            WorkerDao().deleteWorkerByUUID(_myDues.notificationUUID!!)
             homeViewModel.deleteDues()
             close()
         }
@@ -157,7 +178,7 @@ class DuesDetailsDialogViewModel(
         _myDues.cardColor = _cardColor.value!!
 
         viewModelScope.launch {
-            MyDuesDao().updateDoc(_myDues)
+            MyDuesDao().updateDues(_myDues)
             homeViewModel.updateDues()
         }
         return true
@@ -171,6 +192,24 @@ class DuesDetailsDialogViewModel(
         homeViewModel.detailsDialogFragment = null
         homeViewModel.adapter?.unSelectDues()
     }
+
+    fun millisUntilNextPayment(): Long {
+        nextPayment = Calendar.getInstance()
+        // Se establece la fecha de primer pago
+        nextPayment!!.time = firstPayment.value!!
+        // Se añade el tiempo hasta el próximo pago
+        nextPayment!!.add(Calendar.HOUR_OF_DAY, periodicityInHours())
+        // Se calcula el tiempo que queda desde ahora hasta el próximo pago
+        return abs(nextPayment!!.time.time - System.currentTimeMillis())
+    }
+
+    fun periodicityInHours() = when (recurrence.value) {
+        timeUnits[0] -> 1
+        timeUnits[1] -> 7
+        timeUnits[2] -> 30
+        timeUnits[3] -> 365
+        else -> 0
+    } * (every.value?.toInt() ?: 1) * 24
 
     fun checkSelectedDues() {
         if (!_myDues.`package`.isNullOrBlank()) {

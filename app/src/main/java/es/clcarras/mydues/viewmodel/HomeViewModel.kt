@@ -60,7 +60,7 @@ class HomeViewModel(
     init {
         _adapter = DuesHomeAdapter(adapterDataList)
         viewModelScope.launch {
-            MyDuesDao().getAllDocs().addOnSuccessListener { col ->
+            MyDuesDao().getMyDues().addOnSuccessListener { col ->
                 for (doc in col) {
                     val myDues = doc.toObject(MyDues::class.java)
                     dataList.add(myDues)

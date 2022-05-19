@@ -6,17 +6,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.work.*
+import com.google.firebase.Timestamp
+import es.clcarras.mydues.constants.GRACE_PERIOD
+import es.clcarras.mydues.database.WorkerDao
 import es.clcarras.mydues.databinding.ActivityMainBinding
 import es.clcarras.mydues.service.DuesNotificationWorker
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        // One day in millis
-        const val GRACE_PERIOD = 86400000L
-    }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var nav: NavController
@@ -36,42 +34,12 @@ class MainActivity : AppCompatActivity() {
 
     fun getFab() = binding.fab
 
-    fun createWorkRequestPrueba() {
-
-        val workName = "createWorkRequestPrueba.Test"
-
-        WorkManager.getInstance(applicationContext).cancelUniqueWork(workName)
-
-        val minutes = 30L
-        val periodicityInMillis = minutes * 60000
-
-        val myWorkRequest = PeriodicWorkRequestBuilder<DuesNotificationWorker>(
-            periodicityInMillis, TimeUnit.MILLISECONDS
-        ).apply {
-
-            setBackoffCriteria(
-                BackoffPolicy.LINEAR,
-                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                TimeUnit.MILLISECONDS
-            )
-            setInputData(
-                workDataOf(
-                    "title" to "Dues",
-                    "message" to "Testing Worker in $minutes minutes!"
-                )
-            )
-        }.build()
-
-        Log.i("WorkManager", "Periodicity in millis: $periodicityInMillis")
-
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            workName,
-            ExistingPeriodicWorkPolicy.KEEP,
-            myWorkRequest
-        )
-    }
-
-    fun createWorkRequest(message: String, periodicityInMillis: Long, delayInMillis: Long): UUID {
+    fun createWorkRequest(
+        message: String,
+        periodicityInMillis: Long,
+        delayInMillis: Long,
+        uuid: String? = null
+    ): UUID {
 
         val myWorkRequest = PeriodicWorkRequestBuilder<DuesNotificationWorker>(
             periodicityInMillis, TimeUnit.MILLISECONDS
@@ -95,8 +63,10 @@ class MainActivity : AppCompatActivity() {
         Log.i("WorkManager", "Periodicity in millis: $periodicityInMillis")
         Log.i("WorkManager", "Delay in millis from now: ${delayInMillis - GRACE_PERIOD}")
 
+        val uniqueName = uuid ?: myWorkRequest.id.toString()
+
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            "${myWorkRequest.id}",
+            uniqueName,
             ExistingPeriodicWorkPolicy.KEEP,
             myWorkRequest
         )
@@ -110,11 +80,13 @@ class MainActivity : AppCompatActivity() {
             cancelUniqueWork(uuid)
             pruneWork()
         }
+        WorkerDao().deleteWorkerByUUID(uuid)
     }
 
     override fun onBackPressed() {
         if (nav.currentDestination?.id == R.id.nav_login ||
-            nav.currentDestination?.id == R.id.nav_home) moveTaskToBack(true)
+            nav.currentDestination?.id == R.id.nav_home
+        ) moveTaskToBack(true)
         else super.onBackPressed()
     }
 }
