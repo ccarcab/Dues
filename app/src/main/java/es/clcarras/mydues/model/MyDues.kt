@@ -5,7 +5,7 @@ import java.util.*
 
 data class MyDues(
     var id: String? = null,
-    var price: Int = 0,
+    var price: Double = 0.0,
     var name: String? = null,
     var description: String? = null,
     var every: Int = 0,

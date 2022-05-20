@@ -132,7 +132,7 @@ class NewDuesViewModel(
         viewModelScope.launch {
 
             val myDues = MyDues(
-                price = _price.value!!.toInt(),
+                price = _price.value!!.toDouble(),
                 name = _name.value,
                 description = _desc.value,
                 every = _every.value!!.toInt(),

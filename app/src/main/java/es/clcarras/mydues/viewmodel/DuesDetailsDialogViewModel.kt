@@ -170,7 +170,7 @@ class DuesDetailsDialogViewModel(
 
         if (!validInput()) return false
 
-        _myDues.price = _price.value!!.toInt()
+        _myDues.price = _price.value!!.toDouble()
         _myDues.name = _name.value!!
         _myDues.description = _desc.value!!
         _myDues.every = _every.value!!.toInt()

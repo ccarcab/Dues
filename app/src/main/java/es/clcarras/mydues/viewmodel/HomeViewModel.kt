@@ -7,6 +7,7 @@ import es.clcarras.mydues.adapter.DuesHomeAdapter
 import es.clcarras.mydues.database.MyDuesDao
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.ui.DuesDetailsDialogFragment
+import es.clcarras.mydues.utils.Utility
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -26,8 +27,11 @@ class HomeViewModel(
     private val _deleted = MutableLiveData(false)
     val deleted: LiveData<Boolean> get() = _deleted
 
-    private val _totalPrice = MutableLiveData(0)
-    val totalPrice: LiveData<Int> get() = _totalPrice
+    private val _totalPrice = MutableLiveData(0.0)
+    val totalPrice: LiveData<Double> get() = _totalPrice
+
+    private val _recurrence = MutableLiveData(recurrences[2])
+    val recurrence: LiveData<String> get() = _recurrence
 
     private var adapterDataList = mutableListOf<MyDues>()
     private var dataList = mutableListOf<MyDues>()
@@ -58,7 +62,7 @@ class HomeViewModel(
     }
 
     init {
-        _adapter = DuesHomeAdapter(adapterDataList)
+        _adapter = DuesHomeAdapter(adapterDataList, recurrence.value!!)
         viewModelScope.launch {
             MyDuesDao().getMyDues().addOnSuccessListener { col ->
                 for (doc in col) {
@@ -69,7 +73,10 @@ class HomeViewModel(
                 }
             }.addOnCompleteListener {
                 adapterDataList.forEach {
-                    _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
+                    _totalPrice.value =
+                        _totalPrice.value?.plus(
+                            Utility.calculateMonthlyPrice(it, recurrences).toInt()
+                        )
                 }
                 checkPreloadDues()
             }
@@ -102,9 +109,11 @@ class HomeViewModel(
     }
 
     private fun reloadTotalPrice() {
-        _totalPrice.value = 0
+        _totalPrice.value = 0.0
         adapterDataList.forEach {
-            _totalPrice.value = _totalPrice.value?.plus(getPriceByRecurrence(it))
+            _totalPrice.value = _totalPrice.value?.plus(
+                Utility.calculatePrice(_recurrence.value!!, it, recurrences)
+            )
         }
     }
 
@@ -112,12 +121,17 @@ class HomeViewModel(
         _deleted.value = false
     }
 
-    private fun getPriceByRecurrence(myDues: MyDues) =
-        when (myDues.recurrence) {
-            recurrences[0] -> (myDues.price.toDouble() * 30)
-            recurrences[1] -> myDues.price.toDouble() * 4.3
-            recurrences[3] -> myDues.price.toDouble() / 12
-            else -> myDues.price
-        }.toInt() / myDues.every
+    @SuppressLint("NotifyDataSetChanged")
+    fun changeRecurrence() {
+        _recurrence.value = when (recurrence.value!!) {
+            recurrences[0] -> recurrences[1]
+            recurrences[1] -> recurrences[2]
+            recurrences[2] -> recurrences[3]
+            else -> recurrences[0]
+        }
+        _adapter!!.setRecurrence(_recurrence.value!!)
+        _adapter!!.notifyDataSetChanged()
+        reloadTotalPrice()
+    }
 
 }

@@ -71,6 +71,7 @@ class HomeFragment : Fragment() {
                 (requireActivity() as MainActivity).getFab().hide()
                 binding.tvTotalPrice.visibility = View.GONE
                 binding.tvCurrency.visibility = View.GONE
+                binding.tvRecurrence.visibility = View.GONE
                 return true
             }
 
@@ -78,6 +79,7 @@ class HomeFragment : Fragment() {
                 (requireActivity() as MainActivity).getFab().show()
                 binding.tvTotalPrice.visibility = View.VISIBLE
                 binding.tvCurrency.visibility = View.VISIBLE
+                binding.tvRecurrence.visibility = View.VISIBLE
                 return true
             }
         }
@@ -142,7 +144,7 @@ class HomeFragment : Fragment() {
                 }
 
                 totalPrice.observe(viewLifecycleOwner) {
-                    animateTextView(it, tvTotalPrice)
+                    animateTextView(it.toInt(), tvTotalPrice)
                 }
             }
         }
