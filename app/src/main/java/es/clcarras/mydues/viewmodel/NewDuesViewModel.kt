@@ -147,17 +147,18 @@ class NewDuesViewModel(
             MyDuesDao().newDues(myDues).addOnSuccessListener { duesDoc ->
                 myDues.id = duesDoc.id
                 MyDuesDao().updateDues(myDues).addOnSuccessListener {
-                    _insert.value = true
-                }
-                val worker = Worker(
-                    uuid = uuid,
-                    targetDate = nextPayment!!.time,
-                    periodicity = periodicityInHours(),
-                    message = msg
-                )
-                WorkerDao().newWorker(worker).addOnSuccessListener { workDoc ->
-                    worker.id = workDoc.id
-                    WorkerDao().updateWorker(worker)
+                    val worker = Worker(
+                        uuid = uuid,
+                        targetDate = nextPayment!!.time,
+                        periodicity = periodicityInHours(),
+                        message = msg
+                    )
+                    WorkerDao().newWorker(worker).addOnSuccessListener { workDoc ->
+                        worker.id = workDoc.id
+                        WorkerDao().updateWorker(worker).addOnSuccessListener {
+                            _insert.value = true
+                        }
+                    }
                 }
             }
         }

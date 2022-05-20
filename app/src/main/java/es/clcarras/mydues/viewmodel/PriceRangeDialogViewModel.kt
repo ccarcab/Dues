@@ -1,6 +1,7 @@
 package es.clcarras.mydues.viewmodel
 
 import android.icu.util.Calendar
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -56,7 +57,9 @@ class PriceRangeDialogViewModel(private val timeUnits: Array<String>) : ViewMode
                 return
 
             val daysBetween =
-                (_endDate.value!!.time - _initDate.value!!.time) / (1000 * 60 * 60 * 24)
+                ((_endDate.value!!.time - _initDate.value!!.time) /
+                        (1000 * 60 * 60 * 24)) + 1
+            Log.i("PriceRangeDialogViewModel", "$daysBetween")
             MyDuesDao().getMyDues().addOnSuccessListener { col ->
                 for (doc in col) {
                     _totalPrice.value = _totalPrice.value!!.plus(
