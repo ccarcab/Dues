@@ -36,13 +36,5 @@ class Utility {
 
         fun formatDate(date: Date): String = formatLocalDate(getLocalFromDate(date))
 
-        fun getDate(year: Int, month: Int, day: Int): Date =
-            Date.from(
-                LocalDate
-                    .of(year, month, day)
-                    .atTime(12, 0)
-                    .toInstant(ZoneId.systemDefault().rules.getOffset(LocalDateTime.now()))
-            )
-
     }
 }

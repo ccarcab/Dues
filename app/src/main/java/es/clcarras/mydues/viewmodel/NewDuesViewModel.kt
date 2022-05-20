@@ -102,7 +102,9 @@ class NewDuesViewModel(
 
     fun datePicker(): DateDialogFragment {
         return DateDialogFragment.newInstance { _, year, month, day ->
-            _firstPayment.value = Utility.getDate(year, month + 1, day)
+            val cal = Calendar.getInstance()
+            cal.set(year, month, day)
+            _firstPayment.value = cal.time
         }
     }
 

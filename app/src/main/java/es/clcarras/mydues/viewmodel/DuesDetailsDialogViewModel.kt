@@ -1,6 +1,7 @@
 package es.clcarras.mydues.viewmodel
 
 import android.icu.util.Calendar
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
@@ -127,9 +128,10 @@ class DuesDetailsDialogViewModel(
 
     fun datePicker(): DateDialogFragment {
         return DateDialogFragment.newInstance { _, year, month, day ->
-            val selectedDate = Utility.getDate(year, month + 1, day)
             if (validInput()) {
-                _firstPayment.value = selectedDate
+                val cal = Calendar.getInstance()
+                cal.set(year, month, day)
+                _firstPayment.value = cal.time
             }
         }
     }
@@ -195,10 +197,13 @@ class DuesDetailsDialogViewModel(
 
     fun millisUntilNextPayment(): Long {
         nextPayment = Calendar.getInstance()
+        Log.i("WorkManager", "Current Date: ${nextPayment!!.time}")
         // Se establece la fecha de primer pago
         nextPayment!!.time = firstPayment.value!!
+
         // Se añade el tiempo hasta el próximo pago
         nextPayment!!.add(Calendar.HOUR_OF_DAY, periodicityInHours())
+        Log.i("WorkManager", "Next Payment: ${nextPayment!!.time}")
         // Se calcula el tiempo que queda desde ahora hasta el próximo pago
         return abs(nextPayment!!.time.time - System.currentTimeMillis())
     }
