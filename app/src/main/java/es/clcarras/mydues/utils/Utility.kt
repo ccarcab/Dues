@@ -78,7 +78,7 @@ class Utility {
                 else -> myDues.price
             } / myDues.every.toDouble()
 
-        private fun calculateDailyPrice(myDues: MyDues, recurrences: Array<String>) =
+        fun calculateDailyPrice(myDues: MyDues, recurrences: Array<String>) =
             when (myDues.recurrence) {
                 recurrences[1] -> myDues.price / 7
                 recurrences[2] -> myDues.price / 30

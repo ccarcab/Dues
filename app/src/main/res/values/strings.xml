@@ -56,5 +56,9 @@
     <string name="retype_password_hint">Retype your password...</string>
     <string name="logout">Logout</string>
 
+    <string name="init_date">Initial Date</string>
+    <string name="end_date">End Date</string>
+    <string name="calculate_spent">Calculate Spent</string>
+
 
 </resources>

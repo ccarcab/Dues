@@ -12,6 +12,16 @@
         android:padding="8dp">
 
         <Button
+            android:id="@+id/btnPriceRange"
+            style="@style/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableEnd="@drawable/ic_calculate"
+            android:text="@string/calculate_spent"
+            android:textSize="24sp" />
+
+        <Button
             android:id="@+id/btnLogout"
             style="@style/button"
             android:layout_width="match_parent"

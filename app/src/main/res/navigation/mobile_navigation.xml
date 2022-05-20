@@ -53,6 +53,11 @@
         android:id="@+id/nav_logout"
         android:name="es.clcarras.mydues.ui.LogoutDialogFragment"
         android:label="LogoutDialogFragment"
-        tools:layout="@layout/dialog_logout"/>
+        tools:layout="@layout/dialog_logout" />
+    <dialog
+        android:id="@+id/nav_price_range"
+        android:name="es.clcarras.mydues.ui.PriceRangeDialogFragment"
+        android:label="PriceRangeDialogFragment"
+        tools:layout="@layout/dialog_price_range" />
 
 </navigation>

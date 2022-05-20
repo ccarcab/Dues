@@ -163,7 +163,6 @@
                     android:id="@+id/etFirstPayment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#BF2A2A"
                     android:clickable="true"
                     android:drawableEnd="@drawable/ic_calendar_month"
                     android:ems="10"

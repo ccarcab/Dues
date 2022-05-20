@@ -22,6 +22,9 @@ class MenuBottomSheet: BottomSheetDialogFragment() {
         binding.btnLogout.setOnClickListener {
             findNavController().navigate(R.id.nav_logout)
         }
+        binding.btnPriceRange.setOnClickListener {
+            findNavController().navigate(R.id.nav_price_range)
+        }
         return binding.root
     }
 

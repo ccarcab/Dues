@@ -36,9 +36,7 @@ class DuesDetailsDialogFragment(
 
     constructor() : this(null, null)
 
-    private var _binding: DialogDuesDetailsBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var binding: DialogDuesDetailsBinding
     private lateinit var viewModel: DuesDetailsDialogViewModel
     private lateinit var viewModelFactory: DuesDetailsDialogViewModel.Factory
 
@@ -48,7 +46,7 @@ class DuesDetailsDialogFragment(
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        _binding = DialogDuesDetailsBinding.inflate(layoutInflater)
+        binding = DialogDuesDetailsBinding.inflate(layoutInflater)
         viewModelFactory = DuesDetailsDialogViewModel.Factory(
             myDues, homeViewModel,
             resources.getStringArray(R.array.recurrence_array)
