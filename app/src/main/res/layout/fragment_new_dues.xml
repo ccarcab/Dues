@@ -32,7 +32,7 @@
                 android:hint="@string/price"
                 android:importantForAutofill="no"
                 android:includeFontPadding="true"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:text="@{viewModel.price}"
                 android:textAlignment="center"
                 android:textSize="60sp"

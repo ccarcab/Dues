@@ -54,6 +54,7 @@
     <string name="type_email_hint">Type your email...</string>
     <string name="type_password_hint">Type your password...</string>
     <string name="retype_password_hint">Retype your password...</string>
+    <string name="logout">Logout</string>
 
 
 </resources>

@@ -214,6 +214,7 @@
 
                 <Button
                     android:id="@+id/btnClose"
+                    style="@style/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -230,6 +231,7 @@
 
                 <Button
                     android:id="@+id/btnEdit"
+                    style="@style/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -244,6 +246,7 @@
 
                 <Button
                     android:id="@+id/btnSave"
+                    style="@style/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -261,6 +264,7 @@
 
                 <Button
                     android:id="@+id/btnDelete"
+                    style="@style/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"

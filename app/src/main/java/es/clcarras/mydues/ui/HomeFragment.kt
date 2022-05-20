@@ -95,6 +95,11 @@ class HomeFragment : Fragment() {
             true
         }
 
+        menu.findItem(R.id.menu).setOnMenuItemClickListener {
+            findNavController().navigate(R.id.nav_menu)
+            true
+        }
+
         viewModel.launcherEnabled.observe(viewLifecycleOwner) {
             menu.findItem(R.id.launcher).isVisible = it
         }

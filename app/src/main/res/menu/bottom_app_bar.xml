@@ -8,13 +8,20 @@
         android:icon="@drawable/ic_search_24dp"
         android:title="@string/filter"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />
+        app:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/launcher"
         android:contentDescription="@string/content_description_launcher"
         android:icon="@drawable/ic_launch"
         android:title="@string/launcher"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu"
+        android:contentDescription="@string/menu_home"
+        android:icon="@drawable/ic_menu_24"
+        android:title="@string/menu_home"
         app:showAsAction="always" />
 
 </menu>

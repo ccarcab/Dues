@@ -17,8 +17,8 @@
         tools:layout="@layout/fragment_new_dues">
         <argument
             android:name="pkg"
-            app:argType="string"
-            android:defaultValue="" />
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/nav_dues_selector"
@@ -38,11 +38,21 @@
         android:id="@+id/nav_preload_dues"
         android:name="es.clcarras.mydues.ui.PreloadDuesBottomSheet"
         android:label="PreloadDuesDialogFragment"
-        tools:layout="@layout/bottom_sheet_preload_dues"/>
+        tools:layout="@layout/bottom_sheet_preload_dues" />
     <fragment
         android:id="@+id/nav_login"
         android:name="es.clcarras.mydues.ui.LoginFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_login"/>
+        tools:layout="@layout/fragment_login" />
+    <dialog
+        android:id="@+id/nav_menu"
+        android:name="es.clcarras.mydues.ui.MenuBottomSheet"
+        android:label="MenuBottomSheet"
+        tools:layout="@layout/bottom_sheet_menu" />
+    <dialog
+        android:id="@+id/nav_logout"
+        android:name="es.clcarras.mydues.ui.LogoutDialogFragment"
+        android:label="LogoutDialogFragment"
+        tools:layout="@layout/dialog_logout"/>
 
 </navigation>

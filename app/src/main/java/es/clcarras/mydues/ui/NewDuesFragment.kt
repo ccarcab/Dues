@@ -36,7 +36,7 @@ class NewDuesFragment : Fragment() {
         val args = NewDuesFragmentArgs.fromBundle(requireArguments())
         viewModelFactory = NewDuesViewModel.Factory(
             args,
-            getColor(requireContext(), R.color.default_card_color),
+            getColor(requireContext(), R.color.white),
             resources.getStringArray(R.array.recurrence_array)
         )
         viewModel = ViewModelProvider(this, viewModelFactory)[NewDuesViewModel::class.java]

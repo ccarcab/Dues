@@ -2,10 +2,10 @@
 <resources>
     <!-- Button Colors -->
     <color name="textColor_Button">@color/white</color>
-    <color name="backgroundTint_Button">@color/gray</color>
+    <color name="backgroundTint_Button">@color/dark_blue</color>
 
     <!-- Radio Button -->
-    <color name="backgroundTint_radio_button">@color/gray</color>
+    <color name="backgroundTint_radio_button">@color/blue</color>
 
     <!-- Text -->
     <color name="textColor_Text">@color/white</color>
@@ -42,5 +42,11 @@
     <color name="onTertiary">#253149</color>
     <color name="tertiaryContainer">#3B4663</color>
     <color name="onTertiaryContainer">#D8E2FF</color>
+
+    <!--  Dialog Background  -->
+    <color name="dialog_background">@color/dark_gray</color>
+
+    <!--  Icons  -->
+    <color name="icon">@color/white</color>
 
 </resources>

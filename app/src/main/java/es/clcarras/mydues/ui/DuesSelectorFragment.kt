@@ -75,6 +75,7 @@ class DuesSelectorFragment : Fragment() {
         }
 
         menu.findItem(R.id.launcher).isVisible = false
+        menu.findItem(R.id.menu).isVisible = false
     }
 
 }

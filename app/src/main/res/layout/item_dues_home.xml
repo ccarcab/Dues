@@ -29,6 +29,7 @@
             <TextView
                 android:id="@+id/tvName"
                 style="@style/CustomTextView"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/linearLayout"
                 app:layout_constraintHorizontal_bias="0.5"
