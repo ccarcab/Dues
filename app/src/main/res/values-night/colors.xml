@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--  Material 3 Colors  -->
+    <color name="primaryContainer">#B8FFF7</color>
+    <color name="onPrimaryContainer">#00525D</color>
+    <color name="primaryInverse">#BCFFEF</color>
+    <color name="secondaryContainer">#DCE5FF</color>
+    <color name="onSecondaryContainer">#62C9B4</color>
+    <color name="tertiary">#527D7D</color>
+    <color name="onTertiary">#254949</color>
+    <color name="tertiaryContainer">#3B635E</color>
+    <color name="onTertiaryContainer">#D8FFF6</color>
+
     <!-- Button Colors -->
     <color name="textColor_Button">@color/white</color>
-    <color name="backgroundTint_Button">@color/dark_blue</color>
-
-    <!-- Radio Button -->
-    <color name="backgroundTint_radio_button">@color/blue</color>
+    <color name="backgroundTint_Button">#008F72</color>
 
     <!-- Text -->
     <color name="textColor_Text">@color/white</color>
@@ -16,32 +24,15 @@
 
     <!-- TextInputInnerField -->
     <color name="textColor_TextInputInnerField">@color/white</color>
-    <color name="textColorHint_TextInputInnerField">@color/gray</color>
-
-    <!-- Nav Header Main -->
-    <color name="nav_header_color">#121212</color>
+    <color name="textColorHint_TextInputInnerField">@color/white</color>
 
     <!--  Splash Screen  -->
     <color name="splash_background">#121212</color>
     <color name="splash_logo">#FFFFFF</color>
 
     <!--  Gradient  -->
-    <color name="gradient_primary">#3C4A99</color>
-    <color name="gradient_secondary">#121212</color>
-
-    <!--  Google Btn  -->
-    <color name="google_btn">@color/gray</color>
-
-    <!--  Material 3 Colors  -->
-    <color name="primaryContainer">#B8CAFF</color>
-    <color name="onPrimaryContainer">#00225D</color>
-    <color name="primaryInverse">#BCF2FF</color>
-    <color name="secondaryContainer">#DCE5FF</color>
-    <color name="onSecondaryContainer">#627CC9</color>
-    <color name="tertiary">#525B7D</color>
-    <color name="onTertiary">#253149</color>
-    <color name="tertiaryContainer">#3B4663</color>
-    <color name="onTertiaryContainer">#D8E2FF</color>
+    <color name="gradient_primary">#3C9983</color>
+    <color name="gradient_secondary">#292929</color>
 
     <!--  Dialog Background  -->
     <color name="dialog_background">@color/dark_gray</color>

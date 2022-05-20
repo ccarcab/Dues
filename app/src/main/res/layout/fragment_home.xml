@@ -62,7 +62,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvRecurrence"
-            style="@style/text_currency"
+            style="@style/text_price"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
@@ -70,6 +70,7 @@
             android:gravity="center"
             android:onClick="@{() -> viewModel.changeRecurrence()}"
             android:text="@{viewModel.recurrence}"
+            android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/divider"
             app:layout_constraintEnd_toEndOf="@+id/tvTotalPrice"
             app:layout_constraintTop_toTopOf="parent"

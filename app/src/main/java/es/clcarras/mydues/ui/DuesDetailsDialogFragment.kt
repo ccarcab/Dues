@@ -123,7 +123,6 @@ class DuesDetailsDialogFragment(
 
     }
 
-    @SuppressLint("UseCompatTextViewDrawableApis")
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
@@ -137,17 +136,7 @@ class DuesDetailsDialogFragment(
                 }
 
                 cardColor.observe(viewLifecycleOwner) {
-                    btnColorPicker.setBackgroundColor(it)
-                    btnColorPicker.setTextColor(Utility.contrastColor(it))
-                    btnColorPicker.compoundDrawableTintList =
-                        ColorStateList.valueOf(Utility.contrastColor(it))
-                    etPrice.backgroundTintList = ColorStateList.valueOf(it)
-                    etPrice.setTextColor(Utility.contrastColor(it))
-                    etPrice.setHintTextColor(Utility.contrastColor(it))
-                    tvCurrency.backgroundTintList = ColorStateList.valueOf(it)
-                    tvCurrency.setTextColor(Utility.contrastColor(it))
-                    if (ivPreloadDues.visibility == View.VISIBLE)
-                        ivPreloadDues.setColorFilter(Utility.contrastColor(it))
+                    setColor(it)
                 }
 
                 error.observe(viewLifecycleOwner) {
@@ -191,6 +180,37 @@ class DuesDetailsDialogFragment(
                 }
 
             }
+        }
+    }
+
+    @SuppressLint("UseCompatTextViewDrawableApis")
+    private fun setColor(color: Int) {
+        with(binding) {
+            btnColorPicker.setBackgroundColor(color)
+            btnColorPicker.setTextColor(Utility.contrastColor(color))
+            btnColorPicker.compoundDrawableTintList =
+                ColorStateList.valueOf(Utility.contrastColor(color))
+
+            btnClose.setBackgroundColor(color)
+            btnClose.setTextColor(Utility.contrastColor(color))
+
+            btnEdit.setBackgroundColor(color)
+            btnEdit.setTextColor(Utility.contrastColor(color))
+
+            btnSave.setBackgroundColor(color)
+            btnSave.setTextColor(Utility.contrastColor(color))
+
+            btnDelete.setBackgroundColor(color)
+            btnDelete.setTextColor(Utility.contrastColor(color))
+
+            etPrice.backgroundTintList = ColorStateList.valueOf(color)
+            etPrice.setTextColor(Utility.contrastColor(color))
+            etPrice.setHintTextColor(Utility.contrastColor(color))
+
+            tvCurrency.backgroundTintList = ColorStateList.valueOf(color)
+            tvCurrency.setTextColor(Utility.contrastColor(color))
+            if (ivPreloadDues.visibility == View.VISIBLE)
+                ivPreloadDues.setColorFilter(Utility.contrastColor(color))
         }
     }
 
