@@ -9,12 +9,12 @@
         android:id="@+id/nav_home"
         android:name="es.clcarras.mydues.ui.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/home_fragment" />
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/nav_new_due"
         android:name="es.clcarras.mydues.ui.NewDuesFragment"
         android:label="NewDueFragment"
-        tools:layout="@layout/new_dues_fragment">
+        tools:layout="@layout/fragment_new_dues">
         <argument
             android:name="pkg"
             app:argType="string"
@@ -24,7 +24,7 @@
         android:id="@+id/nav_dues_selector"
         android:name="es.clcarras.mydues.ui.DuesSelectorFragment"
         android:label="DuesSelectorFragment"
-        tools:layout="@layout/dues_selector_fragment">
+        tools:layout="@layout/fragment_dues_selector">
         <action
             android:id="@+id/action_nav_dues_selector_to_nav_new_due"
             app:destination="@id/nav_new_due"
@@ -38,11 +38,11 @@
         android:id="@+id/nav_preload_dues"
         android:name="es.clcarras.mydues.ui.PreloadDuesBottomSheet"
         android:label="PreloadDuesDialogFragment"
-        tools:layout="@layout/preload_dues_bottom_sheet"/>
+        tools:layout="@layout/bottom_sheet_preload_dues"/>
     <fragment
         android:id="@+id/nav_login"
         android:name="es.clcarras.mydues.ui.LoginFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/login_fragment"/>
+        tools:layout="@layout/fragment_login"/>
 
 </navigation>

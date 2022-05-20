@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import es.clcarras.mydues.databinding.PreloadDuesItemBinding
+import es.clcarras.mydues.databinding.ItemPreloadDuesBinding
 import es.clcarras.mydues.model.PreloadedDues
 import es.clcarras.mydues.utils.Utility
 
@@ -17,11 +17,11 @@ class PreloadDuesAdapter(
     private val _selectedAppPackage = MutableLiveData("")
     val selectedAppPackage: LiveData<String> get() = _selectedAppPackage
 
-    inner class ViewHolder(val binding: PreloadDuesItemBinding) :
+    inner class ViewHolder(val binding: ItemPreloadDuesBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = PreloadDuesItemBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = ItemPreloadDuesBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(binding)
     }
 

@@ -22,7 +22,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.databinding.DuesDetailsDialogFragmentBinding
+import es.clcarras.mydues.databinding.DialogDuesDetailsBinding
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.DuesDetailsDialogViewModel
@@ -36,7 +36,7 @@ class DuesDetailsDialogFragment(
 
     constructor() : this(null, null)
 
-    private var _binding: DuesDetailsDialogFragmentBinding? = null
+    private var _binding: DialogDuesDetailsBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: DuesDetailsDialogViewModel
@@ -48,7 +48,7 @@ class DuesDetailsDialogFragment(
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        _binding = DuesDetailsDialogFragmentBinding.inflate(layoutInflater)
+        _binding = DialogDuesDetailsBinding.inflate(layoutInflater)
         viewModelFactory = DuesDetailsDialogViewModel.Factory(
             myDues, homeViewModel,
             resources.getStringArray(R.array.recurrence_array)

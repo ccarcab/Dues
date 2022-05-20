@@ -22,14 +22,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.databinding.LoginFragmentBinding
+import es.clcarras.mydues.databinding.FragmentLoginBinding
 import es.clcarras.mydues.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 import javax.security.auth.login.LoginException
 
 class LoginFragment : Fragment() {
 
-    private lateinit var binding: LoginFragmentBinding
+    private lateinit var binding: FragmentLoginBinding
     private lateinit var viewModel: LoginViewModel
     private lateinit var viewModelFactory: LoginViewModel.Factory
 
@@ -38,7 +38,7 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = LoginFragmentBinding.inflate(layoutInflater, container, false)
+        binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         viewModelFactory =
             LoginViewModel.Factory(configureSignInGoogle(), FirebaseAuth.getInstance())

@@ -10,20 +10,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.ktx.toObject
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
 import es.clcarras.mydues.constants.GRACE_PERIOD
 import es.clcarras.mydues.database.WorkerDao
-import es.clcarras.mydues.databinding.HomeFragmentBinding
+import es.clcarras.mydues.databinding.FragmentHomeBinding
 import es.clcarras.mydues.model.Worker
 import es.clcarras.mydues.viewmodel.HomeViewModel
-import java.util.*
 
 class HomeFragment : Fragment() {
 
-    private lateinit var binding: HomeFragmentBinding
+    private lateinit var binding: FragmentHomeBinding
     private lateinit var viewModel: HomeViewModel
     private lateinit var viewModelFactory: HomeViewModel.Factory
 
@@ -34,7 +31,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = HomeFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         viewModelFactory = HomeViewModel.Factory(
             resources.getStringArray(R.array.recurrence_array)
         )
@@ -165,7 +162,8 @@ class HomeFragment : Fragment() {
             for (doc in col) {
                 val worker = doc.toObject(Worker::class.java)
                 val periodicityInMillis = (worker.periodicity * 36e5).toLong()
-                val delayInMillis = worker.targetDate!!.time - System.currentTimeMillis() - GRACE_PERIOD
+                val delayInMillis =
+                    worker.targetDate!!.time - System.currentTimeMillis() - GRACE_PERIOD
                 if (delayInMillis <= 0) {
                     worker.targetDate!!.time += periodicityInMillis
                     WorkerDao().updateWorker(worker).addOnSuccessListener {
@@ -177,12 +175,12 @@ class HomeFragment : Fragment() {
                         )
                     }
                 } else
-                (requireActivity() as MainActivity).createWorkRequest(
-                    worker.message!!,
-                    periodicityInMillis,
-                    delayInMillis,
-                    worker.uuid
-                )
+                    (requireActivity() as MainActivity).createWorkRequest(
+                        worker.message!!,
+                        periodicityInMillis,
+                        delayInMillis,
+                        worker.uuid
+                    )
             }
         }
     }

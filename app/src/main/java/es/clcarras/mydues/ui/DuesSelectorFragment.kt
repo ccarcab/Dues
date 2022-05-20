@@ -11,12 +11,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.databinding.DuesSelectorFragmentBinding
+import es.clcarras.mydues.databinding.FragmentDuesSelectorBinding
 import es.clcarras.mydues.viewmodel.DuesSelectorViewModel
 
 class DuesSelectorFragment : Fragment() {
 
-    private lateinit var binding: DuesSelectorFragmentBinding
+    private lateinit var binding: FragmentDuesSelectorBinding
     private lateinit var viewModel: DuesSelectorViewModel
 
     override fun onCreateView(
@@ -25,7 +25,7 @@ class DuesSelectorFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = DuesSelectorFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentDuesSelectorBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[DuesSelectorViewModel::class.java]
 
         binding.btnNewDues.setOnClickListener {

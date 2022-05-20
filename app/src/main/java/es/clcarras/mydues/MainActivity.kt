@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.work.*
-import com.google.firebase.Timestamp
 import es.clcarras.mydues.constants.GRACE_PERIOD
 import es.clcarras.mydues.database.WorkerDao
 import es.clcarras.mydues.databinding.ActivityMainBinding

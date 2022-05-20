@@ -11,3 +11,7 @@ const val VAL_WORKER_UUID = "uuid"
 const val URI_PLAY_STORE = "https://play.google.com/store/apps/details"
 
 const val GRACE_PERIOD = 86400000L
+
+const val CHANNEL_ID = "Dues Notification Channel"
+const val CHANNEL_DESC = "Channel to alert the user the dues billing period is close."
+const val NOTIFICATION_ID = 852022

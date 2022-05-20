@@ -10,12 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import es.clcarras.mydues.constants.URI_PLAY_STORE
-import es.clcarras.mydues.databinding.PreloadDuesBottomSheetBinding
+import es.clcarras.mydues.databinding.BottomSheetPreloadDuesBinding
 import es.clcarras.mydues.viewmodel.PreloadDuesBottomSheetViewModel
 
 class PreloadDuesBottomSheet : BottomSheetDialogFragment() {
 
-    private lateinit var binding: PreloadDuesBottomSheetBinding
+    private lateinit var binding: BottomSheetPreloadDuesBinding
     private lateinit var viewModel: PreloadDuesBottomSheetViewModel
 
     override fun onCreateView(
@@ -23,7 +23,7 @@ class PreloadDuesBottomSheet : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = PreloadDuesBottomSheetBinding.inflate(layoutInflater)
+        binding = BottomSheetPreloadDuesBinding.inflate(layoutInflater)
         viewModel =
             ViewModelProvider(this)[PreloadDuesBottomSheetViewModel::class.java]
 

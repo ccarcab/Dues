@@ -16,13 +16,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-import es.clcarras.mydues.databinding.NewDuesFragmentBinding
+import es.clcarras.mydues.databinding.FragmentNewDuesBinding
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.NewDuesViewModel
 
 class NewDuesFragment : Fragment() {
 
-    private lateinit var binding: NewDuesFragmentBinding
+    private lateinit var binding: FragmentNewDuesBinding
     private lateinit var viewModel: NewDuesViewModel
     private lateinit var viewModelFactory: NewDuesViewModel.Factory
 
@@ -32,7 +32,7 @@ class NewDuesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = NewDuesFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentNewDuesBinding.inflate(inflater, container, false)
         val args = NewDuesFragmentArgs.fromBundle(requireArguments())
         viewModelFactory = NewDuesViewModel.Factory(
             args,

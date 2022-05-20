@@ -9,10 +9,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import es.clcarras.mydues.MainActivity
 import es.clcarras.mydues.R
-
-const val CHANNEL_ID = "Dues Notification Channel"
-const val CHANNEL_DESC = "Channel to alert the user the dues billing period is close."
-const val NOTIFICATION_ID = 852022
+import es.clcarras.mydues.constants.CHANNEL_DESC
+import es.clcarras.mydues.constants.CHANNEL_ID
+import es.clcarras.mydues.constants.NOTIFICATION_ID
 
 class NotificationHelper(
     private val context: Context
