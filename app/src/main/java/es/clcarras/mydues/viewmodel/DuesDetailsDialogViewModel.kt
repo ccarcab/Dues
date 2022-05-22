@@ -127,7 +127,7 @@ class DuesDetailsDialogViewModel(
     }
 
     fun datePicker(): DateDialogFragment {
-        return DateDialogFragment.newInstance { _, year, month, day ->
+        return DateDialogFragment.newInstance(_firstPayment.value) { _, year, month, day ->
             if (validInput()) {
                 val cal = Calendar.getInstance()
                 cal.set(year, month, day)

@@ -5,14 +5,22 @@ import android.app.Dialog
 import android.icu.util.Calendar
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import java.util.*
 
-class DateDialogFragment : DialogFragment() {
+class DateDialogFragment(
+    private val initialDate: Date?
+) : DialogFragment() {
+
+    constructor() : this(null)
 
     private var listener: DatePickerDialog.OnDateSetListener? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current date as the default date in the picker
         val c = Calendar.getInstance()
+        if (initialDate != null)
+            c.time = initialDate
+
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)
@@ -23,8 +31,11 @@ class DateDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "DateDialogFragment"
-        fun newInstance(listener: DatePickerDialog.OnDateSetListener): DateDialogFragment {
-            val fragment = DateDialogFragment()
+        fun newInstance(
+            initialDate: Date?,
+            listener: DatePickerDialog.OnDateSetListener
+        ): DateDialogFragment {
+            val fragment = DateDialogFragment(initialDate)
             fragment.listener = listener
             return fragment
         }

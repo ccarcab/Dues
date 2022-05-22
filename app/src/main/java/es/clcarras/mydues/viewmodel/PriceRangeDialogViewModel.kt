@@ -10,11 +10,14 @@ import es.clcarras.mydues.database.MyDuesDao
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.ui.DateDialogFragment
 import es.clcarras.mydues.utils.Utility
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-class PriceRangeDialogViewModel(private val timeUnits: Array<String>) : ViewModel() {
+class PriceRangeDialogViewModel(
+    private val timeUnits: Array<String>
+) : ViewModel() {
 
     companion object {
         const val INIT_DATE = 0
@@ -42,23 +45,31 @@ class PriceRangeDialogViewModel(private val timeUnits: Array<String>) : ViewMode
     }
 
     fun datePicker(dateId: Int): DateDialogFragment {
-        return DateDialogFragment.newInstance { _, year, month, day ->
+        val currentDate = if (dateId == INIT_DATE) _initDate.value else _endDate.value
+
+        return DateDialogFragment.newInstance(currentDate) { _, year, month, day ->
             val cal = Calendar.getInstance()
             cal.set(year, month, day)
-            if (dateId == INIT_DATE) _initDate.value = cal.time
-            else _endDate.value = cal.time
+            if (cal.time.after(Date.from(Instant.now())) || cal.time.equals(Date.from(Instant.now())))
+                if (dateId == INIT_DATE)
+                    _initDate.value = cal.time
+                else if (cal.time.after(Date.from(Instant.now())) && !cal.time.equals(_initDate.value))
+                    _endDate.value = cal.time
+
             checkPrice()
         }
     }
 
     private fun checkPrice() {
         if (_initDate.value != null && _endDate.value != null) {
-            if (_initDate.value!!.time > _endDate.value!!.time)
+            _totalPrice.value = 0.0
+
+            if (_initDate.value!!.after(_endDate.value) || _initDate.value!! == _endDate.value)
                 return
 
             val daysBetween =
                 ((_endDate.value!!.time - _initDate.value!!.time) /
-                        (1000 * 60 * 60 * 24)) + 1
+                        (1000 * 60 * 60 * 24))
             Log.i("PriceRangeDialogViewModel", "$daysBetween")
             MyDuesDao().getMyDues().addOnSuccessListener { col ->
                 for (doc in col) {
