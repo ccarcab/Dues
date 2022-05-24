@@ -126,7 +126,6 @@ class DuesDetailsDialogFragment(
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
-
                 preloadDues.observe(viewLifecycleOwner) {
                     if (it != null) {
                         ivPreloadDues.visibility = View.VISIBLE
