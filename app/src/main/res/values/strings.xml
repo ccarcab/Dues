@@ -1,11 +1,9 @@
 <resources>
-    <string name="app_name">Dues</string>
+    <string name="app_name">My Dues</string>
 
-    <string name="menu_home">Home</string>
+    <string name="menu_home" translatable="false">Home</string>
     <string name="filter">Filter</string>
     <string name="content_description_filter">Filter</string>
-    <string name="more">More</string>
-    <string name="content_description_more">More</string>
     <string name="price">Price</string>
     <string name="name">Name</string>
     <string name="description">Description - (Optional)</string>
@@ -22,12 +20,12 @@
     <string name="notification_msg">Your Dues %1$s is close to be renewed for %2$s€!</string>
     <string name="new_dues">New Dues</string>
 
-    <string name="currency">EUR</string>
+    <string name="currency" translatable="false">EUR</string>
 
     <string name="filter_hint">Search your dues here…</string>
     <string name="launcher">Launcher</string>
     <string name="content_description_launcher">Launcher</string>
-    <string name="bottom_sheet_title">Click on Icon to open your APP!</string>
+    <string name="bottom_sheet_title">Click on the icon of the App you want to open</string>
 
     <string-array name="recurrence_array">
         <item>Day</item>
@@ -37,28 +35,31 @@
     </string-array>
 
     <!-- defaultWebId from project > src > google-services.json > client > services > client_id -->
-    <string name="defaultWebId">814549884038-inibblsehsqko6b5vmldpngjfdntcivs.apps.googleusercontent.com</string>
+    <string name="defaultWebId" translatable="false">814549884038-inibblsehsqko6b5vmldpngjfdntcivs.apps.googleusercontent.com</string>
 
     <!--  Login Fragment  -->
     <string name="sign_in_google">Login with Google</string>
-    <string name="sign_in_title">¡Welcome!\n\nLogin to continue</string>
-    <string name="sign_in_subtitle1">Login with account</string>
+    <string name="sign_in_title">Welcome!\n\nLogin to continue</string>
+    <string name="sign_in_subtitle1">Login with email and password</string>
     <string name="sign_in_subtitle2">New here?</string>
     <string name="sign_in_toggle">New account</string>
     <string name="sign_in">Login</string>
     <string name="sign_up_title">Not registered?\n\nSignup to continue</string>
-    <string name="sign_up_subtitle1">Signup account</string>
+    <string name="sign_up_subtitle1">Signup new account</string>
     <string name="sign_up_subtitle2">Got an account?</string>
     <string name="sign_up_toggle">Signin with my account</string>
     <string name="sign_up">Signup</string>
-    <string name="type_email_hint">Type your email...</string>
-    <string name="type_password_hint">Type your password...</string>
-    <string name="retype_password_hint">Retype your password...</string>
+    <string name="type_email_hint">Type your email…</string>
+    <string name="type_password_hint">Type your password…</string>
+    <string name="retype_password_hint">Retype your password…</string>
     <string name="logout">Logout</string>
 
     <string name="init_date">Initial Date</string>
     <string name="end_date">End Date</string>
     <string name="calculate_spent">Calculate Spent</string>
-
+    <string name="dialog_close_title">Yo want to close session?</string>
+    <string name="dialog_close_subtitle">Are you sure?</string>
+    <string name="dialog_close_btn_cancel">No, cancel</string>
+    <string name="dialog_close_btn_signout">Yes, signout</string>
 
 </resources>

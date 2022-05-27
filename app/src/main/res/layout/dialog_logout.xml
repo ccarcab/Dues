@@ -17,9 +17,7 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,8 +26,9 @@
         <TextView
             android:id="@+id/textView"
             style="@style/text"
-            android:text="Cerrar sesión"
+            android:text="@string/dialog_close_title"
             android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/textView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -37,7 +36,8 @@
         <TextView
             android:id="@+id/textView2"
             style="@style/text"
-            android:text="¿Estás seguro?"
+            android:text="@string/dialog_close_subtitle"
+            app:layout_constraintBottom_toTopOf="@+id/btnLogOut"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -46,24 +46,24 @@
         <Button
             android:id="@+id/btnCancel"
             style="@style/button"
-            android:layout_width="0dp"
-            android:text="Cancelar"
+            android:layout_width="182dp"
+            android:text="@string/dialog_close_btn_cancel"
             android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/btnLogOut"
+            app:layout_constraintEnd_toStartOf="@+id/btnLogOut"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btnLogOut"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btnLogOut"
             style="@style/button"
-            android:layout_width="0dp"
-            android:text="Cerrar sesión"
+            android:layout_width="182dp"
+            android:text="@string/dialog_close_btn_signout"
             android:textAllCaps="false"
-            app:layout_constraintBaseline_toBaselineOf="@+id/btnCancel"
-            app:layout_constraintEnd_toStartOf="@+id/btnCancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/btnCancel"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

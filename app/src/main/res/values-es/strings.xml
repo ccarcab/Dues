@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mis Cuotas</string>
+    <string name="filter">Filtro</string>
+    <string name="content_description_filter">Filtro</string>
+    <string name="price">Precio</string>
+    <string name="name">Nombre</string>
+    <string name="description">Descripción - (Opcional)</string>
+    <string name="every">Cada cuanto</string>
+    <string name="first_payment">Primer pago</string>
+    <string name="color_picker">Elige un color</string>
+    <string name="payment_method">Método de pago - (Opcional)</string>
+    <string name="save">Guardar</string>
+    <string name="close">Cerrar</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Borrar</string>
+    <string name="notification_msg">¡Tu Cuota %1$s será renovada pronto por %2$s€!</string>
+    <string name="new_dues">Nueva Cuota</string>
+    <string name="filter_hint">Busca la cuota aquí…</string>
+    <string name="launcher">Lanzador</string>
+    <string name="content_description_launcher">Lanzador</string>
+    <string name="bottom_sheet_title">Pulsa sobre el icono de la App que quieres abrir</string>
+    <string name="sign_in_google">Entrar con Google</string>
+    <string name="sign_in_title">¡Bienvenido!\n\nInicie sesión para continuar</string>
+    <string name="sign_in_subtitle1">Incio con email y contraseña</string>
+    <string name="sign_in_subtitle2">¿Nuevo por aquí?</string>
+    <string name="sign_in_toggle">Nueva cuenta</string>
+    <string name="sign_in">Inciar sesión</string>
+    <string name="sign_up_title">¿No registrado?\n\nRegístrese para continuar</string>
+    <string name="sign_up_subtitle1">Registro de nueva cuenta</string>
+    <string name="sign_up_subtitle2">¿Ya tienes cuenta?</string>
+    <string name="sign_up_toggle">Entrar con mi cuenta</string>
+    <string name="sign_up">Registro</string>
+    <string name="type_email_hint">Introduzca su email…</string>
+    <string name="type_password_hint">Introduzca su contraseña…</string>
+    <string name="retype_password_hint">Confirme la contraseña…</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="init_date">Fecha inicial</string>
+    <string name="end_date">Fecha final</string>
+    <string name="calculate_spent">Calcular gasto</string>
+    <string name="dialog_close_title">¿Quieres cerrar la sesión?</string>
+    <string name="dialog_close_subtitle">¿Estás seguro?</string>
+    <string name="dialog_close_btn_cancel">No, cancelar</string>
+    <string name="dialog_close_btn_signout">Si, cerrar sesión</string>
+</resources>

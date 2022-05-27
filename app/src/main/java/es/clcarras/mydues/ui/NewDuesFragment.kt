@@ -20,6 +20,9 @@ import es.clcarras.mydues.databinding.FragmentNewDuesBinding
 import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.NewDuesViewModel
 
+/**
+ * Fragment que muestra una ventana mediante la cuál el usuario puede crear una cuota
+ */
 class NewDuesFragment : Fragment() {
 
     private lateinit var binding: FragmentNewDuesBinding
@@ -28,14 +31,16 @@ class NewDuesFragment : Fragment() {
 
     private lateinit var snackbar: Snackbar
 
+    /**
+     * Método que crea la vista
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentNewDuesBinding.inflate(inflater, container, false)
-        val args = NewDuesFragmentArgs.fromBundle(requireArguments())
         viewModelFactory = NewDuesViewModel.Factory(
-            args,
+            NewDuesFragmentArgs.fromBundle(requireArguments()),
             getColor(requireContext(), R.color.white),
             resources.getStringArray(R.array.recurrence_array)
         )
@@ -53,23 +58,36 @@ class NewDuesFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Método llamado cuando se restaura la vista
+     */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
+        // Se establece la acción que realizará el fab en esta vista
         setFabAction()
+        // Se oculta la barra de navegación inferior
         (requireActivity() as MainActivity).getBottomAppBar().performHide(true)
     }
 
+    /**
+     * Método que establece la acción que realizará el fab en esta vista
+     */
     private fun setFabAction() {
         with((requireActivity() as MainActivity).getFab()) {
-            setImageResource(android.R.drawable.ic_menu_save)
-            setOnClickListener { viewModel.checkData() }
+            setImageResource(android.R.drawable.ic_menu_save) // Se cambia la imagen
+            setOnClickListener { viewModel.checkData() } // Al pulsar el botón se guardará la cuota
             show()
+            // Se inicializa el snackbar anclándolo al fab
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
                 anchorView = this@with
             }
         }
     }
 
+    /**
+     * Método que establece los eventos de escucha de cambio en el texto en
+     * los campos de introducción de datos
+     */
     private fun setOnTextChanged() {
         with(binding) {
             with(viewModel!!) {
@@ -82,6 +100,9 @@ class NewDuesFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que establece la escucha de clicks a los elementos de la vista
+     */
     private fun setOnClickListeners() {
         with(binding) {
             with(viewModel!!) {
@@ -96,21 +117,31 @@ class NewDuesFragment : Fragment() {
 
     }
 
+    /**
+     * Método que establece la escucha de cambios de los datos almacenados en el ViewModel
+     */
     @SuppressLint("UseCompatTextViewDrawableApis")
     private fun setObservers() {
-        with(binding) {
-            with(viewModel!!) {
+        with(binding) { // With para usar los elementos del binding
+            with(viewModel!!) { // With para usar los datos del ViewModel
+
+                // Si la cuota es precargada
                 preloadDues.observe(viewLifecycleOwner) {
+                    // El campo de nombre estará habilitado si no es una cuota precargada
                     etName.isEnabled = it == null
-                    if (it != null) {
+                    if (it != null) { // Si la cuota es precargada
                         with(binding) {
+                            // Se muestra su icono
                             ivPreloadDues.visibility = View.VISIBLE
                             Picasso.get().load(Uri.parse(it.image)).into(ivPreloadDues)
                             ivPreloadDues.setColorFilter(Utility.contrastColor(it.color))
+                            // Se establece el nombre
                             etName.setText(it.name)
                         }
                     }
                 }
+
+                // Si cambia el color elegido se cambio el color de los elementos de la vista
                 cardColor.observe(viewLifecycleOwner) {
                     btnColorPicker.setBackgroundColor(it)
                     btnColorPicker.setTextColor(Utility.contrastColor(it))
@@ -124,27 +155,38 @@ class NewDuesFragment : Fragment() {
                     if (ivPreloadDues.visibility == View.VISIBLE)
                         ivPreloadDues.setColorFilter(Utility.contrastColor(it))
                 }
+
+                // Si hay un error
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
+                        // Se muestra un snackbar indicando el error
                         snackbar.apply { setText(it) }.show()
+                        // Se muestra un error en los campos requeridos si están vacíos
                         if (etPrice.text.isNullOrBlank()) etPrice.error = "Required"
                         if (etName.text.isNullOrBlank()) etName.error = "Required"
                         if (etFirstPayment.text.isNullOrBlank()) etFirstPayment.error = "Required"
                     }
                 }
+
+                // Si cambia la fecha de primer pago
                 firstPayment.observe(viewLifecycleOwner) {
                     if (it != null) {
                         etFirstPayment.error = null
                         etFirstPayment.setText(Utility.formatDate(it))
                     }
                 }
+
+                // Si la entrada de datos es válida
                 validInput.observe(viewLifecycleOwner) {
                     if (it) {
+                        // Se calcula el periodo de cobro en milisegundos
                         val periodTime = (periodicityInHours() * 36e5).toLong()
+                        // Se obtiene el mensaje que mostrará el worker
                         val msg = getString(
                             R.string.notification_msg,
                             name.value, price.value.toString()
                         )
+                        // Se crea el worker y se obtiene su uuid
                         val uuid = (requireActivity() as MainActivity).createWorkRequest(
                             msg,
                             periodTime,
@@ -153,6 +195,8 @@ class NewDuesFragment : Fragment() {
                         saveDues(uuid, msg)
                     }
                 }
+
+                // Si se han isertado los datos, se navega a la vista home
                 insert.observe(viewLifecycleOwner) {
                     if (it) {
                         snackbar.apply { setText("Dues Created!") }.show()
@@ -163,6 +207,9 @@ class NewDuesFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que inicializa el elemento Spinner que contiene las recurrencias posibles
+     */
     private fun setSpinner() {
         with(binding) {
             with(viewModel!!) {
@@ -174,6 +221,5 @@ class NewDuesFragment : Fragment() {
             }
         }
     }
-
 
 }
