@@ -15,15 +15,22 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
+/**
+ * ViewModel del Fragment de la vista de cálculo de precio
+ */
 class PriceRangeDialogViewModel(
-    private val timeUnits: Array<String>
+    private val recurrences: Array<String> // Listado de recurrencias
 ) : ViewModel() {
 
     companion object {
+        // Constantes para identificar en que campo se quiere almacenar la fecha seleccionada
         const val INIT_DATE = 0
         const val END_DATE = 1
     }
 
+    /**
+     * Clase Factory del ViewModel, usado para pasar parámetros al mismo
+     */
     class Factory(
         private val timeUnits: Array<String>
     ) : ViewModelProvider.Factory {
@@ -31,35 +38,48 @@ class PriceRangeDialogViewModel(
             PriceRangeDialogViewModel(timeUnits) as T
     }
 
+    // LiveData para almacenar la fecha de inicio
     private val _initDate = MutableLiveData<Date>()
     val initDate: LiveData<Date> get() = _initDate
 
+    // LiveData para almacenar la fecha de fin
     private val _endDate = MutableLiveData<Date>()
     val endDate: LiveData<Date> get() = _endDate
 
+    // LiveData para almacenar el precio total
     private val _totalPrice = MutableLiveData(0.0)
     val totalPrice: LiveData<Double> get() = _totalPrice
 
     init {
+        // La fecha de inicio por defecto será la fecha actual
         _initDate.value = Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC))
     }
 
+    /**
+     * Método que muestra un date picker para seleccionar una fecha
+     */
     fun datePicker(dateId: Int): DateDialogFragment {
         val currentDate = if (dateId == INIT_DATE) _initDate.value else _endDate.value
 
         return DateDialogFragment.newInstance(currentDate) { _, year, month, day ->
             val cal = Calendar.getInstance()
+            val today = Date.from(Instant.now())
             cal.set(year, month, day)
-            if (cal.time.after(Date.from(Instant.now())) || cal.time.equals(Date.from(Instant.now())))
+            // Se añade la fecha si es igual o posterior a la fecha actual
+            if (cal.time.after(today) || cal.time.equals(today))
                 if (dateId == INIT_DATE)
                     _initDate.value = cal.time
-                else if (cal.time.after(Date.from(Instant.now())) && !cal.time.equals(_initDate.value))
+                else if (cal.time.after(today) && !cal.time.equals(_initDate.value))
                     _endDate.value = cal.time
 
+            // Se calcula el precio total
             checkPrice()
         }
     }
 
+    /**
+     * Método que calcula el precio total entre dos fechas
+     */
     private fun checkPrice() {
         if (_initDate.value != null && _endDate.value != null) {
             _totalPrice.value = 0.0
@@ -67,16 +87,18 @@ class PriceRangeDialogViewModel(
             if (_initDate.value!!.after(_endDate.value) || _initDate.value!! == _endDate.value)
                 return
 
+            // Días que hay entre las dos fechas
             val daysBetween =
                 ((_endDate.value!!.time - _initDate.value!!.time) /
                         (1000 * 60 * 60 * 24))
-            Log.i("PriceRangeDialogViewModel", "$daysBetween")
+
+            // Se obtienen todas las cuotas y se calcula su precio diario
             MyDuesDao().getMyDues().addOnSuccessListener { col ->
                 for (doc in col) {
                     _totalPrice.value = _totalPrice.value!!.plus(
                         (Utility.calculateDailyPrice(
                             doc.toObject(MyDues::class.java),
-                            timeUnits
+                            recurrences
                         ) * daysBetween)
                     )
                 }
