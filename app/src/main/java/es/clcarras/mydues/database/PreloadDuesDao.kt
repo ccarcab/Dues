@@ -1,23 +1,29 @@
 package es.clcarras.mydues.database
 
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.clcarras.mydues.constants.COL_PRELOAD_DUES
 import es.clcarras.mydues.constants.VAL_PACKAGE
 
+/**
+ * Clase de acceso a la colección de cuotas precargadas
+ */
 class PreloadDuesDao {
 
+    // Referencia a la colección de cuotas
     private val preloadDuesRef = Firebase.firestore
         .collection(COL_PRELOAD_DUES)
 
-    fun getAllPreloadDues(): Task<QuerySnapshot> {
-        return preloadDuesRef.get()
-    }
+    /**
+     * Función que devuelve un Task para obtener la colección de cuotas completa
+     */
+    fun getAllPreloadDues() = preloadDuesRef.get()
 
-    fun getPreloadDueByPackage(pkg: String): Task<QuerySnapshot> {
-        return preloadDuesRef.whereEqualTo(VAL_PACKAGE, pkg).get()
-    }
+    /**
+     * Función para obtener una cuota precargada por su nombre de paquete que devuelve un Task
+     * para saber si existe o no
+     */
+    fun getPreloadDueByPackage(pkg: String) = preloadDuesRef.whereEqualTo(VAL_PACKAGE, pkg).get()
+
 
 }

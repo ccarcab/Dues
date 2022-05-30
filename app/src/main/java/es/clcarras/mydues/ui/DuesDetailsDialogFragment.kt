@@ -28,12 +28,16 @@ import es.clcarras.mydues.utils.Utility
 import es.clcarras.mydues.viewmodel.DuesDetailsDialogViewModel
 import es.clcarras.mydues.viewmodel.HomeViewModel
 
-
+/**
+ * Fragmento usado para mostrar un cuadro de diálogo de los detalles de la cuota
+ * seleccionada en la vista Home
+ */
 class DuesDetailsDialogFragment(
-    private val myDues: MyDues?,
-    private val homeViewModel: HomeViewModel?
+    private val myDues: MyDues?, // Cuota seleccionada
+    private val homeViewModel: HomeViewModel? // ViewModel de la vista Home para comunicarse con el
 ) : DialogFragment() {
 
+    // Constructor sin parámetros
     constructor() : this(null, null)
 
     private lateinit var binding: DialogDuesDetailsBinding
@@ -41,9 +45,13 @@ class DuesDetailsDialogFragment(
     private lateinit var viewModelFactory: DuesDetailsDialogViewModel.Factory
 
     companion object {
+        // Tag usado para identificar al diálogo
         const val TAG = "DuesDetailsDialogFragment"
     }
 
+    /**
+     * Método que crea e inicializa el cuadro de diálogo
+     */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         binding = DialogDuesDetailsBinding.inflate(layoutInflater)
@@ -62,6 +70,9 @@ class DuesDetailsDialogFragment(
         return dialog
     }
 
+    /**
+     * Método que inicializa la vista del cuadro de diálogo
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         viewGroup: ViewGroup?,
@@ -77,6 +88,7 @@ class DuesDetailsDialogFragment(
 
         viewModel.checkSelectedDues()
 
+        // Se ocultan los campos que estén vacíos
         with(binding) {
             with(myDues) {
                 if (this?.description?.isBlank() == true) tilDesc.visibility = View.GONE
@@ -87,11 +99,18 @@ class DuesDetailsDialogFragment(
         return binding.root
     }
 
+    /**
+     * Método llamado cuando se cierra el diálogo
+     */
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
         viewModel.close()
     }
 
+    /**
+     * Método que crea los eventos de escucha que se ejecutan cuando se escribe en los
+     * campos del cuadro de diálogo
+     */
     private fun setOnTextChanged() {
         with(binding) {
             with(viewModel!!) {
@@ -104,6 +123,9 @@ class DuesDetailsDialogFragment(
         }
     }
 
+    /**
+     * Método que establece los eventos de respuesta a clicks a los elementos de la vista
+     */
     private fun setOnClickListeners() {
         with(binding) {
             with(viewModel!!) {
@@ -123,9 +145,13 @@ class DuesDetailsDialogFragment(
 
     }
 
+    /**
+     * Método que establece los eventos de escucha a cambios en los LiveData del ViewModel
+     */
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
+                // Si es una cuota precargada se carga y muestra su icono
                 preloadDues.observe(viewLifecycleOwner) {
                     if (it != null) {
                         ivPreloadDues.visibility = View.VISIBLE
@@ -133,11 +159,11 @@ class DuesDetailsDialogFragment(
                         ivPreloadDues.setColorFilter(Utility.contrastColor(it.color))
                     }
                 }
-
+                // Si se cambia su color se establece a los elementos
                 cardColor.observe(viewLifecycleOwner) {
                     setColor(it)
                 }
-
+                // Si hay un error se muestra
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
                         Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
@@ -146,7 +172,7 @@ class DuesDetailsDialogFragment(
                         if (etFirstPayment.text.isNullOrBlank()) etFirstPayment.error = "Required"
                     }
                 }
-
+                // Si se cambia la fecha se actualiza el campo de texto
                 firstPayment.observe(viewLifecycleOwner) {
                     if (it != null) {
                         etFirstPayment.error = null
@@ -156,21 +182,22 @@ class DuesDetailsDialogFragment(
                         }
                     }
                 }
-
+                // Si se cambia cada cuánto se paga la cuota se actualiza la notificación
                 every.observe(viewLifecycleOwner) {
                     if (!it.isNullOrBlank() && it.toInt() != myDues?.every && it.toInt() > 0)
                         updateNotification()
                 }
-
                 recurrence.observe(viewLifecycleOwner) {
                     if (it != myDues?.recurrence && it.isNotBlank())
                         updateNotification()
                 }
 
+                // Si hay una actualización se cambia a la vista normal
                 update.observe(viewLifecycleOwner) {
                     if (it) toggleEditMode()
                 }
 
+                // Si se elimina la cuota se cierra el dialog y se borra el worker
                 delete.observe(viewLifecycleOwner) {
                     if (it) {
                         (requireActivity() as MainActivity).deleteWork(notificationUUID)
@@ -182,6 +209,9 @@ class DuesDetailsDialogFragment(
         }
     }
 
+    /**
+     * Método que cambia el color de los elementos de la vista en función del color elegido
+     */
     @SuppressLint("UseCompatTextViewDrawableApis")
     private fun setColor(color: Int) {
         with(binding) {
@@ -213,24 +243,34 @@ class DuesDetailsDialogFragment(
         }
     }
 
+    /**
+     * Método que actualiza el worker de la notificación en segundo plano
+     */
     private fun updateNotification() {
         with(requireActivity() as MainActivity) {
             with(viewModel) {
+                // Se obtiene cada cuando se ejecutará el worker en milisegundos
                 val periodTime = (periodicityInHours() * 36e5).toLong()
+                // Se crea el mensaje que mostrará la notificación
                 val msg = getString(
                     R.string.notification_msg,
                     name.value, price.value.toString()
                 )
+                // Se crea un nuevo worker y se obtiene su uuid
                 val uuid = (requireActivity() as MainActivity).createWorkRequest(
                     msg,
                     periodTime,
                     millisUntilNextPayment()
                 ).toString()
+                // Se elimina el worker anterior
                 deleteWork(setNotification(uuid, msg))
             }
         }
     }
 
+    /**
+     * Método que inicializa el spinner de recurrencia
+     */
     private fun setSpinner() {
         with(binding) {
             with(viewModel!!) {
@@ -244,8 +284,13 @@ class DuesDetailsDialogFragment(
         }
     }
 
+    /**
+     * Método que cambia de la vista de visualización a la vista de edición
+     */
     private fun toggleEditMode() {
         with(binding) {
+            // Se recorren los hijos de la vista contenedora y se cambia su visibilidad y su
+            // estado enabled en función del tipo de campo que sean y su contenido
             container.children.forEach {
                 if (it.visibility == View.GONE && it.id != binding.ivPreloadDues.id)
                     it.visibility = View.VISIBLE

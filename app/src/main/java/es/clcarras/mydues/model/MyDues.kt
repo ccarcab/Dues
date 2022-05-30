@@ -3,6 +3,9 @@ package es.clcarras.mydues.model
 import com.google.firebase.Timestamp
 import java.util.*
 
+/**
+ * Data Class para almacenar los datos de las cuotas de usuario
+ */
 data class MyDues(
     var id: String? = null,
     var price: Double = 0.0,
@@ -16,6 +19,10 @@ data class MyDues(
     var notificationUUID: String? = null,
     var `package`: String? = null
 ) {
+
+    /**
+     * Método que devuelve los datos del data class en forma de mapa
+     */
     fun toMap(): Map<String, Any?> = mapOf(
         "id" to id,
         "price" to price,

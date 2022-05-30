@@ -18,6 +18,9 @@ import es.clcarras.mydues.databinding.FragmentHomeBinding
 import es.clcarras.mydues.model.Worker
 import es.clcarras.mydues.viewmodel.HomeViewModel
 
+/**
+ * Fragment que muestra un listado de las cuotas del usuario
+ */
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
@@ -26,6 +29,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var snackbar: Snackbar
 
+    /**
+     * Método que inicializa la vista
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,31 +49,46 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Método llamado al crear el Fragment
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Se establece que tendrá options menu
         setHasOptionsMenu(true)
     }
 
+    /**
+     * Método llamado cuando se restaura la vista, por ejemplo al hacer popback
+     */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         with((requireActivity() as MainActivity)) {
             supportActionBar?.show()
             getBottomAppBar().performShow()
         }
+        // Se comprueban los workers del usuario
         checkUserWorkers()
+        // Se define la acción que realizará el fab en esta vista
         setFabAction()
-
     }
 
+    /**
+     * Método que crea el menú de opciones
+     */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        // Se infla el menú
         inflater.inflate(R.menu.bottom_app_bar, menu)
 
+        // El botón launcher será visible cuando pueda estar habilitado
         viewModel.launcherEnabled.observe(viewLifecycleOwner) {
             menu.findItem(R.id.launcher).isVisible = it
         }
 
+        // Evento de escucha cuando se expande la barra de búsqueda
         val onActionListener = object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                // Se ocultan los elementos innecesarios
                 (requireActivity() as MainActivity).getFab().hide()
                 binding.tvTotalPrice.visibility = View.GONE
                 binding.tvCurrency.visibility = View.GONE
@@ -76,6 +97,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+                // Se vuelven a mostrar los elementos ocultos
                 (requireActivity() as MainActivity).getFab().show()
                 binding.tvTotalPrice.visibility = View.VISIBLE
                 binding.tvCurrency.visibility = View.VISIBLE
@@ -83,6 +105,8 @@ class HomeFragment : Fragment() {
                 return true
             }
         }
+
+        // Se inicializa el filtro
         menu.findItem(R.id.filter).apply {
             setOnActionExpandListener(onActionListener)
             val searchView = actionView as SearchView
@@ -90,28 +114,30 @@ class HomeFragment : Fragment() {
             searchView.setOnQueryTextListener(viewModel.onQueryTextListener)
         }
 
+        // Se añade el onclick al botón launcher
         menu.findItem(R.id.launcher).setOnMenuItemClickListener {
             findNavController().navigate(R.id.nav_preload_dues)
             true
         }
 
+        // Se añade el onclick al botón menú
         menu.findItem(R.id.menu).setOnMenuItemClickListener {
             findNavController().navigate(R.id.nav_menu)
             true
         }
 
-        viewModel.launcherEnabled.observe(viewLifecycleOwner) {
-            menu.findItem(R.id.launcher).isVisible = it
-        }
-
     }
 
+    /**
+     * Método que asigna la función que hará el fab en esta vista
+     */
     private fun setFabAction() {
         with((requireActivity() as MainActivity).getFab()) {
+            // Se le cambia el icono
             setImageResource(android.R.drawable.ic_menu_add)
-            setOnClickListener {
-                findNavController().navigate(R.id.nav_dues_selector)
-            }
+            // se establece su onclik
+            setOnClickListener { findNavController().navigate(R.id.nav_dues_selector) }
+            // Se muestra
             show()
             snackbar = Snackbar.make(this, "", Snackbar.LENGTH_LONG).apply {
                 anchorView = this@with
@@ -119,26 +145,20 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que establece los eventos de escucha a cambios en los LiveData del ViewModel
+     */
     private fun setObservers() {
         with(binding) {
             with(viewModel!!) {
+                // Si se ha borrado la cuota seleccionada se muestra un snackbar
                 deleted.observe(viewLifecycleOwner) {
                     if (it) {
                         snackbar.apply { setText("Dues Deleted!") }.show()
                         viewModel!!.onDeleteComplete()
                     }
                 }
-            }
-        }
-    }
-
-    private fun initRecyclerView() {
-        with(binding) {
-            with(viewModel!!) {
-                recyclerView.layoutManager =
-                    GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
-
-                recyclerView.adapter = adapter
+                // Si se ha seleccionado una cuota del listado, se muestran los detalles
                 adapter!!.selectedMyDues.observe(viewLifecycleOwner) { dues ->
                     if (dues != null && detailsDialogFragment == null) {
                         detailsDialogFragment = DuesDetailsDialogFragment(dues, viewModel)
@@ -147,7 +167,7 @@ class HomeFragment : Fragment() {
                         )
                     }
                 }
-
+                // Si cambia el precio total se anima el texto mostrado
                 totalPrice.observe(viewLifecycleOwner) {
                     animateTextView(it.toInt(), tvTotalPrice)
                 }
@@ -155,6 +175,22 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que inicializa el listado de cuotas
+     */
+    private fun initRecyclerView() {
+        with(binding) {
+            with(viewModel!!) {
+                recyclerView.layoutManager =
+                    GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
+                recyclerView.adapter = adapter
+            }
+        }
+    }
+
+    /**
+     * Método que crea una animación en el campo de texto que recibe por parámetros
+     */
     private fun animateTextView(target: Int, textview: TextView) {
         val animator = ValueAnimator.ofInt(0, target)
         animator.duration = 1500
@@ -164,30 +200,33 @@ class HomeFragment : Fragment() {
         animator.start()
     }
 
+    /**
+     * Método que comprueba los workers del usuario
+     */
     private fun checkUserWorkers() {
+        // Se obtienen todos los workers del usuario
         WorkerDao().getMyWorkers().addOnSuccessListener { col ->
-            for (doc in col) {
+            for (doc in col) { // Por cada documento de worker
+                // Se almacenan los datos del documento en un data class Worker
                 val worker = doc.toObject(Worker::class.java)
+                // Se obtiene la periodicidad
                 val periodicityInMillis = (worker.periodicity * 36e5).toLong()
+                // Se calcula el delay
                 val delayInMillis =
                     worker.targetDate!!.time - System.currentTimeMillis() - GRACE_PERIOD
+                // Si el delay es menor o igual a 0
                 if (delayInMillis <= 0) {
+                    // Se añade otro periodo al worker y se actualiza
                     worker.targetDate!!.time += periodicityInMillis
-                    WorkerDao().updateWorker(worker).addOnSuccessListener {
-                        (requireActivity() as MainActivity).createWorkRequest(
-                            worker.message!!,
-                            periodicityInMillis,
-                            delayInMillis,
-                            worker.uuid
-                        )
-                    }
-                } else
-                    (requireActivity() as MainActivity).createWorkRequest(
-                        worker.message!!,
-                        periodicityInMillis,
-                        delayInMillis,
-                        worker.uuid
-                    )
+                    WorkerDao().updateWorker(worker)
+                }
+                // Se despierta o crea al worker
+                (requireActivity() as MainActivity).createWorkRequest(
+                    worker.message!!,
+                    periodicityInMillis,
+                    delayInMillis,
+                    worker.uuid
+                )
             }
         }
     }

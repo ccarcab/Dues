@@ -1,5 +1,7 @@
 package es.clcarras.mydues.constants
 
+// Fichero dónde se almacenan las constantes usadas por la aplicación
+
 const val COL_PRELOAD_DUES = "dues"
 const val VAL_PACKAGE = "package"
 
