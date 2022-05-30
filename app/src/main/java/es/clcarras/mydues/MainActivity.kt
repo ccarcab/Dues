@@ -13,13 +13,19 @@ import es.clcarras.mydues.service.DuesNotificationWorker
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * Clase MainActivity que será la encargada de inicializar la aplicación
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var nav: NavController
 
+    /**
+     * Método que inicializa la aplicación
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_Dues)
+        setTheme(R.style.Theme_Dues) // Se pone el tema por defecto
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         with(binding) {
@@ -29,10 +35,19 @@ class MainActivity : AppCompatActivity() {
         nav = findNavController(R.id.nav_host_fragment)
     }
 
+    /**
+     * Método para obtener la barra inferior
+     */
     fun getBottomAppBar() = binding.bottomAppBar
 
+    /**
+     * Método para obtener el botón FAB
+     */
     fun getFab() = binding.fab
 
+    /**
+     * Método para crear un worker periódico para mostrar notificaciones y obtener su UUID
+     */
     fun createWorkRequest(
         message: String,
         periodicityInMillis: Long,
@@ -46,11 +61,14 @@ class MainActivity : AppCompatActivity() {
             if (delayInMillis - GRACE_PERIOD > 0)
                 setInitialDelay(delayInMillis - GRACE_PERIOD, TimeUnit.MILLISECONDS)
 
+            // Camportamiento en segundo plano del worker
             setBackoffCriteria(
                 BackoffPolicy.LINEAR,
                 PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
+
+            // Parámetros del worker
             setInputData(
                 workDataOf(
                     "title" to "Dues",
@@ -59,11 +77,10 @@ class MainActivity : AppCompatActivity() {
             )
         }.build()
 
-        Log.i("WorkManager", "Periodicity in millis: $periodicityInMillis")
-        Log.i("WorkManager", "Delay in millis from now: ${delayInMillis - GRACE_PERIOD}")
-
+        // Si el UUID recibido es nulo
         val uniqueName = uuid ?: myWorkRequest.id.toString()
 
+        // Se encola el worker y se le asigna un nombre único, que será su UUID
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
             uniqueName,
             ExistingPeriodicWorkPolicy.KEEP,
@@ -73,19 +90,28 @@ class MainActivity : AppCompatActivity() {
         return myWorkRequest.id
     }
 
+    /**
+     * Método que elimina un worker a través de su UUID
+     */
     fun deleteWork(uuid: String) {
-        Log.i("WorkManager", "Deleted work: $uuid")
         WorkManager.getInstance(applicationContext).apply {
             cancelUniqueWork(uuid)
             pruneWork()
         }
+        // Se borra de la base de datos
         WorkerDao().deleteWorkerByUUID(uuid)
     }
 
+    /**
+     * Método ejecutado al pulsar el botón de back
+     */
     override fun onBackPressed() {
+        // Si el usuario se encuentra en la vista Login o Home se minimiza la aplicación
         if (nav.currentDestination?.id == R.id.nav_login ||
             nav.currentDestination?.id == R.id.nav_home
         ) moveTaskToBack(true)
+
+        // En caso contrario se ejecuta la acción por defecto
         else super.onBackPressed()
     }
 }
