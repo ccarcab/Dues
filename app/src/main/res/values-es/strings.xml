@@ -42,4 +42,10 @@
     <string name="dialog_close_subtitle">¿Estás seguro?</string>
     <string name="dialog_close_btn_cancel">No, cancelar</string>
     <string name="dialog_close_btn_signout">Si, cerrar sesión</string>
+    <string-array name="recurrence_array">
+        <item>Día</item>
+        <item>Semana</item>
+        <item>Mes</item>
+        <item>Año</item>
+    </string-array>
 </resources>
