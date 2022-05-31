@@ -23,6 +23,10 @@ class Utility {
             if (ColorUtils.calculateLuminance(color) < 0.5) Color.WHITE
             else Color.BLACK
 
+        fun contrastErrorColor(color: Int): Int =
+            if (ColorUtils.calculateLuminance(color) < 0.5) Color.WHITE
+            else Color.RED
+
         /**
          * Método que devuelve un cuadro de diálogo
          */

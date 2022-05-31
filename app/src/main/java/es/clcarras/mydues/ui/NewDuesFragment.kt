@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -162,9 +163,14 @@ class NewDuesFragment : Fragment() {
                         // Se muestra un snackbar indicando el error
                         snackbar.apply { setText(it) }.show()
                         // Se muestra un error en los campos requeridos si están vacíos
-                        if (etPrice.text.isNullOrBlank()) etPrice.error = "Required"
-                        if (etName.text.isNullOrBlank()) etName.error = "Required"
-                        if (etFirstPayment.text.isNullOrBlank()) etFirstPayment.error = "Required"
+                        if (etPrice.text.isNullOrBlank())
+                            etPrice.setError("Required", errorIcon())
+                        if (etName.text.isNullOrBlank())
+                            etName.error = "Required"
+                        if (etFirstPayment.text.isNullOrBlank())
+                            etFirstPayment.error = "Required"
+                        if (etEvery.text.isNullOrBlank())
+                            etEvery.error = "Required"
                     }
                 }
 
@@ -206,6 +212,12 @@ class NewDuesFragment : Fragment() {
             }
         }
     }
+
+    private fun errorIcon() =
+        getDrawable(requireContext(), com.google.android.material.R.drawable.mtrl_ic_error)!!.apply {
+            setTint(Utility.contrastErrorColor(viewModel.cardColor.value!!))
+            setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+        }
 
     /**
      * Método que inicializa el elemento Spinner que contiene las recurrencias posibles

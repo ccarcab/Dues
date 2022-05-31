@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.children
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
@@ -167,9 +169,14 @@ class DuesDetailsDialogFragment(
                 error.observe(viewLifecycleOwner) {
                     if (it.isNotBlank()) {
                         Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
-                        if (etPrice.text.isNullOrBlank()) etPrice.error = "Required"
-                        if (etName.text.isNullOrBlank()) etName.error = "Required"
-                        if (etFirstPayment.text.isNullOrBlank()) etFirstPayment.error = "Required"
+                        if (etPrice.text.isNullOrBlank())
+                            etPrice.setError("Required", errorIcon())
+                        if (etName.text.isNullOrBlank())
+                            etName.error = "Required"
+                        if (etFirstPayment.text.isNullOrBlank())
+                            etFirstPayment.error = "Required"
+                        if (etEvery.text.isNullOrBlank())
+                            etEvery.error = "Required"
                     }
                 }
                 // Si se cambia la fecha se actualiza el campo de texto
@@ -208,6 +215,13 @@ class DuesDetailsDialogFragment(
             }
         }
     }
+
+    private fun errorIcon() =
+        getDrawable(requireContext(), com.google.android.material.R.drawable.mtrl_ic_error)!!.apply {
+            setTint(Utility.contrastErrorColor(viewModel.cardColor.value!!))
+            setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+        }
+
 
     /**
      * Método que cambia el color de los elementos de la vista en función del color elegido

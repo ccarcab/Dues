@@ -150,6 +150,7 @@ class NewDuesViewModel(
         if (
             _price.value.isNullOrBlank() ||
             _name.value.isNullOrBlank() ||
+            _every.value.isNullOrBlank() ||
             _firstPayment.value == null
         ) {
             _error.value = "Please check if you fill all the required fields."

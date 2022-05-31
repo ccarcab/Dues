@@ -169,7 +169,7 @@ class HomeFragment : Fragment() {
                 }
                 // Si cambia el precio total se anima el texto mostrado
                 totalPrice.observe(viewLifecycleOwner) {
-                    animateTextView(it.toInt(), tvTotalPrice)
+                    animateTextView(it.toFloat(), tvTotalPrice)
                 }
                 noDues.observe(viewLifecycleOwner) { noDues ->
                     ivBackground.visibility = if (noDues) View.VISIBLE else View.GONE
@@ -194,11 +194,11 @@ class HomeFragment : Fragment() {
     /**
      * Método que crea una animación en el campo de texto que recibe por parámetros
      */
-    private fun animateTextView(target: Int, textview: TextView) {
-        val animator = ValueAnimator.ofInt(0, target)
+    private fun animateTextView(target: Float, textview: TextView) {
+        val animator = ValueAnimator.ofFloat(0f, target)
         animator.duration = 1500
         animator.addUpdateListener {
-            textview.text = it.animatedValue.toString()
+            textview.text = String.format("%.2f", it.animatedValue)
         }
         animator.start()
     }

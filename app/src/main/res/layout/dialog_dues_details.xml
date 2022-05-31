@@ -37,6 +37,7 @@
                     android:enabled="false"
                     android:gravity="center"
                     android:hint="@string/price"
+                    android:maxLength="8"
                     android:text="@{viewModel.price}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -93,6 +94,7 @@
                         android:layout_height="wrap_content"
                         android:enabled="false"
                         android:hint="@string/name"
+                        android:maxLength="32"
                         android:text="@{viewModel.name}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -117,6 +119,7 @@
                         android:gravity="start|top"
                         android:inputType="textMultiLine"
                         android:maxHeight="256dp"
+                        android:maxLength="200"
                         android:text="@{viewModel.desc}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -139,6 +142,7 @@
                         android:ems="10"
                         android:enabled="false"
                         android:inputType="number"
+                        android:maxLength="2"
                         android:text="@{viewModel.every}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -209,6 +213,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:enabled="false"
+                        android:maxLength="60"
                         android:text="@{viewModel.paymentMethod}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
