@@ -170,13 +170,13 @@ class DuesDetailsDialogFragment(
                     if (it.isNotBlank()) {
                         Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
                         if (etPrice.text.isNullOrBlank())
-                            etPrice.setError("Required", errorIcon())
+                            etPrice.setError(getString(R.string.required_field), errorIcon())
                         if (etName.text.isNullOrBlank())
-                            etName.error = "Required"
+                            etName.error = getString(R.string.required_field)
                         if (etFirstPayment.text.isNullOrBlank())
-                            etFirstPayment.error = "Required"
+                            etFirstPayment.error = getString(R.string.required_field)
                         if (etEvery.text.isNullOrBlank())
-                            etEvery.error = "Required"
+                            etEvery.error = getString(R.string.required_field)
                     }
                 }
                 // Si se cambia la fecha se actualiza el campo de texto

@@ -164,13 +164,13 @@ class NewDuesFragment : Fragment() {
                         snackbar.apply { setText(it) }.show()
                         // Se muestra un error en los campos requeridos si están vacíos
                         if (etPrice.text.isNullOrBlank())
-                            etPrice.setError("Required", errorIcon())
+                            etPrice.setError(getString(R.string.required_field), errorIcon())
                         if (etName.text.isNullOrBlank())
-                            etName.error = "Required"
+                            etName.error = getString(R.string.required_field)
                         if (etFirstPayment.text.isNullOrBlank())
-                            etFirstPayment.error = "Required"
+                            etFirstPayment.error = getString(R.string.required_field)
                         if (etEvery.text.isNullOrBlank())
-                            etEvery.error = "Required"
+                            etEvery.error = getString(R.string.required_field)
                     }
                 }
 
@@ -205,7 +205,7 @@ class NewDuesFragment : Fragment() {
                 // Si se han isertado los datos, se navega a la vista home
                 insert.observe(viewLifecycleOwner) {
                     if (it) {
-                        snackbar.apply { setText("Dues Created!") }.show()
+                        snackbar.apply { setText(getString(R.string.dues_added)) }.show()
                         findNavController().navigate(R.id.nav_home)
                     }
                 }

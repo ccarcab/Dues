@@ -62,4 +62,8 @@
     <string name="dialog_close_btn_cancel">No, cancel</string>
     <string name="dialog_close_btn_signout">Yes, signout</string>
 
+    <string name="required_field">Required</string>
+    <string name="dues_added">Dues Added!</string>
+    <string name="dues_deleted">Dues Deleted!</string>
+
 </resources>

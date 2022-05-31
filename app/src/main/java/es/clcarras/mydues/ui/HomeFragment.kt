@@ -154,7 +154,7 @@ class HomeFragment : Fragment() {
                 // Si se ha borrado la cuota seleccionada se muestra un snackbar
                 deleted.observe(viewLifecycleOwner) {
                     if (it) {
-                        snackbar.apply { setText("Dues Deleted!") }.show()
+                        snackbar.apply { setText(R.string.dues_deleted) }.show()
                         viewModel!!.onDeleteComplete()
                     }
                 }
