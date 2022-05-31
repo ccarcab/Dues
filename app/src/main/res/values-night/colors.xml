@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="green">#008F72</color>
     <!--  Material 3 Colors  -->
     <color name="primaryContainer">#B8FFF7</color>
     <color name="onPrimaryContainer">#00525D</color>
@@ -13,7 +14,7 @@
 
     <!-- Button Colors -->
     <color name="textColor_Button">@color/white</color>
-    <color name="backgroundTint_Button">#008F72</color>
+    <color name="backgroundTint_Button">@color/green</color>
 
     <!-- Text -->
     <color name="textColor_Text">@color/white</color>

@@ -62,7 +62,10 @@ class DuesSelectorFragment : Fragment() {
      */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        (requireActivity() as MainActivity).getFab().hide()
+        with((requireActivity() as MainActivity)) {
+            getFab().hide()
+            (requireActivity() as MainActivity).changeStatusBarColor(getColor(R.color.green))
+        }
     }
 
     /**

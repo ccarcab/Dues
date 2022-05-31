@@ -66,6 +66,7 @@ class HomeFragment : Fragment() {
         with((requireActivity() as MainActivity)) {
             supportActionBar?.show()
             getBottomAppBar().performShow()
+            (requireActivity() as MainActivity).changeStatusBarColor(getColor(R.color.black))
         }
         // Se comprueban los workers del usuario
         checkUserWorkers()

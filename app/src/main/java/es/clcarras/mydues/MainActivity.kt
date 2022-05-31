@@ -1,7 +1,10 @@
 package es.clcarras.mydues
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -10,8 +13,10 @@ import es.clcarras.mydues.constants.GRACE_PERIOD
 import es.clcarras.mydues.database.WorkerDao
 import es.clcarras.mydues.databinding.ActivityMainBinding
 import es.clcarras.mydues.service.DuesNotificationWorker
+import es.clcarras.mydues.utils.Utility
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 /**
  * Clase MainActivity que será la encargada de inicializar la aplicación
@@ -114,4 +119,23 @@ class MainActivity : AppCompatActivity() {
         // En caso contrario se ejecuta la acción por defecto
         else super.onBackPressed()
     }
+
+    /**
+     * Método que cambia el color de la barra de estado del sistema en función del color recibido
+     */
+    fun changeStatusBarColor(it: Int) {
+        window.statusBarColor = it
+        val isLight = Utility.contrastColor(it) == Color.WHITE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            window.insetsController?.setSystemBarsAppearance(
+                if (isLight) WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS else 0,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        else window.decorView.systemUiVisibility =
+            if (isLight)
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            else
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    }
+
 }

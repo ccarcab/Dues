@@ -102,7 +102,7 @@ class HomeViewModel(
                 adapterDataList.forEach {
                     _totalPrice.value =
                         _totalPrice.value?.plus(
-                            Utility.calculateMonthlyPrice(it, recurrences).toInt()
+                            Utility.calculateMonthlyPrice(it, recurrences)
                         )
                 }
                 checkPreloadDues()

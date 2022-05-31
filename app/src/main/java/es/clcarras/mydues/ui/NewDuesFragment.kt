@@ -155,6 +155,7 @@ class NewDuesFragment : Fragment() {
                     tvCurrency.setTextColor(Utility.contrastColor(it))
                     if (ivPreloadDues.visibility == View.VISIBLE)
                         ivPreloadDues.setColorFilter(Utility.contrastColor(it))
+                    (requireActivity() as MainActivity).changeStatusBarColor(it)
                 }
 
                 // Si hay un error

@@ -11,6 +11,8 @@
     <color name="teal_200">#03DAD3</color>
     <color name="teal_700">#FF018786</color>
 
+    <color name="green">#61EA8F</color>
+
     <!--  Material 3 Colors  -->
     <color name="primaryContainer">#B8FFEB</color>
     <color name="onPrimaryContainer">#005D47</color>
@@ -24,7 +26,7 @@
 
     <!-- Button Colors -->
     <color name="textColor_Button">@color/black</color>
-    <color name="backgroundTint_Button">#61EA8F</color>
+    <color name="backgroundTint_Button">@color/green</color>
 
     <!-- Text -->
     <color name="textColor_Text">@color/black</color>
