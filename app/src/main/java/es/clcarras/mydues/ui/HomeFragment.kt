@@ -171,6 +171,9 @@ class HomeFragment : Fragment() {
                 totalPrice.observe(viewLifecycleOwner) {
                     animateTextView(it.toInt(), tvTotalPrice)
                 }
+                noDues.observe(viewLifecycleOwner) { noDues ->
+                    ivBackground.visibility = if (noDues) View.VISIBLE else View.GONE
+                }
             }
         }
     }

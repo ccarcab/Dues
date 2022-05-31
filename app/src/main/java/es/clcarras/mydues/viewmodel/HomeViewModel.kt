@@ -35,6 +35,10 @@ class HomeViewModel(
     private val _deleted = MutableLiveData(false)
     val deleted: LiveData<Boolean> get() = _deleted
 
+    // LiveData para saber si existen cuotas
+    private val _noDues = MutableLiveData(true)
+    val noDues: LiveData<Boolean> get() = _noDues
+
     // LiveData para almacenar el precio total
     private val _totalPrice = MutableLiveData(0.0)
     val totalPrice: LiveData<Double> get() = _totalPrice
@@ -92,6 +96,7 @@ class HomeViewModel(
                     adapterDataList.add(myDues)
                     _adapter!!.notifyItemInserted(adapterDataList.indexOf(myDues))
                 }
+                _noDues.value = dataList.isEmpty()
             }.addOnCompleteListener {
                 // Una vez recorrida la lista se calcula el precio total
                 adapterDataList.forEach {
@@ -123,6 +128,8 @@ class HomeViewModel(
 
         // Se comprueba si queda alguna cuota precargada
         checkPreloadDues()
+
+        _noDues.value = dataList.isEmpty()
     }
 
     /**
