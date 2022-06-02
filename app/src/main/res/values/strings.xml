@@ -35,7 +35,7 @@
     </string-array>
 
     <!-- defaultWebId from project > src > google-services.json > client > services > client_id -->
-    <string name="defaultWebId" translatable="false"></string>
+    <string name="defaultWebId" translatable="false">814549884038-inibblsehsqko6b5vmldpngjfdntcivs.apps.googleusercontent.com</string>
 
     <!--  Login Fragment  -->
     <string name="sign_in_google">Login with Google</string>
