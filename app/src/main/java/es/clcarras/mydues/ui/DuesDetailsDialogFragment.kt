@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -217,7 +216,10 @@ class DuesDetailsDialogFragment(
     }
 
     private fun errorIcon() =
-        getDrawable(requireContext(), com.google.android.material.R.drawable.mtrl_ic_error)!!.apply {
+        getDrawable(
+            requireContext(),
+            com.google.android.material.R.drawable.mtrl_ic_error
+        )!!.apply {
             setTint(Utility.contrastErrorColor(viewModel.cardColor.value!!))
             setBounds(0, 0, intrinsicWidth, intrinsicHeight)
         }
@@ -313,8 +315,7 @@ class DuesDetailsDialogFragment(
                         it.visibility = View.GONE
 
                 if (it is TextInputLayout)
-                    if (it.editText?.id != R.id.etName || viewModel!!.`package` != null)
-                        it.editText?.isEnabled = !it.editText?.isEnabled!!
+                    it.editText?.isEnabled = !it.editText?.isEnabled!!
 
                 if (it is EditText) it.isEnabled = !it.isEnabled
                 if (it is Spinner) it.isEnabled = !it.isEnabled
