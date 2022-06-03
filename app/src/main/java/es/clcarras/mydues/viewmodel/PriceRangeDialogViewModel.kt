@@ -1,7 +1,6 @@
 package es.clcarras.mydues.viewmodel
 
 import android.icu.util.Calendar
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +9,6 @@ import es.clcarras.mydues.database.MyDuesDao
 import es.clcarras.mydues.model.MyDues
 import es.clcarras.mydues.ui.DateDialogFragment
 import es.clcarras.mydues.utils.Utility
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -59,18 +57,15 @@ class PriceRangeDialogViewModel(
      * Método que muestra un date picker para seleccionar una fecha
      */
     fun datePicker(dateId: Int): DateDialogFragment {
-        val currentDate = if (dateId == INIT_DATE) _initDate.value else _endDate.value
+        val currentDate =
+            if (dateId == INIT_DATE || _endDate.value == null) _initDate.value else _endDate.value
 
-        return DateDialogFragment.newInstance(currentDate) { _, year, month, day ->
+        return DateDialogFragment.newInstance(currentDate, _initDate.value) { _, year, month, day ->
             val cal = Calendar.getInstance()
-            val today = Date.from(Instant.now())
             cal.set(year, month, day)
-            // Se añade la fecha si es igual o posterior a la fecha actual
-            if (cal.time.after(today) || cal.time.equals(today))
-                if (dateId == INIT_DATE)
-                    _initDate.value = cal.time
-                else if (cal.time.after(today) && !cal.time.equals(_initDate.value))
-                    _endDate.value = cal.time
+
+            if (dateId == INIT_DATE) _initDate.value = cal.time
+            else if (cal.time.after(_initDate.value)) _endDate.value = cal.time
 
             // Se calcula el precio total
             checkPrice()
@@ -90,7 +85,7 @@ class PriceRangeDialogViewModel(
             // Días que hay entre las dos fechas
             val daysBetween =
                 ((_endDate.value!!.time - _initDate.value!!.time) /
-                        (1000 * 60 * 60 * 24))
+                        (1000 * 60 * 60 * 24)) + 1
 
             // Se obtienen todas las cuotas y se calcula su precio diario
             MyDuesDao().getMyDues().addOnSuccessListener { col ->

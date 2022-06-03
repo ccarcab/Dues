@@ -11,11 +11,12 @@ import java.util.*
  * Fragmento que muestra un cuadro de diálogo para seleccionar una fecha
  */
 class DateDialogFragment(
-    private val initialDate: Date? // Fecha mostrada inicialmente
+    private val initialDate: Date?, // Fecha mostrada inicialmente
+    private val minDate: Date?
 ) : DialogFragment() {
 
     // Constructor sin parámetros
-    constructor() : this(null)
+    constructor() : this(null, null)
 
     // Objeto listener para detectar cuando hay un cambio de fecha
     private var listener: DatePickerDialog.OnDateSetListener? = null
@@ -37,7 +38,9 @@ class DateDialogFragment(
         val day = c.get(Calendar.DAY_OF_MONTH)
 
         // Se crea una instancia del cuadro de diálogo y se devuelve
-        return DatePickerDialog(requireActivity(), listener, year, month, day)
+        return DatePickerDialog(requireActivity(), listener, year, month, day).apply {
+            datePicker.minDate = minDate?.time ?: 0
+        }
     }
 
     companion object {
@@ -48,8 +51,9 @@ class DateDialogFragment(
         // Método usado para crear nuevas instancias del cuadro de diálogo
         fun newInstance(
             initialDate: Date?, // Fecha inicial
+            minDate: Date? = null,
             listener: DatePickerDialog.OnDateSetListener // Evento de escucha al cambio de fecha
-        ): DateDialogFragment = DateDialogFragment(initialDate).apply {
+        ): DateDialogFragment = DateDialogFragment(initialDate, minDate).apply {
             this.listener = listener
         }
     }

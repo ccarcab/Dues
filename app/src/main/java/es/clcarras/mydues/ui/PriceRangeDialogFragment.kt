@@ -77,7 +77,7 @@ class PriceRangeDialogFragment : DialogFragment() {
                     etEndDate.setText(Utility.formatDate(it))
                 }
                 totalPrice.observe(viewLifecycleOwner) {
-                    animateTextView(it.toInt(), tvTotalPrice)
+                    animateTextView(it.toFloat(), tvTotalPrice)
                 }
             }
         }
@@ -86,11 +86,11 @@ class PriceRangeDialogFragment : DialogFragment() {
     /**
      * Método para crear una animación en el text view recibido por parámetros
      */
-    private fun animateTextView(target: Int, textview: TextView) {
-        val animator = ValueAnimator.ofInt(0, target)
+    private fun animateTextView(target: Float, textview: TextView) {
+        val animator = ValueAnimator.ofFloat(0f, target)
         animator.duration = 1500
         animator.addUpdateListener {
-            textview.text = it.animatedValue.toString()
+            textview.text = String.format("%.2f", it.animatedValue)
         }
         animator.start()
     }
