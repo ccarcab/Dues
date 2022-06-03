@@ -46,7 +46,7 @@
         <Button
             android:id="@+id/btnCancel"
             style="@style/button"
-            android:layout_width="182dp"
+            android:layout_width="0dp"
             android:text="@string/dialog_close_btn_cancel"
             android:textAllCaps="false"
             app:layout_constraintBaseline_toBaselineOf="@+id/btnLogOut"
@@ -57,7 +57,7 @@
         <Button
             android:id="@+id/btnLogOut"
             style="@style/button"
-            android:layout_width="182dp"
+            android:layout_width="0dp"
             android:text="@string/dialog_close_btn_signout"
             android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"

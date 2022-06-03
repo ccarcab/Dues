@@ -9,7 +9,17 @@
         android:id="@+id/nav_home"
         android:name="es.clcarras.mydues.ui.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_dues_selector"
+            app:destination="@id/nav_dues_selector" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_menu"
+            app:destination="@id/nav_menu" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_preload_dues"
+            app:destination="@id/nav_preload_dues" />
+    </fragment>
     <fragment
         android:id="@+id/nav_new_due"
         android:name="es.clcarras.mydues.ui.NewDuesFragment"
@@ -27,12 +37,7 @@
         tools:layout="@layout/fragment_dues_selector">
         <action
             android:id="@+id/action_nav_dues_selector_to_nav_new_due"
-            app:destination="@id/nav_new_due"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            app:popUpTo="@id/nav_home" />
+            app:destination="@id/nav_new_due" />
     </fragment>
     <dialog
         android:id="@+id/nav_preload_dues"
@@ -43,12 +48,23 @@
         android:id="@+id/nav_login"
         android:name="es.clcarras.mydues.ui.LoginFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_nav_login_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
     <dialog
         android:id="@+id/nav_menu"
         android:name="es.clcarras.mydues.ui.MenuBottomSheet"
         android:label="MenuBottomSheet"
-        tools:layout="@layout/bottom_sheet_menu" />
+        tools:layout="@layout/bottom_sheet_menu" >
+        <action
+            android:id="@+id/action_nav_menu_to_nav_logout"
+            app:destination="@id/nav_logout" />
+        <action
+            android:id="@+id/action_nav_menu_to_nav_price_range"
+            app:destination="@id/nav_price_range" />
+    </dialog>
     <dialog
         android:id="@+id/nav_logout"
         android:name="es.clcarras.mydues.ui.LogoutDialogFragment"

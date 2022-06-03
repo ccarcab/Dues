@@ -40,8 +40,8 @@
     <string name="calculate_spent">Calcular gasto</string>
     <string name="dialog_close_title">¿Quieres cerrar la sesión?</string>
     <string name="dialog_close_subtitle">¿Estás seguro?</string>
-    <string name="dialog_close_btn_cancel">No, cancelar</string>
-    <string name="dialog_close_btn_signout">Si, cerrar sesión</string>
+    <string name="dialog_close_btn_cancel">Cancelar</string>
+    <string name="dialog_close_btn_signout">Cerrar sesión</string>
     <string-array name="recurrence_array">
         <item>Día</item>
         <item>Semana</item>

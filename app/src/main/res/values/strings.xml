@@ -59,8 +59,8 @@
     <string name="calculate_spent">Calculate Spent</string>
     <string name="dialog_close_title">Yo want to close session?</string>
     <string name="dialog_close_subtitle">Are you sure?</string>
-    <string name="dialog_close_btn_cancel">No, cancel</string>
-    <string name="dialog_close_btn_signout">Yes, signout</string>
+    <string name="dialog_close_btn_cancel">Cancel</string>
+    <string name="dialog_close_btn_signout">Signout</string>
 
     <string name="required_field">Required</string>
     <string name="dues_added">Dues Added!</string>

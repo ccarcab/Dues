@@ -13,6 +13,8 @@
         android:fitsSystemWindows="true"
         tools:context=".MainActivity">
 
+        <include layout="@layout/content_main" />
+
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             style="@style/ThemeOverlay.Material3.BottomAppBar"
@@ -21,9 +23,9 @@
             android:layout_gravity="bottom"
             android:background="@android:color/transparent"
             app:fabAlignmentMode="center"
-            app:fabCradleMargin="24dp"
-            app:fabCradleRoundedCornerRadius="24dp"
-            app:layout_insetEdge="top"
+            app:fabCradleMargin="12dp"
+            app:fabCradleRoundedCornerRadius="12dp"
+            app:layout_insetEdge="none"
             app:menu="@menu/bottom_app_bar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -31,8 +33,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_anchor="@id/bottomAppBar" />
-
-        <include layout="@layout/content_main" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

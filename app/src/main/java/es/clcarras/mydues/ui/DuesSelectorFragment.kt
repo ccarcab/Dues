@@ -64,6 +64,7 @@ class DuesSelectorFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         with((requireActivity() as MainActivity)) {
             getFab().hide()
+            getBottomAppBar().performShow()
             (requireActivity() as MainActivity).changeStatusBarColor(getColor(R.color.green))
         }
     }
